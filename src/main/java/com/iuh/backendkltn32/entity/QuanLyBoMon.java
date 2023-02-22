@@ -1,24 +1,28 @@
 package com.iuh.backendkltn32.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "QuanLyBoMon")
-public class QuanLyBoMon extends GiangVien {
+public class QuanLyBoMon extends GiangVien implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String maQuanLyBoMon;
 
 	public QuanLyBoMon() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-	
 
 	public LopHocPhan moLopHocPhan(LopHocPhan lopHocPhan) {
 

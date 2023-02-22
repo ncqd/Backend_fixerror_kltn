@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.service.SinhVienService;
 
 @RestController

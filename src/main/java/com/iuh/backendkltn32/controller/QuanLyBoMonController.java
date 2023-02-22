@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iuh.backendkltn32.common.EVaiTro;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.Khoa;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
-import com.iuh.backendkltn32.entity.VaiTro;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.KhoaService;
 import com.iuh.backendkltn32.service.SinhVienService;

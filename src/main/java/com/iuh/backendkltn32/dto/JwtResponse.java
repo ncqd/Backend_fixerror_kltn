@@ -1,7 +1,6 @@
 package com.iuh.backendkltn32.dto;
 
 
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -47,7 +47,17 @@ public class DeTai {
 	private GiangVien giangVien;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "maLopHocPhan", nullable = false)
+	@JoinColumn(name = "maLopHocPhan", nullable = true)
 	private LopHocPhan lopHocPhan;
+
+	@Override
+	public String toString() {
+		return "DeTai [maDeTai=" + maDeTai + ", tenDeTai=" + tenDeTai + ", mucTieuDeTai=" + mucTieuDeTai
+				+ ", sanPhamDuKien=" + sanPhamDuKien + ", moTa=" + moTa + ", yeuCauDauVao=" + yeuCauDauVao
+				+ ", gioiHanSoNhomThucHien=" + gioiHanSoNhomThucHien + ", giangVien=" + giangVien + ", lopHocPhan="
+				+ lopHocPhan + "]";
+	}
+	
+	
 
 }

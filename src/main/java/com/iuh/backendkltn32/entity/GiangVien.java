@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -20,6 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "GiangVien")
 public class GiangVien {
 	
@@ -41,14 +44,14 @@ public class GiangVien {
 	@Column(name = "hocVi", columnDefinition = "nvarchar(255)" ,nullable = false)
 	private String hocVi;
 	
-	@Column(name = "ngaySinh")
+	@Column(name = "ngaySinh", nullable = true)
 	private Date ngaySinh;
 	
 	@Column(name = "namCongTac", nullable = false)
 	private Integer namCongTac;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "maKhoa", nullable = false)
+	@JoinColumn(name = "maKhoa", nullable = true)
 	private Khoa khoa;
 	
 	@Column(name = "gioiTinh", nullable = false)

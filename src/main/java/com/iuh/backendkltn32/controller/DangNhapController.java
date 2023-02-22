@@ -10,8 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,8 +20,6 @@ import com.iuh.backendkltn32.config.JwtUntils;
 import com.iuh.backendkltn32.config.UserInfoUserDetails;
 import com.iuh.backendkltn32.dto.JwtResponse;
 import com.iuh.backendkltn32.dto.LoginRequest;
-import com.iuh.backendkltn32.entity.TaiKhoan;
-import com.iuh.backendkltn32.service.AbstractService;
 
 @RestController
 @RequestMapping("/api/xac-thuc")
@@ -35,11 +31,6 @@ public class DangNhapController {
 	@Autowired
 	private JwtUntils jwtService;
 
-	@Autowired
-	private PasswordEncoder encoder;
-
-//	@Autowired
-//	private AbstractService<TaiKhoan> taiKhoanService;
 
 	@PostMapping("/dang-nhap")
 	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) {
@@ -59,25 +50,6 @@ public class DangNhapController {
 				.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new JwtResponse(jwt, "Bearer ", userDetailsImpl.getUsername(), roles.get(0)));
-
-//		if (authentication.isAuthenticated()) {
-//			try {
-//				TaiKhoan taiKhoan = taiKhoanService.layTheoMa(loginRequest.getTenTaiKhoan());
-//				
-//				System.out.println("dangNhap controller - " + taiKhoan.getVaiTro().getTenVaiTro());
-//				
-//				String jwtToken = jwtService.generateJWTToken(new UserInfoUserDetails(taiKhoan));
-//
-//				return ResponseEntity
-//						.ok(new JwtResponse(jwtToken, "Bearer ", taiKhoan.getTenTaiKhoan(), taiKhoan.getPassword()));
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			
-//		} else {
-//			throw new UsernameNotFoundException("invalid user request !");
-//		}
-//		return null;
 
 	}
 
@@ -101,29 +73,6 @@ public class DangNhapController {
 
 				return ResponseEntity.ok(new JwtResponse(jwt, "Bearer ", userDetailsImpl.getUsername(), roles.get(0)));
 
-//		System.out.println("xxxx" + loginRequest.getTenTaiKhoan() + "XXX");
-//		
-//
-//		try {
-//			TaiKhoan taiKhoan = taiKhoanService.layTheoMa(loginRequest.getTenTaiKhoan());
-//			
-//			System.out.println("DangNhapController-test- " + encoder.encode(loginRequest.getPassword()));
-//
-//			if(taiKhoan.getTenTaiKhoan().equals(loginRequest.getTenTaiKhoan()) && taiKhoan.getPassword().equals(encoder.encode(loginRequest.getPassword()))) {
-//				
-//				
-//				String jwtToken = jwtService.generateJWTToken(new UserInfoUserDetails(taiKhoan));
-//
-//				return ResponseEntity
-//						.ok(new JwtResponse(jwtToken, "Bearer", loginRequest.getTenTaiKhoan(), loginRequest.getPassword()));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//		return null;
-		
-		
 	}
 
 }

@@ -22,11 +22,6 @@ import lombok.Setter;
 @Table(name = "TaiKhoan")
 public class TaiKhoan{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	@Id
 	@Column(name = "tenTaiKhoan")
 	private String tenTaiKhoan;

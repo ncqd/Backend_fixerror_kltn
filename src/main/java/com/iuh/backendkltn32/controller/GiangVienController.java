@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
-import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
 
@@ -32,7 +31,7 @@ public class GiangVienController {
 	public GiangVien hienThiThongTinCaNhan(@PathVariable String maGiangVien, @RequestBody LoginRequest loginRequest) {
 		try {
 			if (!loginRequest.getTenTaiKhoan().equals(maGiangVien)) {
-				throw new Exception("Khong Dung Ma Sinh Vien");
+				throw new Exception("Khong Dung Ma Giang Vien");
 			}
 			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
 
@@ -43,11 +42,17 @@ public class GiangVienController {
 		return null;
 	}
 	
-	@PostMapping("/them-de-tai")
+	@PostMapping("/them-de-tai/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public DeTai themDeTai(@RequestBody DeTai deTai) {
+	public DeTai themDeTai(@RequestBody DeTai deTai, @PathVariable("maGiangVien") String maGiangVien) {
 		
 		try {
+			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
+			
+			deTai.setGiangVien(giangVien);
+			
+			System.out.println("giang-vien-controller - them de tai - " + deTai);
+			
 			DeTai ketQuaLuu = deTaiService.luu(deTai);
 			
 			return ketQuaLuu;

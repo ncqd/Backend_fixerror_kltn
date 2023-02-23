@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +69,18 @@ public class DeTaiServiceImpl implements DeTaiService {
 		
 		repository.save(deTaiCanCapNhat);
 		return deTaiCanCapNhat;
+	}
+
+	@Override
+	public List<DeTai> layDsDeTaiTheoNamHocKy(String namHocKy) throws Exception {
+		
+		if(namHocKy == null || namHocKy.isEmpty()) {
+			throw new Exception("Năm Học Kỳ không được rỗng");
+		}
+		
+		List<DeTai> dsDeTai = repository.layDsDeTaiTheoNamHocKy(namHocKy);
+		
+		return dsDeTai;
 	}
 
 }

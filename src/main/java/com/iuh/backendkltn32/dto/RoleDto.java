@@ -12,10 +12,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TaiKhoanDto {
+public class RoleDto {
 
-	private String tenTaiKhoan;
-	private String password;
-	private String role;
+	private String roleName;
+	private String roleDescription;
 
 }

@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,6 +40,9 @@ public class DeTai {
 	@Column(name = "yeuCauDauVao", columnDefinition = "nvarchar(255)" ,nullable = false)
 	private String yeuCauDauVao;
 	
+	@Column(name = "trangThai", nullable = false)
+	private int trangThai;
+	
 	@Column(name = "gioiHanSoNhomThucHien", nullable = false)
 	private Integer gioiHanSoNhomThucHien;
 	
@@ -46,7 +50,10 @@ public class DeTai {
 	@JoinColumn(name = "maGiangVien", nullable = false)
 	private GiangVien giangVien;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {
+	        CascadeType.PERSIST, 
+	        CascadeType.MERGE
+	    })
 	@JoinColumn(name = "maLopHocPhan", nullable = true)
 	private LopHocPhan lopHocPhan;
 
@@ -54,9 +61,10 @@ public class DeTai {
 	public String toString() {
 		return "DeTai [maDeTai=" + maDeTai + ", tenDeTai=" + tenDeTai + ", mucTieuDeTai=" + mucTieuDeTai
 				+ ", sanPhamDuKien=" + sanPhamDuKien + ", moTa=" + moTa + ", yeuCauDauVao=" + yeuCauDauVao
-				+ ", gioiHanSoNhomThucHien=" + gioiHanSoNhomThucHien + ", giangVien=" + giangVien + ", lopHocPhan="
-				+ lopHocPhan + "]";
+				+ ", trangThai=" + trangThai + ", gioiHanSoNhomThucHien=" + gioiHanSoNhomThucHien + ", giangVien="
+				+ giangVien + ", lopHocPhan=" + lopHocPhan + "]";
 	}
+
 	
 	
 

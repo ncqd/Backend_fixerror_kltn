@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.LoginRequest;
-import com.iuh.backendkltn32.dto.NhomSinhVien;
+import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
@@ -79,11 +79,11 @@ public class SinhVienController {
 			return ResponseEntity.ok(null);
 		}
 		
-		List<NhomSinhVien> nhomSinhVien = new ArrayList<>();
+		List<NhomSinhVienDto> nhomSinhVien = new ArrayList<>();
 		
 		for (Nhom nhom : nhoms) {
-			List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-			NhomSinhVien nhomSinhVienTemp = new NhomSinhVien(sinhViens, nhom.getTinhTrang());
+			List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+			NhomSinhVienDto nhomSinhVienTemp = new NhomSinhVienDto(nhom.getMaNhom(),sinhViens, nhom.getTinhTrang());
 			nhomSinhVien.add(nhomSinhVienTemp);
 		}
 		

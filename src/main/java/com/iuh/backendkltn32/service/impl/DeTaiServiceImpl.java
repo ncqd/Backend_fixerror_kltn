@@ -89,4 +89,10 @@ public class DeTaiServiceImpl implements DeTaiService {
 		return repository.layDsDeTaiTheoNamHocKyDaPheDuyet(namHocKy);
 	}
 
+	@Override
+	public Integer laySoNhomDaDangKyDeTai(String maDeTai) {
+		// TODO Auto-generated method stub
+		return repository.laySoNhomDaDangKyDeTai(maDeTai);
+	}
+
 }

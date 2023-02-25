@@ -2,6 +2,8 @@ package com.iuh.backendkltn32.controller;
 
 import java.util.List;
 
+import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.service.HocKyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +27,9 @@ public class GiangVienController {
 
 	@Autowired
 	private DeTaiService deTaiService;
+
+	@Autowired
+	private HocKyService hocKyService;
 
 	@Autowired
 	private GiangVienService giangVienService;
@@ -110,6 +115,12 @@ public class GiangVienController {
 		}
 		return null;
 
+	}
+
+	@RequestMapping("/lay-nam-hoc-ky")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public List<HocKy> layHocKy(){
+		return hocKyService.layTatCaHocKy();
 	}
 
 }

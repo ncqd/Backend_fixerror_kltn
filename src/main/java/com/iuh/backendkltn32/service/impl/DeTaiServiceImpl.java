@@ -86,7 +86,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	@Override
 	public List<DeTai> layDsDeTaiTheoNamHocKyDaDuyet(String namHocKy) throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		return repository.layDsDeTaiTheoNamHocKyDaPheDuyet(namHocKy);
 	}
 
 }

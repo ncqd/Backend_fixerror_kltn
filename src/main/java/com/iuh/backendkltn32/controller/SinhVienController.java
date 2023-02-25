@@ -54,7 +54,7 @@ public class SinhVienController {
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
 	public List<DeTai> xemDsDeTaiDaDuocDuyet(){
 		try {
-			List<DeTai> dsDeTai =  deTaiService.layDsDeTaiTheoNamHocKy("HK2 (2022-2023)");
+			List<DeTai> dsDeTai =  deTaiService.layDsDeTaiTheoNamHocKyDaDuyet("HK2 (2022-2023)");
 			
 			return dsDeTai;
 		} catch (Exception e) {
@@ -90,5 +90,32 @@ public class SinhVienController {
 		return ResponseEntity.ok(nhomSinhVien);
 				
 	}
+	
+//	@GetMapping("/thong-tin-tong-sinh-vien/{namHocKy}")
+//	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
+//	public ResponseEntity<?> dsSinhVienTrongHocKy(@PathVariable("namHocKy") String namHocKy) {
+//		
+//		Integer hocKy = Integer.parseInt(namHocKy.substring(2, 3));
+//		String namHoc = namHocKy.substring(10, 14);
+//		
+//		System.out.println("SinhVienControllẻ - dsSinhVienTrongHocKy - " + namHoc);
+//		
+//		List<Nhom> nhoms = nhomService.layTatCaNhom(hocKy, namHoc);
+//		
+//		if (nhoms.isEmpty()) {
+//			return ResponseEntity.ok(null);
+//		}
+//		
+//		List<NhomSinhVienDto> nhomSinhVien = new ArrayList<>();
+//		
+//		for (Nhom nhom : nhoms) {
+//			List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+//			NhomSinhVienDto nhomSinhVienTemp = new NhomSinhVienDto(nhom.getMaNhom(),sinhViens, nhom.getTinhTrang());
+//			nhomSinhVien.add(nhomSinhVienTemp);
+//		}
+//		
+//		return ResponseEntity.ok(nhomSinhVien);
+//				
+//	}
 
 }

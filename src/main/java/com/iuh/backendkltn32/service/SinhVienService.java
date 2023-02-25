@@ -6,6 +6,6 @@ import com.iuh.backendkltn32.entity.SinhVien;
 
 public interface SinhVienService extends AbstractService<SinhVien>{
 	
-	List<SinhVien> layTatCaSinhVienTheoNhom(String maNhom);
+	List<String> layTatCaSinhVienTheoNhom(String maNhom);
 
 }

@@ -84,9 +84,9 @@ public class SinhVienServiceImpl implements  SinhVienService {
 	}
 
 	@Override
-	public List<SinhVien> layTatCaSinhVienTheoNhom(String maNhom) {
+	public List<String> layTatCaSinhVienTheoNhom(String maNhom) {
 		
-		List<SinhVien> sinhViens = sinhVienRepository.findByNhom(maNhom);
+		List<String> sinhViens = sinhVienRepository.findByNhom(maNhom);
 		return sinhViens;
 	}
 

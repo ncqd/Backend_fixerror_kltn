@@ -13,6 +13,6 @@ public interface SinhVienRepository extends JpaRepository<SinhVien, String>{
 	Optional<SinhVien> findByMaSinhVien(String maSinhVien);
 	
 	
-	@Query(value = "select * from sinhvien where maNhom = ?1", nativeQuery = true)
-	List<SinhVien> findByNhom(String maNhom);
+	@Query(value = "select maSinhVien from sinhvien where maNhom = ?1", nativeQuery = true)
+	List<String> findByNhom(String maNhom);
 }

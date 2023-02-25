@@ -8,6 +8,8 @@ import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.repository.SinhVienRepository;
 import com.iuh.backendkltn32.service.SinhVienService;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 @Service
@@ -79,6 +81,13 @@ public class SinhVienServiceImpl implements  SinhVienService {
 		sinhVienRepository.save(sinhVienCanCapNhat);
 
 		return sinhVienCanCapNhat;
+	}
+
+	@Override
+	public List<SinhVien> layTatCaSinhVienTheoNhom(String maNhom) {
+		
+		List<SinhVien> sinhViens = sinhVienRepository.findByNhom(maNhom);
+		return sinhViens;
 	}
 
 }

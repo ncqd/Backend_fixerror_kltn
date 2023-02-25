@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +66,14 @@ public class NhomServiceImpl implements NhomService{
 		repository.save(nhomKhongTonTai);
 
 		return nhomKhongTonTai;
+	}
+
+	@Override
+	public List<Nhom> layTatCaNhom(Integer hocKy, String namHoc) {
+		
+		
+		
+		return repository.layNhomTheoNamHocKy(hocKy, namHoc);
 	}
 
 }

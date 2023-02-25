@@ -30,5 +30,8 @@ public class Nhom {
 	@JoinColumn(name = "maDeTai", nullable = false)
 	private DeTai deTai;
 	
+	@JoinColumn(name = "tinhTrang", nullable = false)
+	private Integer tinhTrang;
+	
 
 }

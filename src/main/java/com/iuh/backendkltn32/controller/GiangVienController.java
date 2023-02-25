@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
-import com.iuh.backendkltn32.entity.HocPhanKhoaLuanTotNghiep;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
-import com.iuh.backendkltn32.service.HocPhanKhoaLuanTotNghiepService;
 
 @RestController
 @RequestMapping("/api/giang-vien")

@@ -16,7 +16,7 @@ public class VaiTroServiceImpl implements VaiTroService{
 	@Override
 	public VaiTro layTheoMa(Long ma) throws Exception {
 		
-		if (ma == null || ma.equals("")) {
+		if (ma == null || ma == 0) {
 			throw new RuntimeException("Tên tài khoản rỗng không được phép rỗng");
 		}
 		

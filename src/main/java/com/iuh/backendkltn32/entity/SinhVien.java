@@ -51,9 +51,8 @@ public class SinhVien {
 	private Integer gioiTinh;
 	
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "maLopDanhNghia", nullable = true)
-	@JsonIgnore
 	private LopDanhNghia lopDanhNghia;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

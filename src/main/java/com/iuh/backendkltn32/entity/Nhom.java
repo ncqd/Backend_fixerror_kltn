@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +30,7 @@ public class Nhom {
 	private String tenNhom;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "maDeTai", nullable = false)
+	@JoinColumn(name = "maDeTai", nullable = true)
 	private DeTai deTai;
 	
 	@JoinColumn(name = "tinhTrang", nullable = false)

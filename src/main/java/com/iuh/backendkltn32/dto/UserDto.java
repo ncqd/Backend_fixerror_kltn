@@ -13,7 +13,7 @@ import lombok.Setter;
 public class UserDto {
 
 	private List<RoleDto> roles;
-	private String userName;
 	private String fullName;
+	private String userName;
 	private String password;
 }

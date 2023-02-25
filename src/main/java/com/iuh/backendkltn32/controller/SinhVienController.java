@@ -76,7 +76,7 @@ public class SinhVienController {
 		List<Nhom> nhoms = nhomService.layTatCaNhom(hocKy, namHoc);
 		
 		if (nhoms.isEmpty()) {
-			return ResponseEntity.ok(null);
+			return ResponseEntity.ok(new ArrayList<>());
 		}
 		
 		List<NhomSinhVienDto> nhomSinhVien = new ArrayList<>();

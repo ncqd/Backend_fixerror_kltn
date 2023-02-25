@@ -7,6 +7,8 @@ import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.repository.HocKyRepository;
 import com.iuh.backendkltn32.service.HocKyService;
 
+import java.util.List;
+
 @Service
 public class HocKyServiceImpl implements HocKyService{
 	
@@ -63,8 +65,10 @@ public class HocKyServiceImpl implements HocKyService{
 
 		return hocKyKhongTonTai;
 	}
-	
-	
 
 
+	@Override
+	public List<HocKy> layTatCaHocKy() {
+		return repository.findAll();
+	}
 }

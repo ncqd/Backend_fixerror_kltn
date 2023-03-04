@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -24,8 +25,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "sinhvien")
-public class SinhVien {
+public class SinhVien implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	private String maSinhVien;
 	
@@ -50,6 +56,9 @@ public class SinhVien {
 	@Column(name = "gioiTinh",nullable = false)
 	private Integer gioiTinh;
 	
+	@Column(name = "anhDaiDien", columnDefinition = "varchar(255)" ,nullable = true)
+	private String anhDaiDien;
+	
 	
 	@ManyToOne()
 	@JoinColumn(name = "maLopDanhNghia", nullable = true)
@@ -64,7 +73,7 @@ public class SinhVien {
 	@JsonIgnore
 	private List<KetQua> dsKetQua;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "maNhom", nullable = true)
 	private Nhom nhom;
 	

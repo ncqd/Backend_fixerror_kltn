@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import com.iuh.backendkltn32.entity.HocKy;
@@ -56,11 +57,28 @@ public class GiangVienController {
 
 		try {
 			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
+			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getNamHocKy());
+			String maDT = "001";
 
+			if (deTaiCuoiTrongHK == null) {
+				maDT = "001";
+			} else {
+				Long soMaDT = Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)) + 1;
+				System.out.println("chwa ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
+				System.out.println(Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)));
+				if (soMaDT < 10) {
+					maDT = "00" + soMaDT;
+				} else if (soMaDT >= 10 && soMaDT < 100) {
+					maDT = "0" + soMaDT ;
+				} else {
+					maDT = "" + soMaDT ;
+				}
+			}
+			deTai.setMaDeTai("DT" + maDT);
 			deTai.setGiangVien(giangVien);
-
+			deTai.setHocKy(hocKy);
 			deTai.setTrangThai(0);
-
 			System.out.println("giang-vien-controller - them de tai - " + deTai);
 
 			DeTai ketQuaLuu = deTaiService.luu(deTai);
@@ -79,12 +97,10 @@ public class GiangVienController {
 
 		try {
 			String ketQuaXoaDeTai = deTaiService.xoa(maDeTai);
-
 			return ketQuaXoaDeTai;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return null;
 	}
 

@@ -56,16 +56,15 @@ public class DeTai {
 	        CascadeType.PERSIST, 
 	        CascadeType.MERGE
 	    })
-	@JoinColumn(name = "maLopHocPhan", nullable = true)
-	@JsonIgnore
-	private LopHocPhan lopHocPhan;
+	@JoinColumn(name = "maHocKy", nullable = true)
+	private HocKy hocKy;
 
 	@Override
 	public String toString() {
 		return "DeTai [maDeTai=" + maDeTai + ", tenDeTai=" + tenDeTai + ", mucTieuDeTai=" + mucTieuDeTai
 				+ ", sanPhamDuKien=" + sanPhamDuKien + ", moTa=" + moTa + ", yeuCauDauVao=" + yeuCauDauVao
 				+ ", trangThai=" + trangThai + ", gioiHanSoNhomThucHien=" + gioiHanSoNhomThucHien + ", giangVien="
-				+ giangVien + ", lopHocPhan=" + lopHocPhan + "]";
+				+ giangVien + ", hocKy=" + hocKy + "]";
 	}
 
 	

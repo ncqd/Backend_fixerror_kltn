@@ -59,7 +59,7 @@ public class HocKyServiceImpl implements HocKyService{
 		if (hocKyKhongTonTai == null) {
 			throw new RuntimeException("Học kỳ không tồn tại");
 		}
-		hocKyKhongTonTai.setNamHoc(obj.getNamHoc());
+		hocKyKhongTonTai.setNamHocKy(obj.getNamHocKy());
 		
 		repository.save(hocKyKhongTonTai);
 
@@ -70,5 +70,11 @@ public class HocKyServiceImpl implements HocKyService{
 	@Override
 	public List<HocKy> layTatCaHocKy() {
 		return repository.findAll();
+	}
+
+	@Override
+	public HocKy layHocKyCuoiCungTrongDS() {
+		
+		return repository.layHocKyCuoiCungTrongDS();
 	}
 }

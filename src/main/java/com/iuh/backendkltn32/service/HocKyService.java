@@ -7,4 +7,7 @@ import java.util.List;
 public interface HocKyService extends AbstractService<HocKy>{
 
     List<HocKy> layTatCaHocKy();
+    
+    HocKy layHocKyCuoiCungTrongDS();
+    
 }

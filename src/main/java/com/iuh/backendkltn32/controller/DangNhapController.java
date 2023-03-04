@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iuh.backendkltn32.common.EVaiTro;
 import com.iuh.backendkltn32.config.JwtUntils;
 import com.iuh.backendkltn32.config.UserInfoUserDetails;
 import com.iuh.backendkltn32.dto.JwtResponse;
@@ -24,8 +23,10 @@ import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.RoleDto;
 import com.iuh.backendkltn32.dto.UserDto;
 import com.iuh.backendkltn32.entity.GiangVien;
+import com.iuh.backendkltn32.entity.QuanLyBoMon;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.service.GiangVienService;
+import com.iuh.backendkltn32.service.QuanLyBoMonService;
 import com.iuh.backendkltn32.service.SinhVienService;
 
 @RestController
@@ -43,6 +44,9 @@ public class DangNhapController {
 
 	@Autowired
 	private GiangVienService giangVienService;
+	
+	@Autowired
+	private QuanLyBoMonService quanLyBoMonService;
 
 	@PostMapping("/dang-nhap")
 	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws Exception {
@@ -63,18 +67,27 @@ public class DangNhapController {
 
 		RoleDto roleDto = new RoleDto(roles.get(0), roles.get(0).substring(5) + " Role");
 
-		if (roleDto.getRoleName().equals(EVaiTro.ROLE_GIANGVIEN.toString())) {
-
+		switch (roleDto.getRoleName()) {
+		case "ROLE_GIANGVIEN": {
+			
 			GiangVien giangVien = giangVienService.layTheoMa(tenTaiKhoan);
-			return ResponseEntity.ok(new JwtResponse(jwt,  new UserDto(Arrays.asList(roleDto),  
-					giangVien.getTenGiangVien(), userDetailsImpl.getUsername(), userDetailsImpl.getPassword())));
-
-		} else {
-			SinhVien sinhVien = sinhVienService.layTheoMa(tenTaiKhoan);
-			return ResponseEntity.ok(new JwtResponse(jwt, new UserDto(Arrays.asList(roleDto), 
-					sinhVien.getTenSinhVien(),userDetailsImpl.getUsername(), userDetailsImpl.getPassword())));
+			return ResponseEntity.ok(new JwtResponse(jwt,  new UserDto<GiangVien>(Arrays.asList(roleDto),  
+					giangVien)));
 		}
-
+		case "ROLE_SINHVIEN" : {
+			SinhVien sinhVien = sinhVienService.layTheoMa(tenTaiKhoan);
+			return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<SinhVien>(Arrays.asList(roleDto), 
+				 sinhVien)));
+		}
+			
+		case "ROLE_QUANLY": {
+			QuanLyBoMon quanLyBoMon = quanLyBoMonService.layTheoMa(tenTaiKhoan);
+			return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<QuanLyBoMon>(Arrays.asList(roleDto), 
+				 quanLyBoMon)));
+			}
+		}
+		
+		throw new Exception("Dont have user");
 	}
 
 //	@PostMapping("/test")

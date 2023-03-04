@@ -10,10 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserDto {
+public class UserDto<T> {
 
 	private List<RoleDto> roles;
-	private String fullName;
-	private String userName;
-	private String password;
+	private T user;
 }

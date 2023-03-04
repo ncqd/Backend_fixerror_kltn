@@ -67,4 +67,9 @@ public class HocPhanKhoaLuanTotNghiepServiceImpl implements HocPhanKhoaLuanTotNg
 		return hocPhanKhoaLuanTotNghiepKhongTonTai;
 	}
 
+	@Override
+	public HocPhanKhoaLuanTotNghiep layHocPhanCuoiTrongDS() {
+		return repository.layHocPhanCuoiTrongDS();
+	}
+
 }

@@ -54,6 +54,9 @@ public class GiangVien {
 	@JoinColumn(name = "maKhoa", nullable = true)
 	private Khoa khoa;
 	
+	@Column(name = "anhDaiDien", columnDefinition = "varchar(255)" ,nullable = true)
+	private String anhDaiDien;
+	
 	@Column(name = "gioiTinh", nullable = false)
 	private Integer gioiTinh;
 	

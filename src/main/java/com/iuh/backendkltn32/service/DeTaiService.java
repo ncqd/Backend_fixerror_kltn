@@ -10,4 +10,6 @@ public interface DeTaiService extends AbstractService<DeTai> {
 	
 	List<DeTai> layDsDeTaiTheoNamHocKyDaDuyet(String namHocKy) throws Exception ;
 	Integer laySoNhomDaDangKyDeTai(String maDeTai);
+	
+	DeTai getDeTaiCuoiCungTrongHocKy(String namHocKy);
 }

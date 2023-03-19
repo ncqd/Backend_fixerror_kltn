@@ -21,6 +21,6 @@ public class HocKy {
 	@Id
 	private String maHocKy;
 	
-	private String namHocKy;
+	private String soHocKy;
 
 }

@@ -3,6 +3,7 @@ package com.iuh.backendkltn32.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.QuanLyBoMon;
 import com.iuh.backendkltn32.repository.QuanLyBoMonRepository;
 import com.iuh.backendkltn32.service.QuanLyBoMonService;
@@ -40,6 +41,12 @@ public class QuanLyBoMonImpl implements QuanLyBoMonService{
 	public QuanLyBoMon capNhat(QuanLyBoMon obj) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public GiangVien layTheoMaGiangVien(String maGiangVien) {
+		// TODO Auto-generated method stub
+		return quanLyBoMonRepository.getQuanLyTheoMaGiangVien(maGiangVien);
 	}
 
 }

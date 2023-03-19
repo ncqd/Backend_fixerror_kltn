@@ -81,8 +81,8 @@ public class DangNhapController {
 		}
 			
 		case "ROLE_QUANLY": {
-			QuanLyBoMon quanLyBoMon = quanLyBoMonService.layTheoMa(tenTaiKhoan);
-			return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<QuanLyBoMon>(Arrays.asList(roleDto), 
+			GiangVien quanLyBoMon = quanLyBoMonService.layTheoMaGiangVien(tenTaiKhoan);
+			return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<GiangVien>(Arrays.asList(roleDto), 
 				 quanLyBoMon)));
 			}
 		}

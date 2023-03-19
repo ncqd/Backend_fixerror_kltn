@@ -1,6 +1,8 @@
 package com.iuh.backendkltn32.dto;
 
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DangKyNhomRequest {
 	
-	private String maSinhVien1;
-	private String maSinhVien2;
-	private Integer hocKy;
-	private String namHoc;
-
+	private List<String> dsMaSinhVien;
+	private String maNhom;
 }

@@ -66,6 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/giang-vien/**").hasAuthority("ROLE_GIANGVIEN")
 			.and()
 			.authorizeHttpRequests()
+			.antMatchers("/api/quan-ly/**").hasAuthority("ROLE_QUANLY")
+			.and()
+			.authorizeHttpRequests()
 			.antMatchers("/api/sinh-vien/**").hasAuthority("ROLE_SINHVIEN")
 			.anyRequest().authenticated();
 		

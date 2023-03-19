@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.scheduler;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +28,10 @@ public class CreateScheduler {
 
 		HocKy hocKy = new HocKy();
 
-		String maHK = "001";
+		String maHK = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)).substring(2);
 
-		if (hocKy == null) {
-			maHK = "001";
-		} else {
-			Long soMaHPKL = Long.parseLong(hocKy.getMaHocKy().substring(2)) + 1;
-			if (soMaHPKL < 9) {
-				maHK = "00" + soMaHPKL ;
-			} else if (soMaHPKL >= 9 && soMaHPKL < 100) {
-				maHK = "0" + soMaHPKL;
-			} else {
-				maHK = "" + soMaHPKL;
-			}
-		}
-
-		hocKy.setMaHocKy("HK" + maHK);
-		hocKy.setNamHocKy("HK1 (" + date.getYear() + "-" + date.getYear() + 1 + ")");
+		hocKy.setMaHocKy(maHK);
+		hocKy.setSoHocKy("1");
 
 		hocKyService.luu(hocKy);
 
@@ -73,30 +61,17 @@ public class CreateScheduler {
 		hocPhanKhoaLuanTotNghiepService.luu(hocKhoaLuanTotNghiep);
 	}
 	
-	@SuppressWarnings({ "unused", "deprecation" })
+	@SuppressWarnings({ "unused"})
 	@Scheduled(cron = "* * * 1 11 *")
 	public void createHocKy2VaHocPhanKhoaLuan() throws Exception {
 		Date date = new Date();
 
 		HocKy hocKy = new HocKy();
 
-		String maHK = "001";
+		String maHK = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)).substring(2);
 
-		if (hocKy == null) {
-			maHK = "001";
-		} else {
-			Long soMaHPKL = Long.parseLong(hocKy.getMaHocKy().substring(2)) + 1;
-			if (soMaHPKL < 9) {
-				maHK = "00" + soMaHPKL ;
-			} else if (soMaHPKL >= 9 && soMaHPKL < 100) {
-				maHK = "0" + soMaHPKL ;
-			} else {
-				maHK = "" + soMaHPKL;
-			}
-		}
-
-		hocKy.setMaHocKy("HK" + maHK);
-		hocKy.setNamHocKy("HK2 (" + date.getYear() + "-" + date.getYear() + 1 + ")");
+		hocKy.setMaHocKy(maHK);
+		hocKy.setSoHocKy("2");
 
 		hocKyService.luu(hocKy);
 

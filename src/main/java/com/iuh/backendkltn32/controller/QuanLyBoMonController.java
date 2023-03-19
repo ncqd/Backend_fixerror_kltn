@@ -1,6 +1,14 @@
 package com.iuh.backendkltn32.controller;
 
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +24,7 @@ import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.Khoa;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
+import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.KhoaService;
 import com.iuh.backendkltn32.service.SinhVienService;
@@ -99,6 +108,25 @@ public class QuanLyBoMonController {
 		return null;
 		
 	}
+	
+	@GetMapping("/xuat-ds-sinhvien")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	 public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+         
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=danh-sach-sinh-vien_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+         
+        List<SinhVien> dsSinhVien = sinhVienService.layTatCaSinhVien();
+         
+        SinhVienExcelExporoter excelExporter = new SinhVienExcelExporoter(dsSinhVien);
+         
+        excelExporter.export(response);    
+    }  
+	
 	
 	
 	

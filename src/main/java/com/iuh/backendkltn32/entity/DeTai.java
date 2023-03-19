@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "DeTai")
-public class DeTai {
+public class DeTai implements Serializable {
 	
 	@Id
 	private String maDeTai;

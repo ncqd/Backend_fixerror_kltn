@@ -58,7 +58,7 @@ public class GiangVienController {
 		try {
 			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
 			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getNamHocKy());
+			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getSoHocKy());
 			String maDT = "001";
 
 			if (deTaiCuoiTrongHK == null) {

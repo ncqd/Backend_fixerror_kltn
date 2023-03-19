@@ -90,4 +90,10 @@ public class SinhVienServiceImpl implements  SinhVienService {
 		return sinhViens;
 	}
 
+	@Override
+	public List<SinhVien> layTatCaSinhVien() {
+		// TODO Auto-generated method stub
+		return sinhVienRepository.findAll();
+	}
+
 }

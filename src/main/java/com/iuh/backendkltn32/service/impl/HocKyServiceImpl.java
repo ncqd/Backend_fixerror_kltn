@@ -59,7 +59,7 @@ public class HocKyServiceImpl implements HocKyService{
 		if (hocKyKhongTonTai == null) {
 			throw new RuntimeException("Học kỳ không tồn tại");
 		}
-		hocKyKhongTonTai.setNamHocKy(obj.getNamHocKy());
+		hocKyKhongTonTai.setSoHocKy(obj.getSoHocKy());
 		
 		repository.save(hocKyKhongTonTai);
 

@@ -3,6 +3,7 @@ package com.iuh.backendkltn32.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.iuh.backendkltn32.entity.DeTai;
@@ -72,21 +73,17 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public List<DeTai> layDsDeTaiTheoNamHocKy(String namHocKy) throws Exception {
-		
-		if(namHocKy == null || namHocKy.isEmpty()) {
-			throw new Exception("Năm Học Kỳ không được rỗng");
-		}
-		
-		List<DeTai> dsDeTai = repository.layDsDeTaiTheoNamHocKy(namHocKy);
+	public List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy, String maGiangVien) throws Exception {
+	
+		List<DeTai> dsDeTai = repository.layDsDeTaiTheoNamHocKy(maHocKy, soHocKy, maGiangVien);
 		
 		return dsDeTai;
 	}
 
 	@Override
-	public List<DeTai> layDsDeTaiTheoNamHocKyDaDuyet(String namHocKy) throws Exception {
+	public List<DeTai> layDsDeTaiTheoNamHocKyDaDuyet(String maHocKy, String soHocKy) throws Exception {
 		// TODO Auto-generated method stub
-		return repository.layDsDeTaiTheoNamHocKyDaPheDuyet(namHocKy);
+		return repository.layDsDeTaiTheoNamHocKyDaPheDuyet(maHocKy, soHocKy);
 	}
 
 	@Override

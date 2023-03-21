@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
@@ -119,11 +120,12 @@ public class GiangVienController {
 		return null;
 	}
 
-	@GetMapping("/lay-ds-de-tai-theo-nam-hk/{namHocKy}")
-	public List<DeTai> layDanhSachDeTaiTheoNamHocKy(@PathVariable("namHocKy") String namHocKy) {
+	@GetMapping("/lay-ds-de-tai-theo-nam-hk")
+	public List<DeTai> layDanhSachDeTaiTheoNamHocKy(@RequestBody LayDeTaiRquestDto layDeTaiRquestDto) {
 
 		try {
-			List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(namHocKy);
+			List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(layDeTaiRquestDto.getMaHocKy(), 
+					layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
 
 			return dsDeTai;
 		} catch (Exception e) {

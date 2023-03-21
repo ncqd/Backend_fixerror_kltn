@@ -68,11 +68,11 @@ public class SinhVienController {
 		return null;
 	}
 
-	@GetMapping("/xem-de-tai-da-duyet")
+	@GetMapping("/xem-de-tai-da-duyet/{maHocKy}/{soHocKy}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> xemDsDeTaiDaDuocDuyet() {
+	public ResponseEntity<?> xemDsDeTaiDaDuocDuyet(@PathVariable("maHocKy") String maHocKy,@PathVariable("soHocKy") String soHocKy) {
 		try {
-			List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyDaDuyet("HK2 (2022-2023)");
+			List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyDaDuyet(maHocKy, soHocKy);
 
 			List<DeTaiDto> dsDeTaiDtos = new ArrayList<>();
 
@@ -179,6 +179,23 @@ public class SinhVienController {
 			producer.sendMessageOnDeTaiChanel(request);
 
 			return ResponseEntity.ok(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.ok("Have Error");
+		}
+
+	}
+	
+	@GetMapping("/xem-cac-nhom/{hocKy}/{namHoc}")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
+	public ResponseEntity<?> xemCacNhom(@PathVariable("hocKy") String hocKy, @PathVariable("namHoc") String namHoc) {
+
+		try {
+			Integer soHocKy = Integer.parseInt(hocKy);
+			System.out.println("SinhVienController - xemCacNhom - " + hocKy);
+			List<Nhom> nhoms = nhomService.layTatCaNhom(soHocKy, namHoc);
+
+			return ResponseEntity.ok(nhoms);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.ok("Have Error");

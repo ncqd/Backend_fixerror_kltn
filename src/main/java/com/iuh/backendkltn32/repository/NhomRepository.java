@@ -12,7 +12,7 @@ import com.iuh.backendkltn32.utils.Constants;
 public interface NhomRepository extends JpaRepository<Nhom, String>{
 	
 	@Query(value = "\r\n"
-			+ "select n.maNhom, tenNhom, maDeTai, tinhTrang from nhom n join sinhvien s on "
+			+ "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s on "
 			+ "n.maNhom = s.maNhom join lopdanhnghia l on l.maLopDanhNghia = s.maLopDanhNghia "
 			+ "where HocKy = :hocKy and namHoc = :NamHoc ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoNamHocKy(@Param("hocKy") Integer hocKy,@Param("NamHoc") String namHoc);

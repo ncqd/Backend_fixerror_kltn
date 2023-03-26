@@ -93,9 +93,9 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public DeTai getDeTaiCuoiCungTrongHocKy(String namHocKy) {
+	public DeTai getDeTaiCuoiCungTrongHocKy(String maHocKy, String soHocKy) {
 		
-		DeTai deTai = repository.layDeTaiCuoiCungTrongNamHocKy(namHocKy);
+		DeTai deTai = repository.layDeTaiCuoiCungTrongNamHocKy(maHocKy, soHocKy);
 		
 		return deTai;
 	}

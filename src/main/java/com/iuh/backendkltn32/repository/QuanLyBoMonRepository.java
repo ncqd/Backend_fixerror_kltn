@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.QuanLyBoMon;
 
 public interface QuanLyBoMonRepository extends JpaRepository<QuanLyBoMon, String>{

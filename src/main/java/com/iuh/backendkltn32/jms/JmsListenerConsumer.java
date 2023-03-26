@@ -1,9 +1,7 @@
 package com.iuh.backendkltn32.jms;
 
 import java.util.List;
-import java.util.Map;
 
-import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -83,6 +81,7 @@ public class JmsListenerConsumer implements MessageListener {
 		Message message = jmsTemplate.receive();
 		if (message instanceof MapMessage) {
 			MapMessage mapMessage = (MapMessage) message;
+			@SuppressWarnings("unchecked")
 			List<String> dsMaSv = (List<String>) mapMessage.getObject("dsMaSinhVien");
 			DangKyNhomRequest request = new DangKyNhomRequest(dsMaSv, mapMessage.getString("maNhom"));
 			try {

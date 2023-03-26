@@ -23,7 +23,6 @@ import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.RoleDto;
 import com.iuh.backendkltn32.dto.UserDto;
 import com.iuh.backendkltn32.entity.GiangVien;
-import com.iuh.backendkltn32.entity.QuanLyBoMon;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.QuanLyBoMonService;

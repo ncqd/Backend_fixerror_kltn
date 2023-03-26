@@ -19,16 +19,16 @@ import com.iuh.backendkltn32.dto.DeTaiDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.entity.DeTai;
-import com.iuh.backendkltn32.entity.HocKy;
+//import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.DeTaiService;
-import com.iuh.backendkltn32.service.HocKyService;
+//import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.SinhVienService;
-import com.iuh.backendkltn32.utils.Constants;
+//import com.iuh.backendkltn32.utils.Constants;
 
 @RestController
 @RequestMapping("/api/sinh-vien")
@@ -46,8 +46,8 @@ public class SinhVienController {
 	@Autowired
 	private JmsPublishProducer producer;
 
-	@Autowired
-	private HocKyService hocKyService;
+//	@Autowired
+//	private HocKyService hocKyService;
 	
 	@Autowired
 	private JmsListenerConsumer listenerConsumer;
@@ -151,25 +151,25 @@ public class SinhVienController {
 		}
 	}
 
-	private String taoMaMoi() {
-		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-		Nhom nhom = nhomService
-				.layNhomTheoThoiGianHienThuc(Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy());
-		if (nhom != null) {
-			Integer soNhomHienHanh = Integer.parseInt(nhom.getMaNhom().substring(5)) + 1;
-			String maNhom = null;
-			if (soNhomHienHanh < 9) {
-				maNhom = "00" + soNhomHienHanh;
-			} else if (soNhomHienHanh >= 9 && soNhomHienHanh < 100) {
-				maNhom = "0" + soNhomHienHanh;
-			} else {
-				maNhom = "" + soNhomHienHanh;
-			}
-
-			return Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy() + maNhom;
-		}
-		return Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy() + "001";
-	}
+//	private String taoMaMoi() {
+//		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+//		Nhom nhom = nhomService
+//				.layNhomTheoThoiGianHienThuc(Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy());
+//		if (nhom != null) {
+//			Integer soNhomHienHanh = Integer.parseInt(nhom.getMaNhom().substring(5)) + 1;
+//			String maNhom = null;
+//			if (soNhomHienHanh < 9) {
+//				maNhom = "00" + soNhomHienHanh;
+//			} else if (soNhomHienHanh >= 9 && soNhomHienHanh < 100) {
+//				maNhom = "0" + soNhomHienHanh;
+//			} else {
+//				maNhom = "" + soNhomHienHanh;
+//			}
+//
+//			return Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy() + maNhom;
+//		}
+//		return Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy() + "001";
+//	}
 
 	@PostMapping("/dang-ky-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")

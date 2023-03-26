@@ -3,7 +3,6 @@ package com.iuh.backendkltn32.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.iuh.backendkltn32.entity.DeTai;
@@ -59,7 +58,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 			throw new RuntimeException("Đề tài không tồn tại");
 		}
 		
-		deTaiCanCapNhat.setGiangVien(obj.getGiangVien());
+		deTaiCanCapNhat.setGiangVien(deTaiCanCapNhat.getGiangVien());
 		deTaiCanCapNhat.setGioiHanSoNhomThucHien(obj.getGioiHanSoNhomThucHien());
 		deTaiCanCapNhat.setHocKy(obj.getHocKy());
 		deTaiCanCapNhat.setMoTa(obj.getMoTa());

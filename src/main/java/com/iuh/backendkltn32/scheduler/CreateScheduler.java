@@ -21,7 +21,7 @@ public class CreateScheduler {
 	@Autowired
 	private HocPhanKhoaLuanTotNghiepService hocPhanKhoaLuanTotNghiepService;
 
-	@SuppressWarnings({ "unused", "deprecation" })
+	@SuppressWarnings({ "unused" })
 	@Scheduled(cron = "* * * 1 6 *")
 	public void createHocKy1VaHocPhanKhoaLuan() throws Exception {
 		Date date = new Date();

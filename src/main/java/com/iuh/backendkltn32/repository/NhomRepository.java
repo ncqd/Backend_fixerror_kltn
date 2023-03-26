@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.iuh.backendkltn32.entity.Nhom;
-import com.iuh.backendkltn32.utils.Constants;
 
 public interface NhomRepository extends JpaRepository<Nhom, String>{
 	

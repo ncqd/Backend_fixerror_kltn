@@ -119,7 +119,8 @@ public class GiangVienController {
 		return null;
 	}
 
-	@GetMapping("/lay-ds-de-tai-theo-nam-hk")
+	@PostMapping("/lay-ds-de-tai-theo-nam-hk")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public List<DeTai> layDanhSachDeTaiTheoNamHocKy(@RequestBody LayDeTaiRquestDto layDeTaiRquestDto) {
 
 		try {

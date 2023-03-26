@@ -91,7 +91,7 @@ public class GiangVienController {
 		return null;
 	}
 
-	@PutMapping("/sua-de-tai/{maDeTai}")
+	@PutMapping("/xoa-de-tai/{maDeTai}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public String xoaDeTai(@PathVariable String maDeTai) {
 
@@ -104,7 +104,7 @@ public class GiangVienController {
 		return null;
 	}
 
-	@DeleteMapping("/xoa-de-tai")
+	@DeleteMapping("/sua-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public DeTai suaDeTai(@RequestBody DeTai deTai) {
 

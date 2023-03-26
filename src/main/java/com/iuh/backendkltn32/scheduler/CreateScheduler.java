@@ -30,7 +30,7 @@ public class CreateScheduler {
 
 		String maHK = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)).substring(2);
 
-		hocKy.setMaHocKy(maHK);
+		hocKy.setMaHocKy(maHK + "1");
 		hocKy.setSoHocKy("1");
 
 		hocKyService.luu(hocKy);
@@ -70,7 +70,7 @@ public class CreateScheduler {
 
 		String maHK = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)).substring(2);
 
-		hocKy.setMaHocKy(maHK);
+		hocKy.setMaHocKy(maHK + "2");
 		hocKy.setSoHocKy("2");
 
 		hocKyService.luu(hocKy);

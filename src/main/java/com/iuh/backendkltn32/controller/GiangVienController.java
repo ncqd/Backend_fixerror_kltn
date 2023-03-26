@@ -59,15 +59,14 @@ public class GiangVienController {
 		try {
 			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
 			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getSoHocKy());
+			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getMaHocKy(),hocKy.getSoHocKy());
 			String maDT = "001";
 
 			if (deTaiCuoiTrongHK == null) {
 				maDT = "001";
 			} else {
 				Long soMaDT = Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)) + 1;
-				System.out.println("chwa ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
-				System.out.println(Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)));
+				System.out.println("chua ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
 				if (soMaDT < 10) {
 					maDT = "00" + soMaDT;
 				} else if (soMaDT >= 10 && soMaDT < 100) {

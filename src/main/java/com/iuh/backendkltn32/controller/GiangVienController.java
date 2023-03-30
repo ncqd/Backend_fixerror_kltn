@@ -59,6 +59,7 @@ public class GiangVienController {
 			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
 			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getMaHocKy(),hocKy.getSoHocKy());
+			
 			String maDT = "001";
 
 			if (deTaiCuoiTrongHK == null) {
@@ -78,7 +79,7 @@ public class GiangVienController {
 			deTai.setGiangVien(giangVien);
 			deTai.setHocKy(hocKy);
 			deTai.setTrangThai(0);
-			System.out.println("giang-vien-controller - them de tai - " + deTai);
+			System.out.println("giang-vien-controller - them de tai - " + hocKy);
 
 			DeTai ketQuaLuu = deTaiService.luu(deTai);
 
@@ -108,6 +109,8 @@ public class GiangVienController {
 	public DeTai suaDeTai(@RequestBody DeTai deTai) {
 
 		try {
+			HocKy hocKy = hocKyService.layTheoMa(deTai.getHocKy().getMaHocKy());
+			deTai.setHocKy(hocKy);
 			DeTai ketQuaLuu = deTaiService.capNhat(deTai);
 
 			return ketQuaLuu;

@@ -95,6 +95,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	public DeTai getDeTaiCuoiCungTrongHocKy(String maHocKy, String soHocKy) {
 		
 		DeTai deTai = repository.layDeTaiCuoiCungTrongNamHocKy(maHocKy, soHocKy);
+//		System.out.println("De tai service - getDeTaiCuoiCungTrongHocKy - " + deTai.toString());
 		
 		return deTai;
 	}

@@ -21,4 +21,12 @@ public class HocKy {
 	
 	private String soHocKy;
 
+	@Override
+	public String toString() {
+		return "HocKy [maHocKy=" + maHocKy + ", soHocKy=" + soHocKy + "]";
+	}
+	
+
+
+
 }

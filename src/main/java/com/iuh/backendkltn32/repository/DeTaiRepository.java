@@ -28,7 +28,15 @@ public interface DeTaiRepository extends JpaRepository<DeTai, String> {
 			+ "where h.maHocKy = :maHocKy and h.soHocKy = :soHocKy order by maDeTai desc limit 1; " ,nativeQuery = true)
 	DeTai layDeTaiCuoiCungTrongNamHocKy(@Param("maHocKy") String maHocKy,@Param("soHocKy") String soHocKy); 
 	
+	@Query(value = "select maDeTai, gioiHanSoNhomThucHien, moTa, mucTieuDeTai, trangThai, sanPhamDuKien, tenDeTai, yeuCauDauVao, maGiangVien, d.maHocKy "
+			+ "from DeTai d join hocKy h on d.maHocKy = h.maHocKy "
+			+ "where  h.maHocKy = :maHocKy and h.soHocKy = :soHocKy and maGiangVien = :maGianVien and trangThai = 0; " ,nativeQuery = true)
+	List<DeTai> layDsDeTaiTheoNamHocKyChuaPheDuyet(@Param("maHocKy") String maHocKy,@Param("soHocKy") String soHocKy, @Param("maGianVien") String maGiangVien);
 	
+	@Query(value = "select maDeTai, gioiHanSoNhomThucHien, moTa, mucTieuDeTai, trangThai, sanPhamDuKien, tenDeTai, yeuCauDauVao, maGiangVien, d.maHocKy "
+			+ "from DeTai d join hocKy h on d.maHocKy = h.maHocKy "
+			+ "where  h.maHocKy = :maHocKy and h.soHocKy = :soHocKy and maGiangVien = :maGianVien and trangThai = 1; " ,nativeQuery = true)
+	List<DeTai> layDsDeTaiTheoNamHocKyChuaDat(@Param("maHocKy") String maHocKy,@Param("soHocKy") String soHocKy, @Param("maGianVien") String maGiangVien);
 	
 
 }

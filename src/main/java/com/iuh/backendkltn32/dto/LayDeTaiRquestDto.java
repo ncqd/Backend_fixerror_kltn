@@ -14,5 +14,6 @@ public class LayDeTaiRquestDto {
 	private String maGiangVien;
 	private String maHocKy;
 	private String soHocKy;
+	private Integer trangThai;
 
 }

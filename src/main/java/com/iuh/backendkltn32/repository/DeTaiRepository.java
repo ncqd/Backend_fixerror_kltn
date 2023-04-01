@@ -30,8 +30,12 @@ public interface DeTaiRepository extends JpaRepository<DeTai, String> {
 	
 	@Query(value = "select maDeTai, gioiHanSoNhomThucHien, moTa, mucTieuDeTai, trangThai, sanPhamDuKien, tenDeTai, yeuCauDauVao, maGiangVien, d.maHocKy "
 			+ "from DeTai d join hocKy h on d.maHocKy = h.maHocKy "
-			+ "where  h.maHocKy = :maHocKy and h.soHocKy = :soHocKy and maGiangVien = :maGianVien and trangThai = 0; " ,nativeQuery = true)
-	List<DeTai> layDsDeTaiTheoNamHocKyChuaPheDuyet(@Param("maHocKy") String maHocKy,@Param("soHocKy") String soHocKy, @Param("maGianVien") String maGiangVien);
+			+ "where  h.maHocKy = :maHocKy and h.soHocKy = :soHocKy and maGiangVien = :maGianVien and trangThai = :trangThai ;" ,nativeQuery = true)
+	List<DeTai> layDsDeTaiTheoNamHocKyChuaPheDuyet(
+			@Param("maHocKy") String maHocKy,
+			@Param("soHocKy") String soHocKy, 
+			@Param("maGianVien") String maGiangVien, 
+			@Param("trangThai") Integer trangThai);
 	
 	@Query(value = "select maDeTai, gioiHanSoNhomThucHien, moTa, mucTieuDeTai, trangThai, sanPhamDuKien, tenDeTai, yeuCauDauVao, maGiangVien, d.maHocKy "
 			+ "from DeTai d join hocKy h on d.maHocKy = h.maHocKy "

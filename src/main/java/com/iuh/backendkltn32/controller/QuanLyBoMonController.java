@@ -4,6 +4,7 @@ package com.iuh.backendkltn32.controller;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -134,13 +135,19 @@ public class QuanLyBoMonController {
         excelExporter.export(response);    
     }  
 	
-	@GetMapping("/lay-ds-de-tai-theo-nam-hk-chua-duyet")
+	@GetMapping("/lay-ds-de-tai-theo-nam-hk-trang-thai")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public List<DeTai> layDanhSachDeTaiTheoNamHocKy(@RequestBody LayDeTaiRquestDto layDeTaiRquestDto) {
 		try {
-			List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyChuaDuyet(layDeTaiRquestDto.getMaHocKy(), 
-					layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
-
+			List<DeTai> dsDeTai = new ArrayList<>();
+			if(layDeTaiRquestDto.getTrangThai() == null) {
+				dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(layDeTaiRquestDto.getMaHocKy(), 
+						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
+			} else {
+				dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(layDeTaiRquestDto.getMaHocKy(), 
+						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien(), layDeTaiRquestDto.getTrangThai());
+			}
+			
 			return dsDeTai;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -149,7 +156,7 @@ public class QuanLyBoMonController {
 
 	}
 	
-	@PostMapping("/lay-ds-de-tai-theo-nam-hk-chua-duyet")
+	@PostMapping("/duyet-de-tai-theo-nam-hk")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public DeTai pheDuyetDeTai(@RequestBody DuyetDeTaiRequest duyetDeTaiRequest) {
 		try {

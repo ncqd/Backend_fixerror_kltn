@@ -13,7 +13,6 @@ public interface DeTaiService extends AbstractService<DeTai> {
 	
 	DeTai getDeTaiCuoiCungTrongHocKy(String maHocKy, String soHocKy);
 	
-	List<DeTai> layDsDeTaiTheoNamHocKyChuaDuyet(String maHocKy, String soHocKy, String maGiangVien) throws Exception;
+	List<DeTai> layDsDeTaiTheoNamHocKyTheoTrangThai(String maHocKy, String soHocKy, String maGiangVien, Integer trangThai) throws Exception;
 	
-	List<DeTai> layDsDeTaiTheoNamHocKyChuaDat(String maHocKy, String soHocKy, String maGiangVien) throws Exception;
 }

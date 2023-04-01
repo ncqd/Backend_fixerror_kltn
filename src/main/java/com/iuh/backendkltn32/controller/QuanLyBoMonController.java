@@ -19,12 +19,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.DuyetDeTaiRequest;
+import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
+import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.Khoa;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
+import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.KhoaService;
 import com.iuh.backendkltn32.service.SinhVienService;
@@ -50,6 +54,9 @@ public class QuanLyBoMonController {
 	
 	@Autowired
 	private KhoaService khoaService;
+	
+	@Autowired
+	private DeTaiService deTaiService;
 	
 	@Autowired
 	private PasswordEncoder encoder;
@@ -127,7 +134,35 @@ public class QuanLyBoMonController {
         excelExporter.export(response);    
     }  
 	
+	@GetMapping("/lay-ds-de-tai-theo-nam-hk-chua-duyet")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public List<DeTai> layDanhSachDeTaiTheoNamHocKy(@RequestBody LayDeTaiRquestDto layDeTaiRquestDto) {
+		try {
+			List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyChuaDuyet(layDeTaiRquestDto.getMaHocKy(), 
+					layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
+
+			return dsDeTai;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 	
+	@PostMapping("/lay-ds-de-tai-theo-nam-hk-chua-duyet")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public DeTai pheDuyetDeTai(@RequestBody DuyetDeTaiRequest duyetDeTaiRequest) {
+		try {
+			DeTai deTai = deTaiService.layTheoMa(duyetDeTaiRequest.getMaDeTai());
+			deTai.setTrangThai(duyetDeTaiRequest.getTrangThai());
+			deTaiService.capNhat(deTai);
+			return deTai;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 	
 	
 }

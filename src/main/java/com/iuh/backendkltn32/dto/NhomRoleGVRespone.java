@@ -1,6 +1,5 @@
 package com.iuh.backendkltn32.dto;
 
-
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -8,19 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DangKyNhomRequest {
-	
-	private List<String> dsMaSinhVien;
+@Getter
+@Setter
+public class NhomRoleGVRespone {
+
 	private String maNhom;
 	private String maDeTai;
-	@Override
-	public String toString() {
-		return "DangKyNhomRequest [dsMaSinhVien=" + dsMaSinhVien + ", maNhom=" + maNhom + ", maDeTai=" + maDeTai + "]";
-	}
-	
-	
+	private List<String> dsMaSinhVien;
 }

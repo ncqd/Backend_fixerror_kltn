@@ -16,19 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iuh.backendkltn32.dto.DangKyDeTaiRequest;
 import com.iuh.backendkltn32.dto.DangKyNhomRequest;
 import com.iuh.backendkltn32.dto.DeTaiDto;
+import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
-import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.entity.DeTai;
-//import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.DeTaiService;
-//import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.SinhVienService;
-//import com.iuh.backendkltn32.utils.Constants;
 
 @RestController
 @RequestMapping("/api/sinh-vien")
@@ -49,9 +45,6 @@ public class SinhVienController {
 //	@Autowired
 //	private HocKyService hocKyService;
 	
-	@Autowired
-	private JmsListenerConsumer listenerConsumer;
-
 	@GetMapping("/thong-tin-ca-nhan/{maSinhVien}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
 	public SinhVien hienThiThongTinCaNhan(@PathVariable String maSinhVien, @RequestBody LoginRequest loginRequest) {
@@ -90,44 +83,6 @@ public class SinhVienController {
 		}
 	}
 
-	@GetMapping("/thong-tin-tong-sinh-vien/{namHocKy}")
-	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> dsSinhVienTrongHocKy(@PathVariable("namHocKy") String namHocKy) {
-
-		Integer hocKy = Integer.parseInt(namHocKy.substring(2, 3));
-		String namHoc = namHocKy.substring(10, 14);
-
-		System.out.println("SinhVienController - dsSinhVienTrongHocKy - " + namHoc);
-
-		List<Nhom> nhoms = nhomService.layTatCaNhom(hocKy, namHoc);
-
-		if (nhoms.isEmpty()) {
-			return ResponseEntity.ok(new ArrayList<>());
-		}
-
-		List<NhomSinhVienDto> nhomSinhVien = new ArrayList<>();
-
-		for (Nhom nhom : nhoms) {
-			List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-			NhomSinhVienDto nhomSinhVienTemp = new NhomSinhVienDto(nhom.getMaNhom(), sinhViens, nhom.getTinhTrang());
-			nhomSinhVien.add(nhomSinhVienTemp);
-		}
-
-		return ResponseEntity.ok(nhomSinhVien);
-
-	}
-
-	/*
-	 * // case1: tao moi -> check: co nhom chua ???? // TH1: -> chua co //TH2: -> co
-	 * roi -> XONG XONG XONG
-	 */
-	@PostMapping("/dang-ky-nhom")
-	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> dangKyNhom(@RequestBody DangKyNhomRequest request) throws Exception {
-		producer.sendMessageOnNhomChanel(request);
-		return listenerConsumer.listenerNhomChannel();
-	}
-
 	@PostMapping("/roi-nhom")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
 	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) {
@@ -151,26 +106,6 @@ public class SinhVienController {
 		}
 	}
 
-//	private String taoMaMoi() {
-//		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-//		Nhom nhom = nhomService
-//				.layNhomTheoThoiGianHienThuc(Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy());
-//		if (nhom != null) {
-//			Integer soNhomHienHanh = Integer.parseInt(nhom.getMaNhom().substring(5)) + 1;
-//			String maNhom = null;
-//			if (soNhomHienHanh < 9) {
-//				maNhom = "00" + soNhomHienHanh;
-//			} else if (soNhomHienHanh >= 9 && soNhomHienHanh < 100) {
-//				maNhom = "0" + soNhomHienHanh;
-//			} else {
-//				maNhom = "" + soNhomHienHanh;
-//			}
-//
-//			return Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy() + maNhom;
-//		}
-//		return Constants.NHOM + "" + hocKy.getMaHocKy() + hocKy.getSoHocKy() + "001";
-//	}
-
 	@PostMapping("/dang-ky-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
 	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) {
@@ -186,14 +121,13 @@ public class SinhVienController {
 
 	}
 	
-	@GetMapping("/xem-cac-nhom/{hocKy}/{namHoc}")
+	@GetMapping("/xem-cac-nhom")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> xemCacNhom(@PathVariable("hocKy") String hocKy, @PathVariable("namHoc") String namHoc) {
+	public ResponseEntity<?> xemCacNhom(LayDeTaiRquestDto request) {
 
 		try {
-			Integer soHocKy = Integer.parseInt(hocKy);
-			System.out.println("SinhVienController - xemCacNhom - " + hocKy);
-			List<Nhom> nhoms = nhomService.layTatCaNhom(soHocKy, namHoc);
+			System.out.println("SinhVienController - xemCacNhom - " + request.getMaHocKy() + request.getSoHocKy());
+			List<Nhom> nhoms = nhomService.layTatCaNhom(request.getMaHocKy() , request.getSoHocKy());
 
 			return ResponseEntity.ok(nhoms);
 		} catch (Exception e) {
@@ -202,5 +136,4 @@ public class SinhVienController {
 		}
 
 	}
-
 }

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.iuh.backendkltn32.entity.SinhVien;
 
-public interface SinhVienRepository extends JpaRepository<SinhVien, String>{
+public interface SinhVienRepository extends JpaRepository<SinhVien, String> {
 
 	Optional<SinhVien> findByMaSinhVien(String maSinhVien);
 	

@@ -33,7 +33,6 @@ public class HocPhanController {
 		} catch (Exception e) {
 			
 			e.printStackTrace();
-			
 			return null;
 		}
 
@@ -48,7 +47,6 @@ public class HocPhanController {
 			LopHocPhan lopHocPhan = lhpService.layTheoMa(maLopHocPhan);
 			return lopHocPhan;
 		} catch (Exception e) {
-			
 			e.printStackTrace();
 			
 			return null;

@@ -10,5 +10,6 @@ public interface SinhVienService extends AbstractService<SinhVien>{
 	
 	List<SinhVien> layTatCaSinhVien();
 	
+	
 
 }

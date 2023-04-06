@@ -4,7 +4,6 @@ package com.iuh.backendkltn32.controller;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.DuyetDeTaiRequest;
-import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
@@ -134,27 +132,6 @@ public class QuanLyBoMonController {
          
         excelExporter.export(response);    
     }  
-	
-	@GetMapping("/lay-ds-de-tai-theo-nam-hk-trang-thai")
-	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public List<DeTai> layDanhSachDeTaiTheoNamHocKy(@RequestBody LayDeTaiRquestDto layDeTaiRquestDto) {
-		try {
-			List<DeTai> dsDeTai = new ArrayList<>();
-			if(layDeTaiRquestDto.getTrangThai() == null) {
-				dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(layDeTaiRquestDto.getMaHocKy(), 
-						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
-			} else {
-				dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(layDeTaiRquestDto.getMaHocKy(), 
-						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien(), layDeTaiRquestDto.getTrangThai());
-			}
-			
-			return dsDeTai;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-
-	}
 	
 	@PostMapping("/duyet-de-tai-theo-nam-hk")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")

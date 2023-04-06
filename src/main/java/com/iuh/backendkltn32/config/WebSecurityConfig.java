@@ -60,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeHttpRequests().antMatchers("/api/xac-thuc/**").permitAll()
 			.and()
 			.authorizeHttpRequests()
-			.antMatchers("/api/hoc-phan/**").hasAuthority("ROLE_GIANGVIEN")
+			.antMatchers("/api/hoc-phan/**").hasAnyAuthority("ROLE_GIANGVIEN")
 			.and()
 			.authorizeHttpRequests()
 			.antMatchers("/api/giang-vien/**").hasAuthority("ROLE_GIANGVIEN")
@@ -70,6 +70,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeHttpRequests()
 			.antMatchers("/api/sinh-vien/**").hasAuthority("ROLE_SINHVIEN")
+			.and()
+			.authorizeHttpRequests()
+			.antMatchers("/api/hoc-ky/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY", "ROLE_SINHVIEN")
+			.and()
+			.authorizeHttpRequests()
+			.antMatchers("/api/nhom/**").hasAnyAuthority("ROLE_SINHVIEN", "ROLE_GIANGVIEN", "ROLE_SINHVIEN")
+			.and()
+			.authorizeHttpRequests()
+			.antMatchers("/api/de-tai/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY", "ROLE_SINHVIEN")
 			.anyRequest().authenticated();
 		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

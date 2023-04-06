@@ -96,4 +96,6 @@ public class SinhVienServiceImpl implements  SinhVienService {
 		return sinhVienRepository.findAll();
 	}
 
+	
+
 }

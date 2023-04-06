@@ -22,11 +22,11 @@ public class JwtUntils {
 	
 	private static final Logger Logger = LoggerFactory.getLogger(JwtUntils.class);
 	
-	@Value("${bezkoder.app.jwtSecret}")
+	@Value("${jwtSecret}")
 	private String jwtSecret;
 	
-	@Value("${bezkoder.app.jwtExpirationMs}")
-	private int jwtExpirationMs;
+	@Value("${jwtExpirationMs}")
+	private Long jwtExpirationMs;
 	
 	public String  generateJWTToken(Authentication authentication) {
 		

@@ -83,7 +83,8 @@ public class JmsListenerConsumer implements MessageListener {
 			MapMessage mapMessage = (MapMessage) message;
 			@SuppressWarnings("unchecked")
 			List<String> dsMaSv = (List<String>) mapMessage.getObject("dsMaSinhVien");
-			DangKyNhomRequest request = new DangKyNhomRequest(dsMaSv, mapMessage.getString("maNhom"), mapMessage.getString("maDeTai"));
+			System.out.println("Listener - maNhom - " + mapMessage);
+			DangKyNhomRequest request = new DangKyNhomRequest(dsMaSv, mapMessage.getString("maNhom"), mapMessage.getString("maDeTai"), mapMessage.getString("password"));
 			System.out.println("Listener - dang ky nhom - " + request);
 			try {
 				if (request.getMaNhom() == null) {
@@ -91,11 +92,14 @@ public class JmsListenerConsumer implements MessageListener {
 						SinhVien sv = sinhVienService.layTheoMa(maSv); // check SV co nhom chua
 						if (sv != null) {
 							if (sv.getNhom() != null) {
-								return ResponseEntity.status(500).body(
-										"Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
+								throw new Exception("Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
+//								return ResponseEntity.status(500).body(
+//										"Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
 							}
 						} else {
-							  throw new Exception("Ma sinh vien: " + maSv + " khong dung");
+							throw new Exception("Ma sinh vien: " + maSv + " khong dung");
+//							return ResponseEntity.status(500).body(
+//									"Ma sinh vien: " + maSv + " khong dung");
 						}
 
 					}
@@ -104,7 +108,7 @@ public class JmsListenerConsumer implements MessageListener {
 					if (request.getMaDeTai() != null) {
 						deTai = deTaiService.layTheoMa(request.getMaDeTai());
 					}
-					Nhom nhom = nhomService.luu(new Nhom(maNhomMoi, "Nhom " + maNhomMoi.substring(5), deTai, 0, 0));
+					Nhom nhom = nhomService.luu(new Nhom(maNhomMoi, "Nhom " + maNhomMoi.substring(5), deTai, 0, 0, request.getPassword()));
 					for (String maSv : request.getDsMaSinhVien()) {
 						SinhVien sv = sinhVienService.layTheoMa(maSv);
 						sv.setNhom(nhom);
@@ -114,7 +118,9 @@ public class JmsListenerConsumer implements MessageListener {
 				} else {
 					Nhom nhomJoin = nhomService.layTheoMa(request.getMaNhom());
 					if (nhomJoin == null) {
-						throw new Exception("Khong the dang ky vi nhom khong ton tai");
+						return ResponseEntity.status(500).body(
+								"Khong the dang ky vi nhom khong ton tai");
+//						throw new Exception("Khong the dang ky vi nhom khong ton tai");
 					}
 
 					if (nhomService.laySoSinhVienTrongNhomTheoMa(request.getMaNhom()) >= 2) {

@@ -43,7 +43,9 @@ public class JmsPublishProducer {
 				MapMessage mapMessage =  session.createMapMessage();
 				mapMessage.setObject("dsMaSinhVien", message.getDsMaSinhVien());
 				mapMessage.setString("maNhom", message.getMaNhom());
-				return mapMessage;
+				mapMessage.setString("maDeTai", message.getMaDeTai());
+				mapMessage.setString("password", message.getPassword());
+				return mapMessage;		
 			}
 		});
 	}

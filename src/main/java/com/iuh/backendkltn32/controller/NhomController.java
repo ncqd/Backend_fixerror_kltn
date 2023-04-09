@@ -1,7 +1,9 @@
 package com.iuh.backendkltn32.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -75,16 +77,19 @@ public class NhomController {
 	
 	@GetMapping("/lay-ds-nhom/{tinhTrang}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public List<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang) throws Exception {	
+	public Set<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang) throws Exception {	
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(),tinhTrang);
-		List<NhomRoleGVRespone> respones = new ArrayList<>();
+		Set<NhomRoleGVRespone> respones = new HashSet<>();
 		if(!nhoms.isEmpty() && nhoms != null) {
 			nhoms.stream()
 			.forEach(nhom -> {
 				List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(), nhom.getDeTai().getMaDeTai(), sinhViens);
-				respones.add(nhomRoleGVRespone);
+				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(), null, sinhViens);
+				if(!respones.contains(nhomRoleGVRespone)) {
+					
+					respones.add(nhomRoleGVRespone);
+				}
 			});
 			
 		}

@@ -85,7 +85,7 @@ public class NhomServiceImpl implements NhomService{
 
 	@Override
 	public List<Nhom> layDSNhomTheMaGiangVien(String maHocKy, String soHocKy, String maGiangVien) {
-		System.out.println(maHocKy + soHocKy + maGiangVien + "aaa");
+		System.out.println(maHocKy+ " " + soHocKy+ " "  + maGiangVien + "aaa");
 		return repository.layNhomTheoMaGiangVien(maHocKy, soHocKy, maGiangVien);
 	}
 

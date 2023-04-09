@@ -11,5 +11,6 @@ public class Lich {
 	@Id
 	private Integer id;
 	
+	
 
 }

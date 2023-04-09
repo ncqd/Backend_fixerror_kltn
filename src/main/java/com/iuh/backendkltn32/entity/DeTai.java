@@ -36,16 +36,16 @@ public class DeTai implements Serializable {
 	@Column(name = "tenDeTai", nullable = false)
 	private String tenDeTai;
 	
-	@Column(name = "mucTieuDeTai", columnDefinition = "nvarchar(255)" ,nullable = false)
+	@Column(name = "mucTieuDeTai", columnDefinition = "nvarchar(1000)" ,nullable = false)
 	private String mucTieuDeTai;
 	
-	@Column(name = "sanPhamDuKien", columnDefinition = "nvarchar(255)" ,nullable = false)
+	@Column(name = "sanPhamDuKien", columnDefinition = "nvarchar(1000)" ,nullable = false)
 	private String sanPhamDuKien;
 	
-	@Column(name = "moTa", columnDefinition = "nvarchar(255)")
+	@Column(name = "moTa", columnDefinition = "nvarchar(1000)")
 	private String moTa;
 	
-	@Column(name = "yeuCauDauVao", columnDefinition = "nvarchar(255)" ,nullable = false)
+	@Column(name = "yeuCauDauVao", columnDefinition = "nvarchar(1000)" ,nullable = false)
 	private String yeuCauDauVao;
 	
 	@Column(name = "trangThai", nullable = false)

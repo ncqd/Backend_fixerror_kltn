@@ -44,5 +44,8 @@ public class Nhom implements Serializable{
 	@Column(name = "dkDeTai", nullable = false)
 	private Integer tinhTrangDeTai;
 	
+	@Column(name = "matKhauNhom", nullable = false)
+	private String matKhauNhom;
+	
 
 }

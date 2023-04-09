@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.iuh.backendkltn32.config.JwtUntils;
 import com.iuh.backendkltn32.config.UserInfoUserDetails;
@@ -85,8 +87,8 @@ public class DangNhapController {
 				 quanLyBoMon)));
 			}
 		}
-		
-		throw new Exception("Dont have user");
+		return ResponseEntity.status(401).body("ko co");
+//		throw new Exception("Dont have user");
 	}
 
 //	@PostMapping("/test")

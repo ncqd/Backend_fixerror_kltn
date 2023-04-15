@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hpsf.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -181,8 +182,8 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto themKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
-				lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().substring(1,
-						lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1),
+				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
+						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
 				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.luu(keHoach);
@@ -193,10 +194,10 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getChuThich(), lapKeHoachDto.getTenKeHoach(),
-				lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().substring(1,
-						lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1),
+				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
+						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang(),  lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
+				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.capNhat(keHoach);
 		return lapKeHoachDto;
 	}
@@ -211,9 +212,10 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto layKeHoachTheoMa(@PathVariable String maKeHoach) throws Exception {
 		KeHoach kh = keHoachService.layTheoMa(maKeHoach);
-		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan().split(",\\s");
-		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(), Arrays.asList(ngayThucHienKL),
-				kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
+		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
+		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
+				Arrays.asList(ngayThucHienKL), kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(),
+				kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
 		return lapKeHoachDto;
 	}
 
@@ -222,7 +224,7 @@ public class QuanLyBoMonController {
 	public List<LapKeHoachDto> layKeHoachTheoHk(@PathVariable String maHocKy) throws Exception {
 		List<LapKeHoachDto> ds = new ArrayList<>();
 		keHoachService.layKeHoachTheoMaHocKy(maHocKy).stream().forEach(kh -> {
-			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan().split(",\\s");
+			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
 			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 					Arrays.asList(ngayThucHienKL), kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(),
 					kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());

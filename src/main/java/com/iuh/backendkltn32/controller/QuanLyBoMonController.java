@@ -181,8 +181,8 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto themKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
-				lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().substring(1,
-						lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1),
+				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
+						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
 				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.luu(keHoach);
@@ -193,10 +193,10 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getChuThich(), lapKeHoachDto.getTenKeHoach(),
-				lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().substring(1,
-						lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1),
+				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
+						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang(),  lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
+				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.capNhat(keHoach);
 		return lapKeHoachDto;
 	}
@@ -212,8 +212,9 @@ public class QuanLyBoMonController {
 	public LapKeHoachDto layKeHoachTheoMa(@PathVariable String maKeHoach) throws Exception {
 		KeHoach kh = keHoachService.layTheoMa(maKeHoach);
 		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan().split(",\\s");
-		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(), Arrays.asList(ngayThucHienKL),
-				kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
+		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
+				Arrays.asList(ngayThucHienKL), kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(),
+				kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
 		return lapKeHoachDto;
 	}
 

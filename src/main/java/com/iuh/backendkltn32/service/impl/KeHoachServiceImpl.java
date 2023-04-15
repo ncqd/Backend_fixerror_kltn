@@ -75,4 +75,14 @@ public class KeHoachServiceImpl implements KeHoachService {
 		return repository.findByHocKy(hocKy);
 	}
 
+	@Override
+	public List<KeHoach> layKeHoachTheoVaiTro(String maHocKy, String vaiTro) {
+		return repository.layKeHoachTheoVaiTro(maHocKy, vaiTro);
+	}
+	
+	@Override
+	public List<KeHoach> layKeHoachTheoMaNguoiDung(String maHocKy, String maNguoiDung) {
+		return repository.layKeHoachTheoMaNguoiDung(maHocKy, maNguoiDung);
+	}
+
 }

@@ -14,26 +14,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LapKeHoachDto {
+public class LayKeHoachRequest {
 
-	private Integer id;
-
-	private String tenKeHoach;
-	
-	private String chuThich;
-
-	private List<String> dsNgayThucHienKhoaLuan;
-
-	private HocKy hocKy;
-
-	private Timestamp thoiGianBatDau;
-
-	private Timestamp thoiGianKetThuc;
-
-	private Integer tinhTrang;
-
-	private String vaiTro;
-
+	private String maHocKy;
 	private String maNguoiDung;
-
+	private String vaiTro;
 }

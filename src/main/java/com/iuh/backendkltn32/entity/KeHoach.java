@@ -31,6 +31,9 @@ public class KeHoach {
 	@Column(name = "tenKeHoach", nullable = false)
 	private String tenKeHoach;
 	
+	@Column(name = "chuThich", nullable = true)
+	private String chuThich;
+	
 	@Column(name = "dsNgayThucHienKhoaLuan", nullable = true)
 	private String dsNgayThucHienKhoaLuan;
 	
@@ -46,17 +49,27 @@ public class KeHoach {
 	
 	@Column(name = "tinhTrang", nullable = false)
 	private Integer tinhTrang;
+	
+	@Column(name = "vaiTro", nullable = true)
+	private String vaiTro;
+	
+	@Column(name = "maNguoiDung", nullable = true)
+	private String maNguoiDung;
 
-	public KeHoach(String tenKeHoach, String dsNgayThucHienKhoaLuan, HocKy hocKy, Timestamp thoiGianBatDau,
-			Timestamp thoiGianKetThuc, Integer tinhTrang) {
+	public KeHoach(String tenKeHoach, String chuThich, String dsNgayThucHienKhoaLuan, HocKy hocKy,
+			Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, Integer tinhTrang, String vaiTro, String maNguoiDung) {
 		super();
 		this.tenKeHoach = tenKeHoach;
+		this.chuThich = chuThich;
 		this.dsNgayThucHienKhoaLuan = dsNgayThucHienKhoaLuan;
 		this.hocKy = hocKy;
 		this.thoiGianBatDau = thoiGianBatDau;
 		this.thoiGianKetThuc = thoiGianKetThuc;
 		this.tinhTrang = tinhTrang;
+		this.vaiTro = vaiTro;
+		this.maNguoiDung = maNguoiDung;
 	}
+
 	
 	
 

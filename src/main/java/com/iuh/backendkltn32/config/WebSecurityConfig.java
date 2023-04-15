@@ -79,6 +79,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeHttpRequests()
 			.antMatchers("/api/de-tai/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY", "ROLE_SINHVIEN")
+			.and()
+			.authorizeHttpRequests()
+			.antMatchers("/api/ke-hoach/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY", "ROLE_SINHVIEN")
 			.anyRequest().authenticated();
 		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

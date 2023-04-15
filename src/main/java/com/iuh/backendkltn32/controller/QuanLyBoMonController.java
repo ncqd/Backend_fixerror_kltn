@@ -180,11 +180,11 @@ public class QuanLyBoMonController {
 	@PostMapping("/them-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto themKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
-		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(),
+		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().substring(1,
 						lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1),
 				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang());
+				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.luu(keHoach);
 		return lapKeHoachDto;
 	}
@@ -192,11 +192,11 @@ public class QuanLyBoMonController {
 	@PutMapping("/cap-nhat-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
-		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getTenKeHoach(),
+		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getChuThich(), lapKeHoachDto.getTenKeHoach(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().substring(1,
 						lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1),
 				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang());
+				lapKeHoachDto.getTinhTrang(),  lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.capNhat(keHoach);
 		return lapKeHoachDto;
 	}
@@ -212,8 +212,8 @@ public class QuanLyBoMonController {
 	public LapKeHoachDto layKeHoachTheoMa(@PathVariable String maKeHoach) throws Exception {
 		KeHoach kh = keHoachService.layTheoMa(maKeHoach);
 		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan().split(",\\s");
-		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), Arrays.asList(ngayThucHienKL),
-				kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(), kh.getTinhTrang());
+		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(), Arrays.asList(ngayThucHienKL),
+				kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
 		return lapKeHoachDto;
 	}
 
@@ -223,9 +223,9 @@ public class QuanLyBoMonController {
 		List<LapKeHoachDto> ds = new ArrayList<>();
 		keHoachService.layKeHoachTheoMaHocKy(maHocKy).stream().forEach(kh -> {
 			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan().split(",\\s");
-			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(),
+			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 					Arrays.asList(ngayThucHienKL), kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(),
-					kh.getTinhTrang());
+					kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
 			ds.add(lapKeHoachDto);
 		});
 		return ds;

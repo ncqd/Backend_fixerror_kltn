@@ -11,6 +11,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 @Entity
 @Table(name = "KeHoach")
 public class KeHoach {
@@ -22,20 +31,8 @@ public class KeHoach {
 	@Column(name = "tenKeHoach", nullable = false)
 	private String tenKeHoach;
 	
-	private Boolean thuHai;
-
-	private Boolean thuBa;
-
-	private Boolean thuTu;
-
-	private Boolean thuNam;
-	
-
-	private Boolean thuSau;
-
-	private Boolean thuBay;
-	
-	private Boolean chuNhat;
+	@Column(name = "dsNgayThucHienKhoaLuan", nullable = true)
+	private String dsNgayThucHienKhoaLuan;
 	
 	@ManyToOne
 	@JoinColumn(name = "maHocKy", nullable = true)
@@ -49,6 +46,18 @@ public class KeHoach {
 	
 	@Column(name = "tinhTrang", nullable = false)
 	private Integer tinhTrang;
+
+	public KeHoach(String tenKeHoach, String dsNgayThucHienKhoaLuan, HocKy hocKy, Timestamp thoiGianBatDau,
+			Timestamp thoiGianKetThuc, Integer tinhTrang) {
+		super();
+		this.tenKeHoach = tenKeHoach;
+		this.dsNgayThucHienKhoaLuan = dsNgayThucHienKhoaLuan;
+		this.hocKy = hocKy;
+		this.thoiGianBatDau = thoiGianBatDau;
+		this.thoiGianKetThuc = thoiGianKetThuc;
+		this.tinhTrang = tinhTrang;
+	}
+	
 	
 
 }

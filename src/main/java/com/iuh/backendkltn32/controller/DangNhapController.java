@@ -5,30 +5,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 
 import com.iuh.backendkltn32.config.JwtUntils;
 import com.iuh.backendkltn32.config.UserInfoUserDetails;
+import com.iuh.backendkltn32.dto.DoiMatKhauRequest;
 import com.iuh.backendkltn32.dto.JwtResponse;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.RoleDto;
 import com.iuh.backendkltn32.dto.UserDto;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.SinhVien;
+import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.QuanLyBoMonService;
 import com.iuh.backendkltn32.service.SinhVienService;
+import com.iuh.backendkltn32.service.TaiKhoanService;
 
 @RestController
 @RequestMapping("/api/xac-thuc")
@@ -48,6 +51,10 @@ public class DangNhapController {
 	
 	@Autowired
 	private QuanLyBoMonService quanLyBoMonService;
+	
+	@Autowired
+	private TaiKhoanService taiKhoanService;
+	
 
 	@PostMapping("/dang-nhap")
 	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws Exception {
@@ -111,5 +118,21 @@ public class DangNhapController {
 //		return ResponseEntity.ok(new JwtResponse(jwt, "Bearer ", userDetailsImpl.getUsername(), roles));
 //
 //	}
+	
+	@PostMapping("/doi-mat-khau")
+	public ResponseEntity<?> doiMatKhau(@RequestBody DoiMatKhauRequest doiMatKhauRequest) throws Exception {
+		
+		TaiKhoan taiKhoan = taiKhoanService.layTheoMa(doiMatKhauRequest.getTenTaiKhoan());
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		System.out.println("mat khau cu " + taiKhoan.getPassword());
+		System.out.println("mat khau cu UI " + passwordEncoder.encode(doiMatKhauRequest.getMatKhauCu()));
+		if (!(passwordEncoder.matches(doiMatKhauRequest.getMatKhauCu(), taiKhoan.getPassword()))) {
+			throw new Exception("Mat Khau sai");
+		}
+		taiKhoan.setPassword(passwordEncoder.encode(doiMatKhauRequest.getMatKhauMoi()));
+		taiKhoanService.capNhat(taiKhoan);
+		
+		return ResponseEntity.ok(taiKhoan);
+	}
 
 }

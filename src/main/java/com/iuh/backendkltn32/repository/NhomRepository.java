@@ -39,4 +39,5 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy "
 			+ "where k.maHocKy = :maHocKy and k.soHocKy = :soHocKy and n.tinhTrang = :tinhTrang   ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoTinhTrang(@Param("maHocKy") String hocKy, @Param("soHocKy") String soHocKy, @Param("tinhTrang") Integer tinhTrang);
+	
 }

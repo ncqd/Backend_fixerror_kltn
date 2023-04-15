@@ -24,12 +24,13 @@ public class JmsPublishProducer {
 
 	public void sendMessageOnDeTaiChanel(final DangKyDeTaiRequest message) {
 
+//		jmsTemplate.setDefaultDestinationName("deTai_channel");
 		jmsTemplate.send(new MessageCreator() {
 			public Message createMessage(Session session) throws JMSException {
-				MapMessage objectMessage =  session.createMapMessage();
-				objectMessage.setString("maDeTai", message.getMaDeTai());
-				objectMessage.setString("maNhom", message.getMaNhom());
-				return objectMessage;
+				MapMessage mapMessage =  session.createMapMessage();
+				mapMessage.setString("maNhom", message.getMaNhom());
+				mapMessage.setString("maDeTai", message.getMaDeTai());
+				return mapMessage;		
 			}
 		});
 	}

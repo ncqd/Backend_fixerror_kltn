@@ -77,9 +77,8 @@ public class SinhVien implements Serializable{
 	@JoinColumn(name = "maNhom", nullable = true)
 	private Nhom nhom;
 	
-//	@OneToOne( mappedBy = "sinhVien")
-//	@JsonIgnore
-//	private TaiKhoan taiKhoan;
+	@Column(name = "laTruongNhom",nullable = true)
+	private Integer laTruongNhom;
 	
 	@Override
 	public String toString() {

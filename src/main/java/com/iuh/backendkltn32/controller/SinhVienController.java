@@ -39,9 +39,6 @@ public class SinhVienController {
 	@Autowired
 	private NhomService nhomService;
 
-	@Autowired
-	private JmsPublishProducer producer;
-
 //	@Autowired
 //	private HocKyService hocKyService;
 	
@@ -59,66 +56,6 @@ public class SinhVienController {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	@GetMapping("/xem-de-tai-da-duyet/{maHocKy}/{soHocKy}")
-	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> xemDsDeTaiDaDuocDuyet(@PathVariable("maHocKy") String maHocKy,@PathVariable("soHocKy") String soHocKy) {
-		try {
-			List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyDaDuyet(maHocKy, soHocKy);
-
-			List<DeTaiDto> dsDeTaiDtos = new ArrayList<>();
-
-			for (DeTai deTai : dsDeTai) {
-				Integer soNhomDaDKDeTai = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
-				dsDeTaiDtos
-						.add(new DeTaiDto(deTai, soNhomDaDKDeTai == deTai.getGioiHanSoNhomThucHien() ? true : false));
-			}
-
-			return ResponseEntity.ok(dsDeTai);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return ResponseEntity.ok("Have Error");
-		}
-	}
-
-	@PostMapping("/roi-nhom")
-	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) {
-		try {
-			SinhVien sinhVien = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
-			if (sinhVien.getNhom() == null) {
-				return ResponseEntity.status(500).body("Chua co nhom de roi");
-			}
-			if (request.getMaNhom() == null) {
-				return ResponseEntity.status(500).body("Ma nhom bang null");
-			}
-			sinhVien.setNhom(null);
-			sinhVienService.capNhat(sinhVien);
-			if (nhomService.laySoSinhVienTrongNhomTheoMa(request.getMaNhom()) == null) {
-				nhomService.xoa(request.getMaNhom());
-			}
-			return ResponseEntity.ok(sinhVien);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(500).body(e.getMessage());
-		}
-	}
-
-	@PostMapping("/dang-ky-de-tai")
-	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) {
-
-		try {
-			producer.sendMessageOnDeTaiChanel(request);
-
-			return ResponseEntity.ok(null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.ok("Have Error");
-		}
-
 	}
 	
 	@GetMapping("/xem-cac-nhom")

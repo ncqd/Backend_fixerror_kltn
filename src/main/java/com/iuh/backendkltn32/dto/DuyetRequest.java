@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DuyetDeTaiRequest {
+public class DuyetRequest {
 	
-	private String maDeTai;
+	private String ma;
 	private Integer trangThai;
+	private String maHocKy;
 
 }

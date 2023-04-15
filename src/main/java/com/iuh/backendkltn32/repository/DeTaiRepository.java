@@ -20,7 +20,7 @@ public interface DeTaiRepository extends JpaRepository<DeTai, String> {
 			+ " where h.maHocKy = :maHocKy and h.soHocKy = :soHocKy and trangThai = 2; " ,nativeQuery = true)
 	List<DeTai> layDsDeTaiTheoNamHocKyDaPheDuyet(@Param("maHocKy") String maHocKy,@Param("soHocKy") String soHocKy);
 	
-	@Query(value = "select count(*) from nhom group by(:maDeTai);" ,nativeQuery = true)
+	@Query(value = "select count(*) from nhom  where maDeTai = :maDeTai group by(:maDeTai);" ,nativeQuery = true)
 	Integer laySoNhomDaDangKyDeTai(String maDeTai);
 	
 	@Query(value = "select maDeTai, gioiHanSoNhomThucHien, moTa, mucTieuDeTai, sanPhamDuKien, tenDeTai, trangThai, yeuCauDauVao, maGiangVien, d.maHocKy "

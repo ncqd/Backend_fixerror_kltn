@@ -66,6 +66,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 		deTaiCanCapNhat.setSanPhamDuKien(obj.getSanPhamDuKien());
 		deTaiCanCapNhat.setTenDeTai(obj.getTenDeTai());
 		deTaiCanCapNhat.setYeuCauDauVao(obj.getYeuCauDauVao());
+		deTaiCanCapNhat.setTrangThai(obj.getTrangThai());
 		
 		repository.save(deTaiCanCapNhat);
 		return deTaiCanCapNhat;
@@ -87,7 +88,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 
 	@Override
 	public Integer laySoNhomDaDangKyDeTai(String maDeTai) {
-		// TODO Auto-generated method stub
+		
 		return repository.laySoNhomDaDangKyDeTai(maDeTai);
 	}
 

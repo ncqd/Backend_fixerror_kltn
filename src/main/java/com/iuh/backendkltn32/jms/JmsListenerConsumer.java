@@ -59,21 +59,24 @@ public class JmsListenerConsumer implements MessageListener {
 		return null;
 	}
 
-	@JmsListener(destination = "detai_channel")
-	public void listenerDeTaiChannel(Message message) throws Exception {
+	
+	public ResponseEntity<?> listenerDeTaiChannel() throws Exception {
+		jmsTemplate.setDefaultDestinationName("detai_channel");
+		Message message = jmsTemplate.receive();
 		if (message instanceof MapMessage) {
 			MapMessage mapMessage = (MapMessage) message;
 			DeTai deTai = deTaiService.layTheoMa(mapMessage.getString("maDeTai"));
-			Integer soNhomDaDKDeTai = deTaiService.laySoNhomDaDangKyDeTai(mapMessage.getString("maDeTai"));
+			Integer soNhomDaDKDeTai = deTaiService.laySoNhomDaDangKyDeTai(mapMessage.getString("maDeTai")) != null ? 
+					deTaiService.laySoNhomDaDangKyDeTai(mapMessage.getString("maDeTai")) : 0;
 
 			if (soNhomDaDKDeTai >= deTai.getGioiHanSoNhomThucHien()) {
-
+				throw new Exception("Khong the dang ky de tai " + deTai.getTenDeTai() + " da day");
 			}
 			Nhom nhomDangKy = nhomService.layTheoMa(mapMessage.getString("maNhom"));
 			nhomDangKy.setDeTai(deTai);
-			nhomService.capNhat(nhomDangKy);
-
+			return ResponseEntity.ok(nhomService.capNhat(nhomDangKy));
 		}
+		return null;
 	}
 
 	public ResponseEntity<?> listenerNhomChannel() throws Exception {
@@ -93,13 +96,9 @@ public class JmsListenerConsumer implements MessageListener {
 						if (sv != null) {
 							if (sv.getNhom() != null) {
 								throw new Exception("Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
-//								return ResponseEntity.status(500).body(
-//										"Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
 							}
 						} else {
 							throw new Exception("Ma sinh vien: " + maSv + " khong dung");
-//							return ResponseEntity.status(500).body(
-//									"Ma sinh vien: " + maSv + " khong dung");
 						}
 
 					}
@@ -120,7 +119,6 @@ public class JmsListenerConsumer implements MessageListener {
 					if (nhomJoin == null) {
 						return ResponseEntity.status(500).body(
 								"Khong the dang ky vi nhom khong ton tai");
-//						throw new Exception("Khong the dang ky vi nhom khong ton tai");
 					}
 
 					if (nhomService.laySoSinhVienTrongNhomTheoMa(request.getMaNhom()) >= 2) {

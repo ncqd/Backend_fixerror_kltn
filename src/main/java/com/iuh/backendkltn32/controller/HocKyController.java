@@ -25,7 +25,7 @@ public class HocKyController {
 	}
 	
 	@GetMapping("/lay-hoc-ky-moi-nhat")
-	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public HocKy layHocKyCuoiCung(){
 		return hocKyService.layHocKyCuoiCungTrongDS();
 	}

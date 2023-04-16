@@ -66,8 +66,12 @@ public class KeHoachController {
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public List<LapKeHoachValidateDto> layKeHoachTheoTen(@RequestBody LayKeHoachRequest request) {
 		List<LapKeHoachValidateDto> dsKeHoach = new ArrayList<>();
-		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-		keHoachService.layKeHoachTheoVaiTro(hocKy.getMaHocKy(), request.getVaiTro()).stream().forEach(kh -> {
+		String maHocKy = request.getMaHocKy();
+		if (maHocKy == null) {
+			
+			maHocKy = hocKyService.layHocKyCuoiCungTrongDS().getMaHocKy();
+		}
+		keHoachService.layKeHoachTheoVaiTro(maHocKy, request.getVaiTro()).stream().forEach(kh -> {
 			boolean isValidate = false;
 			if (kh.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
 				isValidate = true;

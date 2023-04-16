@@ -1,6 +1,7 @@
 package com.iuh.backendkltn32.controller;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hpsf.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -184,7 +184,7 @@ public class QuanLyBoMonController {
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
-				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
+				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau() , lapKeHoachDto.getThoiGianKetThuc(),
 				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.luu(keHoach);
 		return lapKeHoachDto;
@@ -214,7 +214,7 @@ public class QuanLyBoMonController {
 		KeHoach kh = keHoachService.layTheoMa(maKeHoach);
 		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
 		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
-				Arrays.asList(ngayThucHienKL), kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(),
+				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()), new Timestamp(kh.getThoiGianKetThuc().getTime()),
 				kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
 		return lapKeHoachDto;
 	}
@@ -224,11 +224,12 @@ public class QuanLyBoMonController {
 	public List<LapKeHoachDto> layKeHoachTheoHk(@PathVariable String maHocKy) throws Exception {
 		List<LapKeHoachDto> ds = new ArrayList<>();
 		keHoachService.layKeHoachTheoMaHocKy(maHocKy).stream().forEach(kh -> {
+			
 			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
 			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
-					Arrays.asList(ngayThucHienKL), kh.getHocKy(), kh.getThoiGianBatDau(), kh.getThoiGianKetThuc(),
+					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()), new Timestamp(kh.getThoiGianKetThuc().getTime()),
 					kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
-			ds.add(lapKeHoachDto);
+				ds.add(lapKeHoachDto);
 		});
 		return ds;
 	}

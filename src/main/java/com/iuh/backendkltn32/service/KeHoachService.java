@@ -12,5 +12,7 @@ public interface KeHoachService extends AbstractService<KeHoach>{
 	List<KeHoach> layKeHoachTheoVaiTro( String maHocKy,String vaiTro);
 	
 	List<KeHoach> layKeHoachTheoMaNguoiDung( String maHocKy,String maNguoiDung);
+	
+	List<KeHoach> layTheoTenVaMaHocKyVaiTro( String maHocKy,String tenKeHoach, String vaiTro);
 
 }

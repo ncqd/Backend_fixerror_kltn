@@ -14,5 +14,6 @@ public class DangKyDeTaiRequest {
 	
 	private String maDeTai;
 	private String maNhom;
+	private String vaiTro;
 
 }

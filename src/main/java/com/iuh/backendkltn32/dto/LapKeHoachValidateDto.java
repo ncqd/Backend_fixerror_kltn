@@ -14,6 +14,6 @@ import lombok.Setter;
 public class LapKeHoachValidateDto {
 	
 	private String tenKeHoach;
-	private boolean isValid;
+	private boolean isInvalid;
 
 }

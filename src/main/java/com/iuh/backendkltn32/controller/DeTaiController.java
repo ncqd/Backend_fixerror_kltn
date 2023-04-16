@@ -20,11 +20,15 @@ import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.entity.KeHoach;
+import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.HocKyService;
+import com.iuh.backendkltn32.service.KeHoachService;
+import com.iuh.backendkltn32.service.TaiKhoanService;
 
 @RestController
 @RequestMapping("/api/de-tai")
@@ -32,7 +36,7 @@ public class DeTaiController {
 
 	@Autowired
 	private DeTaiService deTaiService;
-	
+
 	@Autowired
 	private JmsListenerConsumer listenerConsumer;
 
@@ -41,79 +45,129 @@ public class DeTaiController {
 
 	@Autowired
 	private GiangVienService giangVienService;
-	
+
 	@Autowired
 	private JmsPublishProducer producer;
 
+	@Autowired
+	private KeHoachService keHoachService;
+
+	@Autowired
+	private TaiKhoanService taiKhoanService;
+
 	@PostMapping("/them-de-tai/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public DeTai themDeTai(@RequestBody DeTai deTai, @PathVariable("maGiangVien") String maGiangVien) {
-
-		try {
-			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
-			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
-
-			String maDT = "001";
-
-			if (deTaiCuoiTrongHK == null) {
-				maDT = "001";
-			} else {
-				Long soMaDT = Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)) + 1;
-				System.out.println("chua ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
-				if (soMaDT < 10) {
-					maDT = "00" + soMaDT;
-				} else if (soMaDT >= 10 && soMaDT < 100) {
-					maDT = "0" + soMaDT;
-				} else {
-					maDT = "" + soMaDT;
-				}
+	public DeTai themDeTai(@RequestBody DeTai deTai, @PathVariable("maGiangVien") String maGiangVien) throws Exception {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		TaiKhoan taiKhoan = taiKhoanService.layTheoMa(maGiangVien);
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng ký đề tài",
+				taiKhoan.getVaiTro().getTenVaiTro().name());
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký đề tài đã hết");
 			}
-			deTai.setMaDeTai("DT" + maDT);
-			deTai.setGiangVien(giangVien);
-			deTai.setHocKy(hocKy);
-			deTai.setTrangThai(0);
-			System.out.println("giang-vien-controller - them de tai - " + hocKy);
 
-			DeTai ketQuaLuu = deTaiService.luu(deTai);
+			try {
+				GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
+				DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getMaHocKy(),
+						hocKy.getSoHocKy());
 
-			return ketQuaLuu;
-		} catch (Exception e) {
-			e.printStackTrace();
+				String maDT = "001";
+
+				if (deTaiCuoiTrongHK == null) {
+					maDT = "001";
+				} else {
+					Long soMaDT = Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)) + 1;
+					System.out.println("chua ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
+					if (soMaDT < 10) {
+						maDT = "00" + soMaDT;
+					} else if (soMaDT >= 10 && soMaDT < 100) {
+						maDT = "0" + soMaDT;
+					} else {
+						maDT = "" + soMaDT;
+					}
+				}
+				deTai.setMaDeTai("DT" + maDT);
+				deTai.setGiangVien(giangVien);
+				deTai.setHocKy(hocKy);
+				deTai.setTrangThai(0);
+				System.out.println("giang-vien-controller - them de tai - " + hocKy);
+
+				DeTai ketQuaLuu = deTaiService.luu(deTai);
+
+				return ketQuaLuu;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
 		}
 
-		return null;
 	}
 
 	@DeleteMapping("/xoa-de-tai/{maDeTai}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public String xoaDeTai(@PathVariable String maDeTai) {
+	public String xoaDeTai(@PathVariable String maDeTai) throws Exception{
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng ký đề tài",
+				"ROLE_GIANGVIEN");
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký đề tài đã hết");
+			}
 
-		try {
-			String ketQuaXoaDeTai = deTaiService.xoa(maDeTai);
-			return ketQuaXoaDeTai;
-		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				String ketQuaXoaDeTai = deTaiService.xoa(maDeTai);
+				return ketQuaXoaDeTai;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
 		}
-		return null;
+
 	}
 
 	@PutMapping("/sua-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public DeTai suaDeTai(@RequestBody DeTai deTai) {
+	public DeTai suaDeTai(@RequestBody DeTai deTai) throws Exception{
 
-		try {
-			HocKy hocKy = hocKyService.layTheoMa(deTai.getHocKy().getMaHocKy());
-			deTai.setHocKy(hocKy);
-			deTai.setTrangThai(0);
-			DeTai ketQuaLuu = deTaiService.capNhat(deTai);
+		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Đăng ký đề tài",
+				"ROLE_GIANGVIEN");
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký đề tài đã hết");
+			}
 
-			return ketQuaLuu;
-		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				HocKy hocKy = hocKyService.layTheoMa(deTai.getHocKy().getMaHocKy());
+				deTai.setHocKy(hocKy);
+				deTai.setTrangThai(0);
+				DeTai ketQuaLuu = deTaiService.capNhat(deTai);
+
+				return ketQuaLuu;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
 		}
-
-		return null;
+		
 	}
 
 	@PostMapping("/lay-ds-de-tai-theo-nam-hk")
@@ -151,17 +205,17 @@ public class DeTaiController {
 					dsDeTaiDtos.add(new DeTaiDto(deTai,
 							soNhomDaDKDeTai == deTai.getGioiHanSoNhomThucHien() ? true : false, deTai.getGiangVien()));
 				}
-			}else {
+			} else {
 				List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(layDeTaiRquestDto.getMaHocKy(),
-						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien(), layDeTaiRquestDto.getTrangThai());
-				
+						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien(),
+						layDeTaiRquestDto.getTrangThai());
+
 				for (DeTai deTai : dsDeTai) {
 					Integer soNhomDaDKDeTai = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
 					dsDeTaiDtos.add(new DeTaiDto(deTai,
 							soNhomDaDKDeTai == deTai.getGioiHanSoNhomThucHien() ? true : false, deTai.getGiangVien()));
 				}
 			}
-			
 
 			return ResponseEntity.ok(dsDeTaiDtos);
 		} catch (Exception e) {
@@ -170,20 +224,35 @@ public class DeTaiController {
 			return ResponseEntity.ok("Have Error");
 		}
 	}
-	
-	@PostMapping("/dang-ky-de-tai")
-	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) {
 
-		try {
-			producer.sendMessageOnDeTaiChanel(request);
-			return listenerConsumer.listenerDeTaiChannel();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(500).body("Have Error");
+	@PostMapping("/dang-ky-de-tai")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_GIANGVIEN')")
+	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) throws Exception {
+		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Đăng ký đề tài",
+				"ROLE_SINHVIEN");
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký đề tài đã hết");
+			}
+
+			try {
+				producer.sendMessageOnDeTaiChanel(request);
+				return listenerConsumer.listenerDeTaiChannel();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(500).body("Have Error");
+			}
+
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
 		}
+		
 	}
-	
+
 	@PostMapping("/import-excel")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
 	public ResponseEntity<?> importExcel(@RequestBody DangKyDeTaiRequest request) {

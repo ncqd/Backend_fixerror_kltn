@@ -18,6 +18,8 @@ public class DangKyNhomRequest {
 	private String maNhom;
 	private String maDeTai;
 	private String password;
+	private String vaiTro;
+	
 	@Override
 	public String toString() {
 		return "DangKyNhomRequest [dsMaSinhVien=" + dsMaSinhVien + ", maNhom=" + maNhom + ", maDeTai=" + maDeTai + "]";

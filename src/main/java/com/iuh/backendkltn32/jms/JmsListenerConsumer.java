@@ -8,7 +8,6 @@ import javax.jms.MessageListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
@@ -87,7 +86,8 @@ public class JmsListenerConsumer implements MessageListener {
 			@SuppressWarnings("unchecked")
 			List<String> dsMaSv = (List<String>) mapMessage.getObject("dsMaSinhVien");
 			System.out.println("Listener - maNhom - " + mapMessage);
-			DangKyNhomRequest request = new DangKyNhomRequest(dsMaSv, mapMessage.getString("maNhom"), mapMessage.getString("maDeTai"), mapMessage.getString("password"));
+			DangKyNhomRequest request = new DangKyNhomRequest(dsMaSv, mapMessage.getString("maNhom"), 
+					mapMessage.getString("maDeTai"), mapMessage.getString("password"), null);
 			System.out.println("Listener - dang ky nhom - " + request);
 			try {
 				if (request.getMaNhom() == null) {

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,11 +21,13 @@ import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
 import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.HocKyService;
+import com.iuh.backendkltn32.service.KeHoachService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.SinhVienService;
 
@@ -47,6 +50,9 @@ public class NhomController {
 	@Autowired
 	private HocKyService hocKyService;
 
+	@Autowired
+	private KeHoachService keHoachService;
+
 	/*
 	 * // case1: tao moi -> check: co nhom chua ???? // TH1: -> chua co //TH2: -> co
 	 * roi -> XONG XONG XONG
@@ -54,9 +60,23 @@ public class NhomController {
 	@PostMapping("/dang-ky-nhom")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
 	public ResponseEntity<?> dangKyNhom(@RequestBody DangKyNhomRequest request) throws Exception {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng Ký Nhóm",
+				request.getVaiTro());
 		System.out.println("NhomController - dang ky nhom - " + request);
-		producer.sendMessageOnNhomChanel(request);
-		return listenerConsumer.listenerNhomChannel();
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký nhóm");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký nhóm đã hết");
+			}
+
+			producer.sendMessageOnNhomChanel(request);
+			return listenerConsumer.listenerNhomChannel();
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký nhóm");
+		}
 	}
 
 	@PostMapping("/lay-ds-nhom")
@@ -99,9 +119,9 @@ public class NhomController {
 
 	@GetMapping("/lay-nhom/{maNhom}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public NhomSinhVienDto layNhom(@PathVariable("maNhom") String maNhom) throws Exception {	
+	public NhomSinhVienDto layNhom(@PathVariable("maNhom") String maNhom) throws Exception {
 		Nhom nhom = nhomService.layTheoMa(maNhom);
-		List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(maNhom).stream().map (ma -> {
+		List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(maNhom).stream().map(ma -> {
 			try {
 				return sinhVienService.layTheoMa(ma);
 			} catch (Exception e) {
@@ -109,33 +129,49 @@ public class NhomController {
 			}
 			return null;
 		}).toList();
-		
+
 		NhomSinhVienDto respones = new NhomSinhVienDto(nhom, sinhViens, nhom.getTinhTrang(), nhom.getDeTai());
-		
+
 		return respones;
 	}
-	
+
 	@PostMapping("/roi-nhom")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) {
-		try {
-			SinhVien sinhVien = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
-			if (sinhVien.getNhom() == null) {
-				return ResponseEntity.status(500).body("Chua co nhom de roi");
+	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) throws Exception {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng Ký Nhóm",
+				request.getVaiTro());
+		System.out.println("NhomController - dang ky nhom - " + request);
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký nhóm");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký nhóm đã hết");
 			}
-			if (request.getMaNhom() == null) {
-				return ResponseEntity.status(500).body("Ma nhom bang null");
+
+			try {
+				SinhVien sinhVien = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
+				if (sinhVien.getNhom() == null) {
+					return ResponseEntity.status(500).body("Chua co nhom de roi");
+				}
+				if (request.getMaNhom() == null) {
+					return ResponseEntity.status(500).body("Ma nhom bang null");
+				}
+				sinhVien.setNhom(null);
+				sinhVienService.capNhat(sinhVien);
+				if (nhomService.laySoSinhVienTrongNhomTheoMa(request.getMaNhom()) == null) {
+					nhomService.xoa(request.getMaNhom());
+				}
+				return ResponseEntity.ok(sinhVien);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(500).body(e.getMessage());
 			}
-			sinhVien.setNhom(null);
-			sinhVienService.capNhat(sinhVien);
-			if (nhomService.laySoSinhVienTrongNhomTheoMa(request.getMaNhom()) == null) {
-				nhomService.xoa(request.getMaNhom());
-			}
-			return ResponseEntity.ok(sinhVien);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(500).body(e.getMessage());
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký nhóm");
 		}
+
 	}
 
 }

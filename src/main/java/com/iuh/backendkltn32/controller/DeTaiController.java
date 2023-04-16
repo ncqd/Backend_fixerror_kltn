@@ -219,7 +219,6 @@ public class DeTaiController {
 
 			return ResponseEntity.ok(dsDeTaiDtos);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return ResponseEntity.ok("Have Error");
 		}
@@ -230,7 +229,7 @@ public class DeTaiController {
 	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) throws Exception {
 		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Đăng ký đề tài",
-				"ROLE_SINHVIEN");
+				request.getVaiTro());
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {

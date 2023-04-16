@@ -53,6 +53,8 @@ public class KeHoachServiceImpl implements KeHoachService {
 	@Override
 	public KeHoach capNhat(KeHoach obj) throws Exception {
 		KeHoach khKhongTonTai = layTheoMa(obj.getId().toString());
+		
+		
 
 		if (khKhongTonTai == null) {
 			throw new RuntimeException("Kế hoạch không tồn tại");
@@ -63,10 +65,8 @@ public class KeHoachServiceImpl implements KeHoachService {
 		khKhongTonTai.setThoiGianBatDau(obj.getThoiGianBatDau());
 		khKhongTonTai.setThoiGianKetThuc(obj.getThoiGianKetThuc());
 		khKhongTonTai.setTinhTrang(obj.getTinhTrang());
-		
-		repository.save(khKhongTonTai);
 
-		return khKhongTonTai;
+		return repository.save(khKhongTonTai);
 	}
 
 	@Override

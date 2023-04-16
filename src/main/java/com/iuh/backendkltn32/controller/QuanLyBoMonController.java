@@ -193,7 +193,7 @@ public class QuanLyBoMonController {
 	@PutMapping("/cap-nhat-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
-		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getChuThich(), lapKeHoachDto.getTenKeHoach(),
+		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),

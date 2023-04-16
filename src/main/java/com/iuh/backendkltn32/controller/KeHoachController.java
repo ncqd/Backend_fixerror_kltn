@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
+import com.iuh.backendkltn32.dto.LapKeHoachValidateDto;
 import com.iuh.backendkltn32.dto.LayKeHoachRequest;
-import com.iuh.backendkltn32.entity.KeHoach;
+import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KeHoachService;
 
 @RestController
@@ -24,6 +26,9 @@ public class KeHoachController {
 
 	@Autowired
 	private KeHoachService keHoachService;
+	
+	@Autowired
+	private HocKyService hocKyService;
 
 	@PostMapping("/lay-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
@@ -55,6 +60,40 @@ public class KeHoachController {
 		}
 
 		return dsKeHoach;
-
 	}
+
+	@PostMapping("/lay-ke-hoach-theo-ten")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public List<LapKeHoachValidateDto> layKeHoachTheoTen(@RequestBody LayKeHoachRequest request) {
+		List<LapKeHoachValidateDto> dsKeHoach = new ArrayList<>();
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		keHoachService.layKeHoachTheoVaiTro(hocKy.getMaHocKy(), request.getVaiTro()).stream().forEach(kh -> {
+			boolean isValidate = false;
+			if (kh.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				isValidate = true;
+			} 
+			if (kh.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				isValidate = true;
+			} 
+			LapKeHoachValidateDto lapKeHoachValidateDto = new LapKeHoachValidateDto(kh.getTenKeHoach(), isValidate);
+			dsKeHoach.add(lapKeHoachValidateDto);
+		});
+//		if (request.getMaNguoiDung() != null) {
+//			keHoachService.layKeHoachTheoMaNguoiDung(request.getMaHocKy(), request.getMaNguoiDung()).stream()
+//					.forEach(kh -> {
+//						String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null
+//								? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
+//								: new String[0];
+//						LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(),
+//								kh.getChuThich(), Arrays.asList(ngayThucHienKL), kh.getHocKy(),
+//								new Timestamp(kh.getThoiGianBatDau().getTime()),
+//								new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
+//								kh.getMaNguoiDung());
+//						dsKeHoach.add(lapKeHoachDto);
+//					});
+//		}
+
+		return dsKeHoach;
+	}
+
 }

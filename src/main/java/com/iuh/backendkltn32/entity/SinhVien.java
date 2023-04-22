@@ -25,8 +25,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "sinhvien")
-public class SinhVien implements Serializable{
-	
+public class SinhVien implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -34,58 +34,73 @@ public class SinhVien implements Serializable{
 
 	@Id
 	private String maSinhVien;
-	
-	@Column(name = "tenSinhVien", columnDefinition = "nvarchar(255)" ,nullable = false)
+
+	@Column(name = "tenSinhVien", columnDefinition = "nvarchar(255)", nullable = false)
 	private String tenSinhVien;
-	
-	@Column(name = "noiSinh", columnDefinition = "nvarchar(255)" ,nullable = false)
+
+	@Column(name = "noiSinh", columnDefinition = "nvarchar(255)", nullable = false)
 	private String noiSinh;
-	
-	@Column(name = "dienThoai",nullable = false)
+
+	@Column(name = "dienThoai", nullable = false)
 	private String dienThoai;
-	
+
 	@Column(name = "email", nullable = false)
 	private String email;
-	
-	@Column(name = "ngaySinh",nullable = true)
+
+	@Column(name = "ngaySinh", nullable = true)
 	private Date ngaySinh;
-	
+
 	@Column(name = "namNhapHoc", nullable = false)
 	private Integer namNhapHoc;
-	
-	@Column(name = "gioiTinh",nullable = false)
+
+	@Column(name = "gioiTinh", nullable = false)
 	private Integer gioiTinh;
-	
-	@Column(name = "anhDaiDien", columnDefinition = "varchar(255)" ,nullable = true)
+
+	@Column(name = "anhDaiDien", columnDefinition = "varchar(255)", nullable = true)
 	private String anhDaiDien;
-	
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "maLopDanhNghia", nullable = true)
 	private LopDanhNghia lopDanhNghia;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
 	@JoinColumn(name = "maLopHocPhan", nullable = true)
 	private LopHocPhan lopHocPhan;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "sinhVien")
 	@JsonIgnore
 	private List<KetQua> dsKetQua;
-	
+
 	@ManyToOne()
 	@JoinColumn(name = "maNhom", nullable = true)
 	private Nhom nhom;
-	
-	@Column(name = "laTruongNhom",nullable = true)
+
+	@Column(name = "laTruongNhom", nullable = true)
 	private Integer laTruongNhom;
-	
+
 	@Override
 	public String toString() {
 		return "SinhVien [maSinhVien=" + maSinhVien + ", tenSinhVien=" + tenSinhVien + ", noiSinh=" + noiSinh
-				+ ", dienThoai=" + dienThoai + ", email=" + email + ", namNhapHoc="
-				+ namNhapHoc + ", gioiTinh=" + gioiTinh + "]";
+				+ ", dienThoai=" + dienThoai + ", email=" + email + ", namNhapHoc=" + namNhapHoc + ", gioiTinh="
+				+ gioiTinh + "]";
 	}
-	
-	
+
+	public SinhVien(String maSinhVien, String tenSinhVien, String noiSinh, String dienThoai, String email,
+			Date ngaySinh, Integer namNhapHoc, Integer gioiTinh, String anhDaiDien, LopDanhNghia lopDanhNghia,
+			LopHocPhan lopHocPhan) {
+		super();
+		this.maSinhVien = maSinhVien;
+		this.tenSinhVien = tenSinhVien;
+		this.noiSinh = noiSinh;
+		this.dienThoai = dienThoai;
+		this.email = email;
+		this.ngaySinh = ngaySinh;
+		this.namNhapHoc = namNhapHoc;
+		this.gioiTinh = gioiTinh;
+		this.anhDaiDien = anhDaiDien;
+		this.lopDanhNghia = lopDanhNghia;
+		this.lopHocPhan = lopHocPhan;
+	}
+
 }

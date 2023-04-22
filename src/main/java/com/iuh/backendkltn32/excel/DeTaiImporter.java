@@ -45,33 +45,35 @@ public class DeTaiImporter {
 			Iterator<Row> rowIterator = sheet.iterator();
 			rowIterator.next();
 			boolean isHasValue = true;
+			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+			DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getMaHocKy(),
+					hocKy.getSoHocKy());
+
+			String maDT = "001";
+
+			if (deTaiCuoiTrongHK == null) {
+				maDT = "001";
+			} else {
+				Long soMaDT = Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)) + 1;
+				System.out.println("chua ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
+				if (soMaDT < 10) {
+					maDT = "00" + soMaDT;
+				} else if (soMaDT >= 10 && soMaDT < 100) {
+					maDT = "0" + soMaDT;
+				} else {
+					maDT = "" + soMaDT;
+				}
+			}
 			while (rowIterator.hasNext() && isHasValue) {
 				Row nextRow = rowIterator.next();
 				Iterator<Cell> cellIterator = nextRow.cellIterator();
 				DeTai deTai = new DeTai();
-				HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-				DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getMaHocKy(),
-						hocKy.getSoHocKy());
-
-				String maDT = "001";
-
-				if (deTaiCuoiTrongHK == null) {
-					maDT = "001";
-				} else {
-					Long soMaDT = Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)) + 1;
-					System.out.println("chua ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
-					if (soMaDT < 10) {
-						maDT = "00" + soMaDT;
-					} else if (soMaDT >= 10 && soMaDT < 100) {
-						maDT = "0" + soMaDT;
-					} else {
-						maDT = "" + soMaDT;
-					}
-				}
+				
 				deTai.setMaDeTai("DT" + maDT);
 				deTai.setGiangVien(giangVien);
 				deTai.setGioiHanSoNhomThucHien(2);
 				deTai.setHocKy(hocKy);
+				deTai.setTrangThai(0);
 
 				while (cellIterator.hasNext() && isHasValue) {
 					Cell nextCell = cellIterator.next();
@@ -99,11 +101,13 @@ public class DeTaiImporter {
 					}
 					columnIndex++;
 				}
-				if (deTai.getTenDeTai() == null) {
+//				deTais.add(deTai);
+				if (deTai.getTenDeTai() == null || deTai.getTenDeTai().isBlank() || deTai.getTenDeTai().isEmpty()) {
 					System.out.println("null;");
 					isHasValue = false;
 				} else {
 					deTais.add(deTai);
+					maDT = "00" + (Long.parseLong(maDT) + 1) + "";
 				}
 			}
 			workbook.close();

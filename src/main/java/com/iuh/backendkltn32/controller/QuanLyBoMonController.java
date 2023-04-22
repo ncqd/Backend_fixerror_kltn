@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.DuyetRequest;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
@@ -33,6 +35,7 @@ import com.iuh.backendkltn32.entity.Khoa;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
+import com.iuh.backendkltn32.excel.SinhVienImporter;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
@@ -73,6 +76,9 @@ public class QuanLyBoMonController {
 
 	@Autowired
 	private PasswordEncoder encoder;
+	
+	@Autowired
+	private SinhVienImporter importer;
 
 	@GetMapping("/thong-tin-ca-nhan/{maQuanLy}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -232,6 +238,12 @@ public class QuanLyBoMonController {
 				ds.add(lapKeHoachDto);
 		});
 		return ds;
+	}
+	
+	@PostMapping("/them-sinh-vien-excel")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public void themSinhVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
+		importer.addDataFDromExcel(file.getInputStream());
 	}
 
 }

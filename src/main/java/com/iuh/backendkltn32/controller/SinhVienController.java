@@ -71,6 +71,5 @@ public class SinhVienController {
 			e.printStackTrace();
 			return ResponseEntity.ok("Have Error");
 		}
-
 	}
 }

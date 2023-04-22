@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,10 +29,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.iuh.backendkltn32.dto.DuyetRequest;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
+import com.iuh.backendkltn32.dto.SinhVienDto;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Khoa;
+import com.iuh.backendkltn32.entity.LopDanhNghia;
+import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
@@ -41,6 +45,8 @@ import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.KeHoachService;
 import com.iuh.backendkltn32.service.KhoaService;
+import com.iuh.backendkltn32.service.LopDanhNghiaService;
+import com.iuh.backendkltn32.service.LopHocPhanService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.SinhVienService;
 import com.iuh.backendkltn32.service.TaiKhoanService;
@@ -75,10 +81,13 @@ public class QuanLyBoMonController {
 	private KeHoachService keHoachService;
 
 	@Autowired
-	private PasswordEncoder encoder;
+	private SinhVienImporter importer;
 	
 	@Autowired
-	private SinhVienImporter importer;
+	private LopDanhNghiaService lopDanhNghiaService;
+	
+	@Autowired
+	private LopHocPhanService lopHocPhanService;
 
 	@GetMapping("/thong-tin-ca-nhan/{maQuanLy}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -98,10 +107,19 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/them-sinh-vien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public SinhVien themSinhVienVaoHeThong(@RequestBody SinhVien sinhVien) {
+	public SinhVien themSinhVienVaoHeThong(@RequestBody SinhVienDto sinhVien) {
 
 		try {
-			SinhVien ketQuaLuuSinhVien = sinhVienService.luu(sinhVien);
+			
+			LopDanhNghia lopDanhNghia = lopDanhNghiaService.layTheoMa(sinhVien.getMaLopDanhNghia());
+			
+			LopHocPhan lopHocPhan = lopHocPhanService.layTheoMa(sinhVien.getMaLopHocPhan());
+			
+			SinhVien sinhVien2 = new SinhVien(sinhVien.getMaSinhVien(), sinhVien.getTenSinhVien(), 
+					sinhVien.getNoiSinh(), sinhVien.getDienThoai(), sinhVien.getEmail(), sinhVien.getNgaySinh(), 
+					sinhVien.getNamNhapHoc(), sinhVien.getGioiTinh(), sinhVien.getAnhDaiDien(), lopDanhNghia, lopHocPhan);
+			SinhVien ketQuaLuuSinhVien = sinhVienService.luu(sinhVien2);
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 			TaiKhoan taiKhoan = new TaiKhoan(sinhVien.getMaSinhVien(), encoder.encode("1111"),
 					vaiTroService.layTheoMa(4L));
@@ -123,6 +141,7 @@ public class QuanLyBoMonController {
 			Khoa khoa = khoaService.layTheoMa(giangVien.getKhoa().getMaKhoa());
 			giangVien.setKhoa(khoa);
 			GiangVien ketQuaLuuGiangVien = giangVienService.luu(giangVien);
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 			TaiKhoan taiKhoan = new TaiKhoan(giangVien.getMaGiangVien(), encoder.encode("1111"),
 					vaiTroService.layTheoMa(3L));

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -260,7 +261,7 @@ public class DeTaiController {
 
 	@PostMapping("/them-de-tai-excel/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> importExcel(@PathVariable("maGiangVien") String maGiangVien, @RequestParam("file") MultipartFile file) {
+	public ResponseEntity<?> importExcel(@PathVariable("maGiangVien") String maGiangVien, @RequestPart("file") MultipartFile file) {
 		if (DeTaiImporter.isValidExcelFile(file)) {
 			try {
 				

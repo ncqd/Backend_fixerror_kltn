@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +35,7 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 		if (tieuChiChamDiemDaTonTai != null) {
 			throw new RuntimeException("Tiêu chí đã tồn tại");
 		}
-		repository.save(obj);
-
-		return obj;
+		return repository.save(obj);
 	}
 
 	@Override
@@ -64,6 +64,11 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 		repository.save(tieuChiChamDiemKhongTonTai);
 
 		return tieuChiChamDiemKhongTonTai;
+	}
+
+	@Override
+	public List<TieuChiChamDiem> laydsTieuChiChamDiemTheoPhieuCham(String maPhieu) {
+		return repository.layTieuChiChamDiemTheoPhieuCham(maPhieu);
 	}
 
 }

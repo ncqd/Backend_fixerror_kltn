@@ -31,6 +31,13 @@ public class VaiTro {
 	@Column(name = "tenVaiTro", columnDefinition = "varchar(255)" ,nullable = false)
 	@Enumerated(EnumType.STRING)
 	private EVaiTro tenVaiTro;
+
+	@Override
+	public String toString() {
+		return "VaiTro [maVaiTro=" + maVaiTro + ", tenVaiTro=" + tenVaiTro + "]";
+	}
+	
+	
 	
 
 }

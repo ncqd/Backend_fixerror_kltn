@@ -115,4 +115,10 @@ public class DeTaiServiceImpl implements DeTaiService {
 		return repository.layDsDeTaiTheoNamHocKyChuaPheDuyet(maHocKy, soHocKy, maGiangVien, trangThai);
 	}
 
+	@Override
+	public List<DeTai> luuDanhSach(List<DeTai> deTais) {
+		// TODO Auto-generated method stub
+		return repository.saveAll(deTais);
+	}
+
 }

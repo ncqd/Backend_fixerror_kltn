@@ -19,11 +19,12 @@ public class DangKyNhomRequest {
 	private String maDeTai;
 	private String password;
 	private String vaiTro;
-	
 	@Override
 	public String toString() {
-		return "DangKyNhomRequest [dsMaSinhVien=" + dsMaSinhVien + ", maNhom=" + maNhom + ", maDeTai=" + maDeTai + "]";
+		return "DangKyNhomRequest [dsMaSinhVien=" + dsMaSinhVien + ", maNhom=" + maNhom + ", maDeTai=" + maDeTai
+				+ ", password=" + password + ", vaiTro=" + vaiTro + "]";
 	}
+	
 	
 	
 }

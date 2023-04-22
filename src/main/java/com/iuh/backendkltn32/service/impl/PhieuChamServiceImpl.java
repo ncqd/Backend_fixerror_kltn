@@ -2,12 +2,14 @@ package com.iuh.backendkltn32.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.iuh.backendkltn32.entity.PhieuCham;
 import com.iuh.backendkltn32.repository.PhieuChamRepository;
 import com.iuh.backendkltn32.service.PhieuChamService;
 
 @Service
+@Transactional
 public class PhieuChamServiceImpl implements PhieuChamService{
 	
 	@Autowired
@@ -33,9 +35,8 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 		if (phieuChamDaTonTai != null) {
 			throw new RuntimeException("Phiếu đã tồn tại");
 		}
-		repository.save(obj);
 
-		return obj;
+		return repository.save(obj);
 	}
 
 	@Override

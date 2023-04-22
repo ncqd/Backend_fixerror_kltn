@@ -5,6 +5,7 @@ package com.iuh.backendkltn32.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -29,9 +30,14 @@ public class TaiKhoan{
 	@Column(name = "password", columnDefinition = "varchar(255)" ,nullable = false)
 	private String password = "1111";
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "vaiTro", referencedColumnName = "maVaiTro")
 	private VaiTro vaiTro;
+
+	@Override
+	public String toString() {
+		return "TaiKhoan [tenTaiKhoan=" + tenTaiKhoan + ", password=" + password + ", vaiTro=" + vaiTro + "]";
+	}
 	
 //	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //	@MapsId
@@ -42,6 +48,8 @@ public class TaiKhoan{
 //	@MapsId
 //	@JoinColumn(name = "tenTaiKhoan")
 //	private SinhVien sinhVien;
+	
+	
 
 
 }

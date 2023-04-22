@@ -31,6 +31,16 @@ public class TieuChiChamDiem {
 	private Double diemToiDa;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tieuChiChamDiem")
+	@Column(columnDefinition = "nvarchar(255)" ,nullable = true)
 	private List<DiemThanhPhan> dsDiemThanhPhan;
+
+	public TieuChiChamDiem(String tenChuanDauRa, Double diemToiDa, List<DiemThanhPhan> dsDiemThanhPhan) {
+		super();
+		this.tenChuanDauRa = tenChuanDauRa;
+		this.diemToiDa = diemToiDa;
+		this.dsDiemThanhPhan = dsDiemThanhPhan;
+	}
+	
+	
 
 }

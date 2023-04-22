@@ -36,6 +36,15 @@ public class DiemThanhPhan {
 	@JoinColumn(name = "maChuanDauRa", nullable = false)
 	private TieuChiChamDiem tieuChiChamDiem;
 	
-	@Column(name = "diemThanhPhan", nullable = false)
+	@Column(name = "diemThanhPhan", nullable = true)
 	private String diemThanhPhan;
+
+	public DiemThanhPhan(PhieuCham phieuCham, TieuChiChamDiem tieuChiChamDiem, String diemThanhPhan) {
+		super();
+		this.phieuCham = phieuCham;
+		this.tieuChiChamDiem = tieuChiChamDiem;
+		this.diemThanhPhan = diemThanhPhan;
+	}
+	
+	
 }

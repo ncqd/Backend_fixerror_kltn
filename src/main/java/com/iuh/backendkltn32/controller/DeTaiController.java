@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.DangKyDeTaiRequest;
 import com.iuh.backendkltn32.dto.DeTaiDto;
@@ -22,6 +24,7 @@ import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.TaiKhoan;
+import com.iuh.backendkltn32.excel.DeTaiImporter;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.DeTaiService;
@@ -112,7 +115,7 @@ public class DeTaiController {
 
 	@DeleteMapping("/xoa-de-tai/{maDeTai}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public String xoaDeTai(@PathVariable String maDeTai) throws Exception{
+	public String xoaDeTai(@PathVariable String maDeTai) throws Exception {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng ký đề tài",
 				"ROLE_GIANGVIEN");
@@ -139,7 +142,7 @@ public class DeTaiController {
 
 	@PutMapping("/sua-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public DeTai suaDeTai(@RequestBody DeTai deTai) throws Exception{
+	public DeTai suaDeTai(@RequestBody DeTai deTai) throws Exception {
 
 		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Đăng ký đề tài",
@@ -167,7 +170,7 @@ public class DeTaiController {
 		} else {
 			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
 		}
-		
+
 	}
 
 	@PostMapping("/lay-ds-de-tai-theo-nam-hk")
@@ -249,18 +252,22 @@ public class DeTaiController {
 		} else {
 			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
 		}
-		
+
 	}
 
 	@PostMapping("/import-excel")
-	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> importExcel(@RequestBody DangKyDeTaiRequest request) {
-
-		try {
-			return ResponseEntity.ok("aaaa");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(500).body("Have Error");
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> importExcel(@RequestParam("file") MultipartFile file) {
+		if (DeTaiImporter.isValidExcelFile(file)) {
+			try {
+				List<DeTai> deTais = DeTaiImporter.addDataFDromExcel(file.getInputStream());
+				deTaiService.luuDanhSach(deTais);
+				return ResponseEntity.ok(deTais);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(500).body("Have Error");
+			}
 		}
+		return null;
 	}
 }

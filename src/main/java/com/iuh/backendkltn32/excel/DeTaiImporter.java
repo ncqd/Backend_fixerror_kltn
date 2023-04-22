@@ -4,11 +4,16 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.entity.DeTai;
+import com.iuh.backendkltn32.entity.GiangVien;
+import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.service.DeTaiService;
+import com.iuh.backendkltn32.service.HocKyService;
 
-import lombok.Setter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,13 +22,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class DeTaiImporter {
+	
+
+	@Autowired
+	private HocKyService hocKyService;
+	
+	@Autowired
+	private DeTaiService deTaiService;
+	
 	public static boolean isValidExcelFile(MultipartFile file) {
 		return Objects.equals(file.getContentType(),
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 	}
 
-	public static List<DeTai> addDataFDromExcel(InputStream inputStream) {
+	public List<DeTai> addDataFDromExcel(InputStream inputStream, GiangVien giangVien) {
 		List<DeTai> deTais = new ArrayList<>();
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
@@ -35,6 +49,29 @@ public class DeTaiImporter {
 				Row nextRow = rowIterator.next();
 				Iterator<Cell> cellIterator = nextRow.cellIterator();
 				DeTai deTai = new DeTai();
+				HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+				DeTai deTaiCuoiTrongHK = deTaiService.getDeTaiCuoiCungTrongHocKy(hocKy.getMaHocKy(),
+						hocKy.getSoHocKy());
+
+				String maDT = "001";
+
+				if (deTaiCuoiTrongHK == null) {
+					maDT = "001";
+				} else {
+					Long soMaDT = Long.parseLong(deTaiCuoiTrongHK.getMaDeTai().substring(2)) + 1;
+					System.out.println("chua ra so" + deTaiCuoiTrongHK.getMaDeTai().substring(2));
+					if (soMaDT < 10) {
+						maDT = "00" + soMaDT;
+					} else if (soMaDT >= 10 && soMaDT < 100) {
+						maDT = "0" + soMaDT;
+					} else {
+						maDT = "" + soMaDT;
+					}
+				}
+				deTai.setMaDeTai("DT" + maDT);
+				deTai.setGiangVien(giangVien);
+				deTai.setGioiHanSoNhomThucHien(2);
+				deTai.setHocKy(hocKy);
 
 				while (cellIterator.hasNext() && isHasValue) {
 					Cell nextCell = cellIterator.next();

@@ -57,6 +57,9 @@ public class DeTaiController {
 
 	@Autowired
 	private TaiKhoanService taiKhoanService;
+	
+	@Autowired
+	private DeTaiImporter deTaiImporter;
 
 	@PostMapping("/them-de-tai/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
@@ -255,12 +258,14 @@ public class DeTaiController {
 
 	}
 
-	@PostMapping("/import-excel")
+	@PostMapping("/them-de-tai-excel/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> importExcel(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<?> importExcel(@PathVariable("maGiangVien") String maGiangVien, @RequestParam("file") MultipartFile file) {
 		if (DeTaiImporter.isValidExcelFile(file)) {
 			try {
-				List<DeTai> deTais = DeTaiImporter.addDataFDromExcel(file.getInputStream());
+				
+				GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
+				List<DeTai> deTais = deTaiImporter.addDataFDromExcel(file.getInputStream(),giangVien);
 				deTaiService.luuDanhSach(deTais);
 				return ResponseEntity.ok(deTais);
 			} catch (Exception e) {

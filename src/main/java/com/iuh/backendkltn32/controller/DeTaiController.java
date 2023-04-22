@@ -266,7 +266,7 @@ public class DeTaiController {
 				
 				GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
 				List<DeTai> deTais = deTaiImporter.addDataFDromExcel(file.getInputStream(),giangVien);
-				deTaiService.luuDanhSach(deTais);
+//				deTaiService.luuDanhSach(deTais);
 				return ResponseEntity.ok(deTais);
 			} catch (Exception e) {
 				e.printStackTrace();

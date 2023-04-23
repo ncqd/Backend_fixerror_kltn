@@ -30,14 +30,6 @@ public class PhanCongServiceImpl implements PhanCongService {
 
 	@Override
 	public PhanCong luu(PhanCong obj) throws Exception {
-		PhanCong phanCongDaTonTai = layTheoMa(obj.getMaPhanCong()+"");
-
-		System.out.println("PhieuCham service - luu: " + phanCongDaTonTai);
-
-		if (phanCongDaTonTai != null) {
-			throw new RuntimeException("Phiếu đã tồn tại");
-		}
-
 		return repository.save(obj);
 	}
 

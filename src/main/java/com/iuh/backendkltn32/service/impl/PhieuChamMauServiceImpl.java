@@ -29,13 +29,6 @@ public class PhieuChamMauServiceImpl implements PhieuChamMauService{
 
 	@Override
 	public PhieuChamMau luu(PhieuChamMau obj) throws Exception {
-		PhieuChamMau phieuChamDaTonTai = layTheoMa(obj.getMaPhieuMau()+"");
-
-		System.out.println("PhieuCham service - luu: " + phieuChamDaTonTai);
-
-		if (phieuChamDaTonTai != null) {
-			throw new RuntimeException("Phiếu đã tồn tại");
-		}
 
 		return repository.save(obj);
 	}

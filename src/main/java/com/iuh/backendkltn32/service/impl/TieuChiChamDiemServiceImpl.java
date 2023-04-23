@@ -28,13 +28,6 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 
 	@Override
 	public TieuChiChamDiem luu(TieuChiChamDiem obj) throws Exception {
-		TieuChiChamDiem tieuChiChamDiemDaTonTai = layTheoMa(obj.getMaChuanDauRa()+"");
-
-		System.out.println("TieuChiChamDiem service - luu: " + tieuChiChamDiemDaTonTai);
-
-		if (tieuChiChamDiemDaTonTai != null) {
-			throw new RuntimeException("Tiêu chí đã tồn tại");
-		}
 		return repository.save(obj);
 	}
 

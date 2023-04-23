@@ -334,20 +334,46 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
 		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
-		GiangVien giangVien = giangVienService.layTheoMa(phanCongDto.getMaGiangVien());
-		PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
+		List<PhanCong> phanCongs =  phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
+			GiangVien giangVien;
+			try {
+				giangVien = giangVienService.layTheoMa(ma);
+			
+			PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
+			phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+			return phanCongService.luu(phanCong);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}).toList();
 		
-		return ResponseEntity.ok(phanCongService.luu(phanCong));
+		
+		return ResponseEntity.ok(phanCongs);
 	}
 	
 	@PutMapping("/cap-nhat-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> capNhatPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
 		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
-		GiangVien giangVien = giangVienService.layTheoMa(phanCongDto.getMaGiangVien());
-		PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
+		List<PhanCong> phanCongs =  phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
+			GiangVien giangVien;
+			try {
+				giangVien = giangVienService.layTheoMa(ma);
+			
+			PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
+			phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+			return phanCongService.capNhat(phanCong);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}).toList();
 		
-		return ResponseEntity.ok(phanCongService.capNhat(phanCong));
+		
+		return ResponseEntity.ok(phanCongs);
 	}
 	
 	@DeleteMapping("/xoa-phan-cong/{maPhanCong}")

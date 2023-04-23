@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.dto;
 
+import java.util.List;
+
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.Nhom;
 
@@ -22,6 +24,6 @@ public class PhanCongDto {
 
 	private String maNhom;
 
-	private String maGiangVien;
+	private List<String> dsMaGiangVienPB;
 
 }

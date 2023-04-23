@@ -3,6 +3,8 @@
  */
 package com.iuh.backendkltn32.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +79,18 @@ public class GiangVienServiceImpl implements GiangVienService {
 		repository.save(giangVienCanCapNhat);
 
 		return giangVienCanCapNhat;
+	}
+
+	@Override
+	public List<GiangVien> luuDanhSach(List<GiangVien> deTais) {
+		// TODO Auto-generated method stub
+		return repository.saveAll(deTais);
+	}
+
+	@Override
+	public List<GiangVien> layDanhSach() {
+		// TODO Auto-generated method stub
+		return repository.findAll();
 	}
 
 }

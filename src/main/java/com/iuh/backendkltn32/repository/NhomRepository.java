@@ -14,7 +14,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ "on n.maNhom = s.maNhom join lopHocPhan l "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy "
-			+ "where k.maHocKy = :maHocKy and k.soHocKy = :soHocKy; ", nativeQuery = true)
+			+ "where k.maHocKy = :maHocKy and k.soHocKy = :soHocKy    ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoNamHocKy(@Param("maHocKy") String hocKy, @Param("soHocKy") String soHocKy);
 
 	@Query(value = "select count(*) from sinhvien s join Nhom n on s.maNhom = n.maNhom where n.maNhom = :maNhom group by (s.maNhom)", nativeQuery = true)

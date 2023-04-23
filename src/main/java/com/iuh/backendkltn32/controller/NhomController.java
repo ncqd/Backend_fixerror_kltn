@@ -1,8 +1,10 @@
 package com.iuh.backendkltn32.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.DangKyNhomRequest;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
+import com.iuh.backendkltn32.dto.NhomPBResponeDto;
 import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
 import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.entity.HocKy;
@@ -79,18 +82,49 @@ public class NhomController {
 	}
 
 	@PostMapping("/lay-ds-nhom")
-	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public List<NhomRoleGVRespone> layNhomTheoMaGv(@RequestBody LayDeTaiRquestDto request) throws Exception {
-		List<Nhom> nhoms = nhomService.layDSNhomTheMaGiangVien(request.getMaHocKy(), request.getSoHocKy(),
-				request.getMaGiangVien());
-		List<NhomRoleGVRespone> respones = new ArrayList<>();
-		if (!nhoms.isEmpty() && nhoms != null) {
-			nhoms.stream().forEach(nhom -> {
-				List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(),
-						nhom.getDeTai().getMaDeTai(), sinhViens);
-				respones.add(nhomRoleGVRespone);
-			});
+	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
+	public Set<NhomRoleGVRespone> layNhomTheoMaGv(@RequestBody LayDeTaiRquestDto request) throws Exception {
+		List<Nhom> nhoms = new ArrayList<>();
+		Set<NhomRoleGVRespone> respones = new HashSet<>();
+		if (request.getTrangThai() == null && request.getMaGiangVien() == null) {
+			nhoms = nhomService.layTatCaNhom(request.getMaHocKy(), request.getSoHocKy());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(),
+							null, sinhViens);
+					respones.add(nhomRoleGVRespone);
+				});
+
+			}
+		}
+		
+		if (request.getTrangThai() != null && request.getMaGiangVien() == null) {
+			nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), request.getTrangThai());
+			
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(),
+							null, sinhViens);
+					respones.add(nhomRoleGVRespone);
+				});
+
+			}
+		}
+
+		if (request.getMaGiangVien() != null) {
+			nhoms = nhomService.layDSNhomTheMaGiangVien(request.getMaHocKy(), request.getSoHocKy(),
+					request.getMaGiangVien());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(),
+							nhom.getDeTai().getMaDeTai(), sinhViens);
+					respones.add(nhomRoleGVRespone);
+				});
+
+			}
 
 		}
 		return respones;
@@ -106,6 +140,34 @@ public class NhomController {
 			nhoms.stream().forEach(nhom -> {
 				List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
 				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(), null, sinhViens);
+				if (!respones.contains(nhomRoleGVRespone)) {
+
+					respones.add(nhomRoleGVRespone);
+				}
+			});
+
+		}
+		return respones;
+	}
+	
+	@PostMapping("/lay-ds-nhom-phan-bien")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDeTaiRquestDto request) throws Exception {
+		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
+		Set<NhomPBResponeDto> respones = new HashSet<>();
+		if (!nhoms.isEmpty() && nhoms != null) {
+			nhoms.stream().forEach(nhom -> {
+				Map<String, String> sinhViens =  new HashMap<>();
+				sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+					try {
+						sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(), 
+						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien());
 				if (!respones.contains(nhomRoleGVRespone)) {
 
 					respones.add(nhomRoleGVRespone);

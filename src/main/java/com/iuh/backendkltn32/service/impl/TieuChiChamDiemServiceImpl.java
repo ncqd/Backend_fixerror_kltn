@@ -21,14 +21,14 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
 		System.out.println("TieuChiChamDiem service - layTheoMa: " + ma);
-		TieuChiChamDiem tieuChiChamDiem = repository.findById(ma).orElse(null);
+		TieuChiChamDiem tieuChiChamDiem = repository.findById(Integer.parseInt(ma)).orElse(null);
 
 		return tieuChiChamDiem;
 	}
 
 	@Override
 	public TieuChiChamDiem luu(TieuChiChamDiem obj) throws Exception {
-		TieuChiChamDiem tieuChiChamDiemDaTonTai = layTheoMa(obj.getMaChuanDauRa());
+		TieuChiChamDiem tieuChiChamDiemDaTonTai = layTheoMa(obj.getMaChuanDauRa()+"");
 
 		System.out.println("TieuChiChamDiem service - luu: " + tieuChiChamDiemDaTonTai);
 
@@ -45,20 +45,19 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 		if (tieuChiChamDiemKhongTonTai == null) {
 			throw new RuntimeException("Tiêu chí không tồn tại");
 		}
-		repository.deleteById(ma);
+		repository.deleteById(Integer.parseInt(ma));
 
 		return "Xóa thành công";
 	}
 
 	@Override
 	public TieuChiChamDiem capNhat(TieuChiChamDiem obj) throws Exception {
-		TieuChiChamDiem tieuChiChamDiemKhongTonTai = layTheoMa(obj.getMaChuanDauRa());
+		TieuChiChamDiem tieuChiChamDiemKhongTonTai = layTheoMa(obj.getMaChuanDauRa()+"");
 
 		if (tieuChiChamDiemKhongTonTai == null) {
 			throw new RuntimeException("Tiêu chí không tồn tại");
 		}
 		tieuChiChamDiemKhongTonTai.setDiemToiDa(obj.getDiemToiDa());
-		tieuChiChamDiemKhongTonTai.setDsDiemThanhPhan(obj.getDsDiemThanhPhan());
 		tieuChiChamDiemKhongTonTai.setTenChuanDauRa(obj.getTenChuanDauRa());
 		
 		repository.save(tieuChiChamDiemKhongTonTai);

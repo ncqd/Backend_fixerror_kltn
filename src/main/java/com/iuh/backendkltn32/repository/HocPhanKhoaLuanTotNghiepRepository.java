@@ -7,7 +7,7 @@ import com.iuh.backendkltn32.entity.HocPhanKhoaLuanTotNghiep;
 
 public interface HocPhanKhoaLuanTotNghiepRepository extends JpaRepository<HocPhanKhoaLuanTotNghiep, String>{
 	
-	@Query(value = "select * from hocphankhoaluantotnghiep order by order by maHocPhan desc limit 1 ; ", nativeQuery = true)
+	@Query(value = "select * from hocphankhoaluantotnghiep order by maHocPhan desc limit 1 ; ", nativeQuery = true)
 	HocPhanKhoaLuanTotNghiep layHocPhanCuoiTrongDS();
 
 }

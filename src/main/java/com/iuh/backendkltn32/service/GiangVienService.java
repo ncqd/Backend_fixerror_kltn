@@ -1,7 +1,14 @@
 package com.iuh.backendkltn32.service;
 
-import com.iuh.backendkltn32.entity.GiangVien;
+import java.util.List;
 
-public interface GiangVienService extends AbstractService<GiangVien>{
+import com.iuh.backendkltn32.entity.GiangVien;
+import com.iuh.backendkltn32.entity.SinhVien;
+
+public interface GiangVienService extends AbstractService<GiangVien> {
+	
+	List<GiangVien> luuDanhSach(List<GiangVien> deTais);
+	
+	List<GiangVien> layDanhSach();
 
 }

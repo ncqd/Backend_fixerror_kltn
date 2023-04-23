@@ -12,10 +12,14 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.bytebuddy.utility.nullability.MaybeNull;
 
 @Getter
 @Setter
@@ -60,9 +64,4 @@ public class GiangVien {
 	@Column(name = "gioiTinh", nullable = false)
 	private Integer gioiTinh;
 	
-//	@OneToOne( mappedBy = "giangVien")
-//	@JsonIgnore
-//	private TaiKhoan taiKhoan;
-	
-
 }

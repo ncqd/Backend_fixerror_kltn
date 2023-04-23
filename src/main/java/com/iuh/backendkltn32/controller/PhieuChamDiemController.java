@@ -59,7 +59,7 @@ public class PhieuChamDiemController {
 				TieuChiChamDiem tieuChiChamDiem = null;
 				if (tc.getMaChuanDauRa() == null) {
 					tieuChiChamDiem = tieuChiChamDiemService
-							.luu(new TieuChiChamDiem(tc.getTenChuanDauRa(), tc.getDiemToiDa(), null));
+							.luu(new TieuChiChamDiem(tc.getTenChuanDauRa(), tc.getDiemToiDa()));
 				}
 				DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAdd, tieuChiChamDiem, null);
 				diemThanhPhanService.luu(diemThanhPhan);
@@ -89,7 +89,7 @@ public class PhieuChamDiemController {
 				TieuChiChamDiem tieuChiChamDiem = null;
 				if (tc.getMaChuanDauRa() == null) {
 					tieuChiChamDiem = tieuChiChamDiemService
-							.luu(new TieuChiChamDiem(tc.getTenChuanDauRa(), tc.getDiemToiDa(), null));
+							.luu(new TieuChiChamDiem(tc.getTenChuanDauRa(), tc.getDiemToiDa()));
 				}
 				dsDiemThanhPhans.add(new DiemThanhPhan(phieuChamUpdate, tieuChiChamDiem, null));
 			}

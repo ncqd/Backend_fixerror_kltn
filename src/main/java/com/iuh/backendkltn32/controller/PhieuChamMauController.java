@@ -1,8 +1,5 @@
 package com.iuh.backendkltn32.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,23 +10,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iuh.backendkltn32.entity.TieuChiChamDiem;
-import com.iuh.backendkltn32.service.TieuChiChamDiemService;
+import com.iuh.backendkltn32.entity.PhieuChamMau;
+import com.iuh.backendkltn32.service.PhieuChamMauService;
 
 @RestController
-@RequestMapping("/api/tieu-chi-cham-diem")
-public class TieuChiChamDiemController {
+@RequestMapping("/api/phieu-mau")
+public class PhieuChamMauController {
 	
-	@Autowired
-	private TieuChiChamDiemService tieuChiChamDiemService;
+	private PhieuChamMauService phieuChamMauService;
+	
+	@GetMapping("/lay/{maPhieu}")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public PhieuChamMau layPhieuMau(@PathVariable("maPhieu") String ma) {
+		try {
+			return phieuChamMauService.layTheoMa(ma);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	@PostMapping("/them")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public TieuChiChamDiem themTieuChiChamDiem(@RequestBody TieuChiChamDiem tieuChiChamDiem) {
+	public PhieuChamMau themPhieuChamMau(@RequestBody PhieuChamMau phieuChamMau) {
 
 		try {
 				
-			return tieuChiChamDiemService.luu(tieuChiChamDiem);
+			return phieuChamMauService.luu(phieuChamMau);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -38,11 +45,11 @@ public class TieuChiChamDiemController {
 	
 	@PutMapping("/cap-nhat")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public TieuChiChamDiem capNhatTieuChiChamDiem(@RequestBody TieuChiChamDiem tieuChiChamDiem) {
+	public PhieuChamMau capNhatPhieuChamMau(@RequestBody PhieuChamMau phieuChamMau) {
 
 		try {
 				
-			return tieuChiChamDiemService.capNhat(tieuChiChamDiem);
+			return phieuChamMauService.capNhat(phieuChamMau);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -51,25 +58,15 @@ public class TieuChiChamDiemController {
 	
 	@DeleteMapping("/xoa/{ma}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public String xoaTieuChiChamDiem(@PathVariable("ma") String ma) {
+	public String xoaPhieuChamMau(@PathVariable("ma") String ma) {
 
 		try {
 				
-			return tieuChiChamDiemService.xoa(ma);
+			return phieuChamMauService.xoa(ma);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	@GetMapping("/lay/{maPhieuCham}")
-	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<TieuChiChamDiem> layTieuChiChamDiemTheoMaPhieu(@PathVariable("maPhieuCham") String ma) {
-		try {
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 }

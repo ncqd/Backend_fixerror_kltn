@@ -25,12 +25,14 @@ import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
+import com.iuh.backendkltn32.entity.PhanCong;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KeHoachService;
 import com.iuh.backendkltn32.service.NhomService;
+import com.iuh.backendkltn32.service.PhanCongService;
 import com.iuh.backendkltn32.service.SinhVienService;
 
 @RestController
@@ -54,6 +56,9 @@ public class NhomController {
 
 	@Autowired
 	private KeHoachService keHoachService;
+	
+	@Autowired
+	private PhanCongService phanCongService;
 
 	/*
 	 * // case1: tao moi -> check: co nhom chua ???? // TH1: -> chua co //TH2: -> co
@@ -166,8 +171,9 @@ public class NhomController {
 						e.printStackTrace();
 					}
 				});
+				List<String> tenGiangVienPB = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getTenGiangVien()).toList();
 				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(), 
-						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien());
+						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPB);
 				if (!respones.contains(nhomRoleGVRespone)) {
 
 					respones.add(nhomRoleGVRespone);

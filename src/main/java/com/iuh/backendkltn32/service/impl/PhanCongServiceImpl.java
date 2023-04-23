@@ -1,8 +1,11 @@
 package com.iuh.backendkltn32.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.PhanCong;
 import com.iuh.backendkltn32.entity.PhieuChamMau;
 import com.iuh.backendkltn32.repository.PhanCongRepository;
@@ -65,6 +68,12 @@ public class PhanCongServiceImpl implements PhanCongService {
 		repository.save(phieuChamKhongTonTai);
 
 		return phieuChamKhongTonTai;
+	}
+
+	@Override
+	public List<PhanCong> layPhanCongTheoMaNhom(Nhom nhom) {
+		// TODO Auto-generated method stub
+		return repository.findByNhom(nhom);
 	}
 
 }

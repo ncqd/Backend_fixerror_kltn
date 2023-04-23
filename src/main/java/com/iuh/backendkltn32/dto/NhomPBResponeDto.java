@@ -20,7 +20,8 @@ public class NhomPBResponeDto {
 	private String maDeTai;
 	private String tenDeTai;
 	private Map<String, String> dsMaSinhVien;
-	private String tenGiangVien;
+	private String tenGiangVienHD;
+	private List<String> dsTenGiangVienPB;
 	@Override
 	public int hashCode() {
 		return Objects.hash(maNhom);

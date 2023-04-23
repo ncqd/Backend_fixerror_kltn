@@ -3,6 +3,8 @@ package com.iuh.backendkltn32.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,7 +23,8 @@ import lombok.Setter;
 public class PhanCong {
 	
 	@Id
-	private String maPhanCong;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer maPhanCong;
 	
 	@Column(name = "viTriPhanCong", columnDefinition = "nvarchar(255)", nullable = false)
 	private String viTriPhanCong;
@@ -36,5 +39,14 @@ public class PhanCong {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "maGiangVien", nullable = false)
 	private GiangVien giangVien;
+
+	public PhanCong(String viTriPhanCong, Boolean chamCong, Nhom nhom, GiangVien giangVien) {
+		this.viTriPhanCong = viTriPhanCong;
+		this.chamCong = chamCong;
+		this.nhom = nhom;
+		this.giangVien = giangVien;
+	}
+	
+	
 
 }

@@ -33,9 +33,8 @@ public class HocPhanKhoaLuanTotNghiepServiceImpl implements HocPhanKhoaLuanTotNg
 		if (hocPhanKhoaLuanTotNghiepDaTonTai != null) {
 			throw new RuntimeException("Học Phần đã tồn tại");
 		}
-		repository.save(obj);
-
-		return obj;
+		
+		return repository.save(obj);
 	}
 
 	@Override

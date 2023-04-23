@@ -96,6 +96,18 @@ public class SinhVienServiceImpl implements  SinhVienService {
 		return sinhVienRepository.findAll();
 	}
 
+	@Override
+	public List<SinhVien> luuDanhSach(List<SinhVien> deTais) {
+		// TODO Auto-generated method stub
+		return sinhVienRepository.saveAll(deTais);
+	}
+
+	@Override
+	public List<SinhVien> layTatCaSinhVienTheoHocKy(String maHocKy, String soHocKy) {
+		// TODO Auto-generated method stub
+		return sinhVienRepository.layTatCaSinhVienTheoHocKy(maHocKy, soHocKy);
+	}
+
 	
 
 }

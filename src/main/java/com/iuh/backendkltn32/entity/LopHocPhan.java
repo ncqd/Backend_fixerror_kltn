@@ -28,10 +28,10 @@ public class LopHocPhan {
 	@Column(name = "tenLopHocPhan", columnDefinition = "nvarchar(255)" ,nullable = false)
 	private String tenLopHocPhan;
 	
-	@Column(name = "thoiGianBatDau")
+	@Column(name = "thoiGianBatDau", nullable = true)
 	private Date thoiGianBatDau;
 	
-	@Column(name = "thoiGianKetThuc")
+	@Column(name = "thoiGianKetThuc", nullable = true)
 	private Date thoiGianKetThuc;
 	
 	@Column(name = "phong", nullable = false)

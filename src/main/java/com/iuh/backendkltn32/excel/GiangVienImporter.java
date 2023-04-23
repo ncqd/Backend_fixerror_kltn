@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.HocPhanKhoaLuanTotNghiep;
+import com.iuh.backendkltn32.entity.Khoa;
 import com.iuh.backendkltn32.entity.LopDanhNghia;
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.SinhVien;
@@ -31,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class SinhVienImporter {
+public class GiangVienImporter {
 
 	@Autowired
 	private HocKyService hocKyService;
@@ -42,8 +44,6 @@ public class SinhVienImporter {
 	@Autowired
 	private LopHocPhanService lopHocPhanService;
 
-	@Autowired
-	private HocPhanKhoaLuanTotNghiepService hocPhanKhoaLuanTotNghiepService;
 
 	@Autowired
 	private LopDanhNghiaService lopDanhNghiaService;
@@ -53,43 +53,16 @@ public class SinhVienImporter {
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 	}
 
-	public List<SinhVien> addDataFDromExcel(InputStream inputStream) throws Exception {
-		List<SinhVien> sinhViens = new ArrayList<>();
+	public List<GiangVien> addDataFDromExcel(InputStream inputStream) throws Exception {
+		List<GiangVien> giangViens = new ArrayList<>();
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 			XSSFSheet sheet = workbook.getSheetAt(0);
-			DataFormatter dataFormatter = new DataFormatter();
 
-			String maHP = xuLyDuLieuNoiChiDinh(sheet, "B6").substring(14, 25);
-			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+			
+			Khoa khoa = new Khoa("1", "CNTT");
 
-			HocPhanKhoaLuanTotNghiep hpkl = hocPhanKhoaLuanTotNghiepService.layTheoMa(maHP);
-			if (hpkl == null) {
-				hpkl = new HocPhanKhoaLuanTotNghiep();
-				hpkl.setMaHocPhan(maHP);
-				hpkl.setSoTinChi("5");
-				hpkl.setTenHocPhan("Khóa Luận Tốt Nghiệp");
-				hpkl.setHocPhantienQuyet(true);
-				hpkl.setHocKy(hocKy);
-				hpkl = hocPhanKhoaLuanTotNghiepService.luu(hpkl);
-			}
-
-			String maLopHocPhan = xuLyDuLieuNoiChiDinh(sheet, "B5").substring(9, 21);
-			String tenLopHocPhan = xuLyDuLieuNoiChiDinh(sheet, "B5").substring(24);
-			LopHocPhan lopHocPhan = lopHocPhanService.layTheoMa(maLopHocPhan);
-			if (lopHocPhan == null) {
-				lopHocPhan = new LopHocPhan();
-				lopHocPhan.setMaLopHocPhan(maLopHocPhan);
-				lopHocPhan.setGhiChu("Chưa có");
-				lopHocPhan.setHocPhanKhoaLuanTotNghiep(hpkl);
-				lopHocPhan.setPhong("Chưa có");
-				lopHocPhan.setTenLopHocPhan(tenLopHocPhan);
-				lopHocPhan.setThoiGianBatDau(null);
-				lopHocPhan.setThoiGianKetThuc(null);
-				lopHocPhan = lopHocPhanService.luu(lopHocPhan);
-			}
 			Iterator<Row> rowIterator = sheet.iterator();
-			rowIterator.next();
 			rowIterator.next();
 			rowIterator.next();
 			rowIterator.next();
@@ -104,13 +77,11 @@ public class SinhVienImporter {
 			while (rowIterator.hasNext() && isHasValue) {
 				Row nextRow = rowIterator.next();
 				Iterator<Cell> cellIterator = nextRow.cellIterator();
-				SinhVien sinhVien = new SinhVien();
-				sinhVien.setLopHocPhan(lopHocPhan);
-				sinhVien.setAnhDaiDien("");
-				sinhVien.setEmail("a@gmail.com");
-				sinhVien.setNamNhapHoc(2023);
-				sinhVien.setNoiSinh("Ho Chi Minh");
-				String tenSinhVien = "";
+				GiangVien giangVien = new GiangVien();
+				giangVien.setAnhDaiDien("");
+				giangVien.setEmail("a@gmail.com");
+				giangVien.setKhoa(khoa);
+				String tenGiangVien = "";
 				
 				if (nextRow.getCell(3).getCellType() == CellType.BLANK) {
 					System.out.println("null;");
@@ -126,20 +97,20 @@ public class SinhVienImporter {
 						break;
 					case 1:
 						if (nextCell.getCellType() == CellType.NUMERIC) {
-							sinhVien.setMaSinhVien((int) nextCell.getNumericCellValue() + "");
+							giangVien.setMaGiangVien((int) nextCell.getNumericCellValue() + "");
 						} else {
-							sinhVien.setMaSinhVien(nextCell.getStringCellValue());
+							giangVien.setMaGiangVien(nextCell.getStringCellValue());
 						}
 
 						break;
 					case 2:
-						tenSinhVien = nextCell.getStringCellValue();
+						tenGiangVien = nextCell.getStringCellValue();
 						break;
 					case 3:
-						sinhVien.setTenSinhVien(tenSinhVien + " " + nextCell.getStringCellValue());
+						giangVien.setTenGiangVien(tenGiangVien + " " + nextCell.getStringCellValue());;
 						break;
 					case 4:
-						sinhVien.setGioiTinh(nextCell.getStringCellValue().equals("Nam") ? 1 : 0);
+						giangVien.setGioiTinh(nextCell.getStringCellValue().equals("Nam") ? 1 : 0);
 						break;
 					case 5:
 						Integer ngay = Integer.parseInt(nextCell.getStringCellValue().substring(0, 2));
@@ -151,30 +122,27 @@ public class SinhVienImporter {
 						date.setMonth(thang - 1);
 						date.setDate(ngay);
 //						System.out.println(date);
-						sinhVien.setNgaySinh(date);
+						giangVien.setNgaySinh(date);
 						break;
 					case 6:
-						sinhVien.setDienThoai(nextCell.getStringCellValue());
+						giangVien.setSoDienThoai(nextCell.getStringCellValue());
 						break;
 					case 7:
+						giangVien.setNamCongTac((int)nextCell.getNumericCellValue());
 						break;
 					case 8:
-						LopDanhNghia lopDanhNghia = lopDanhNghiaService.layTheoMa(
-								nextCell.getStringCellValue() == null ? "DHKTPM15ATT" : nextCell.getStringCellValue());
-						if (lopDanhNghia == null) {
-							lopDanhNghia = new LopDanhNghia(nextCell.getStringCellValue(), hocKy.getMaHocKy(),
-									Integer.parseInt(hocKy.getSoHocKy()), "Chưa có", 50);
-							lopDanhNghia = lopDanhNghiaService.luu(lopDanhNghia);
-						}
-						sinhVien.setLopDanhNghia(lopDanhNghia);
+						giangVien.setHocVi(nextCell.getStringCellValue());
+						break;
+					case 9:
+						giangVien.setCmnd(nextCell.getStringCellValue());
 						break;
 					}
-
+					
 					columnIndex++;
 					
 				}
 				
-				sinhViens.add(sinhVien);
+				giangViens.add(giangVien);
 			}
 			workbook.close();
 		}
@@ -183,7 +151,7 @@ public class SinhVienImporter {
 			e.getStackTrace();
 		}
 //		System.out.println(sinhViens.size());
-		return sinhViens;
+		return giangViens;
 	}
 
 	public String xuLyDuLieuNoiChiDinh(XSSFSheet sheet, String noi) {

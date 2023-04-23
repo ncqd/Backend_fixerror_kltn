@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.entity;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -20,6 +22,10 @@ public class HocKy {
 	private String maHocKy;
 	
 	private String soHocKy;
+	
+	private Timestamp thoiGianBatDau;
+	
+	private Timestamp thoiGianKetThuc;
 
 	@Override
 	public String toString() {

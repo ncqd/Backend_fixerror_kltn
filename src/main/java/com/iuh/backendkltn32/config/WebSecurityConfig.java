@@ -75,13 +75,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/hoc-ky/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY", "ROLE_SINHVIEN")
 			.and()
 			.authorizeHttpRequests()
-			.antMatchers("/api/nhom/**").hasAnyAuthority("ROLE_SINHVIEN", "ROLE_GIANGVIEN", "ROLE_SINHVIEN")
+			.antMatchers("/api/nhom/**").hasAnyAuthority("ROLE_QUANLY", "ROLE_GIANGVIEN", "ROLE_SINHVIEN")
 			.and()
 			.authorizeHttpRequests()
 			.antMatchers("/api/de-tai/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY", "ROLE_SINHVIEN")
 			.and()
 			.authorizeHttpRequests()
 			.antMatchers("/api/ke-hoach/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY", "ROLE_SINHVIEN")
+			.and()
+			.authorizeHttpRequests()
+			.antMatchers("/api/tieu-chi-cham-diem/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY")
+			.and()
+			.authorizeHttpRequests()
+			.antMatchers("/api/phieu-cham-diem/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY")
+			.and()
+			.authorizeHttpRequests()
+			.antMatchers("/api/phieu-mau/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY")
 			.anyRequest().authenticated();
 		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

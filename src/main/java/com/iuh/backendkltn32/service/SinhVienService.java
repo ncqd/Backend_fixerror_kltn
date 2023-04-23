@@ -10,6 +10,10 @@ public interface SinhVienService extends AbstractService<SinhVien>{
 	
 	List<SinhVien> layTatCaSinhVien();
 	
+	List<SinhVien> luuDanhSach(List<SinhVien> deTais);
+	
+	List<SinhVien> layTatCaSinhVienTheoHocKy(String maHocKy, String soHocKy);
+	
 	
 
 }

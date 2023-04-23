@@ -30,7 +30,7 @@ public class SinhVienDto {
 	
 	private String email;
 	
-	private Date ngaySinh;
+	private java.sql.Date ngaySinh;
 	
 	private Integer namNhapHoc;
 	

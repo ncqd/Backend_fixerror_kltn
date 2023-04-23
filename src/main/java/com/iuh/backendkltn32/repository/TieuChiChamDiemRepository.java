@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
 
-public interface TieuChiChamDiemRepository extends JpaRepository<TieuChiChamDiem, String> {
+public interface TieuChiChamDiemRepository extends JpaRepository<TieuChiChamDiem, Integer> {
 	
 	@Query(value = "select * from tieuchichamdiem", nativeQuery = true)
 	List<TieuChiChamDiem> layTieuChiChamDiemTheoPhieuCham(@Param("maPhieu") String maPhieu);

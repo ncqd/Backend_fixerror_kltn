@@ -12,6 +12,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,8 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.DuyetRequest;
+import com.iuh.backendkltn32.dto.GiangVienDto;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
+import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
+import com.iuh.backendkltn32.dto.PhanCongDto;
 import com.iuh.backendkltn32.dto.SinhVienDto;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
@@ -37,8 +41,11 @@ import com.iuh.backendkltn32.entity.Khoa;
 import com.iuh.backendkltn32.entity.LopDanhNghia;
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.Nhom;
+import com.iuh.backendkltn32.entity.PhanCong;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
+import com.iuh.backendkltn32.excel.DeTaiImporter;
+import com.iuh.backendkltn32.excel.GiangVienImporter;
 import com.iuh.backendkltn32.excel.SinhVienImporter;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 import com.iuh.backendkltn32.service.DeTaiService;
@@ -48,9 +55,11 @@ import com.iuh.backendkltn32.service.KhoaService;
 import com.iuh.backendkltn32.service.LopDanhNghiaService;
 import com.iuh.backendkltn32.service.LopHocPhanService;
 import com.iuh.backendkltn32.service.NhomService;
+import com.iuh.backendkltn32.service.PhanCongService;
 import com.iuh.backendkltn32.service.SinhVienService;
 import com.iuh.backendkltn32.service.TaiKhoanService;
 import com.iuh.backendkltn32.service.VaiTroService;
+import com.iuh.backendkltn32.service.impl.GiangVienServiceImpl;
 
 @RestController
 @RequestMapping("/api/quan-ly")
@@ -79,16 +88,22 @@ public class QuanLyBoMonController {
 
 	@Autowired
 	private KeHoachService keHoachService;
-
-	@Autowired
-	private SinhVienImporter importer;
 	
 	@Autowired
 	private LopDanhNghiaService lopDanhNghiaService;
 	
 	@Autowired
 	private LopHocPhanService lopHocPhanService;
-
+	
+	@Autowired
+	private SinhVienImporter sinhVienImporter;
+	
+	@Autowired
+	private GiangVienImporter giangVienImporter;
+	
+	@Autowired
+	private PhanCongService phanCongService;
+	
 	@GetMapping("/thong-tin-ca-nhan/{maQuanLy}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public GiangVien hienThiThongTinCaNhan(@PathVariable String maQuanLy, @RequestBody LoginRequest loginRequest) {
@@ -135,18 +150,39 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/them-giang-vien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public GiangVien themSGiangVienVaoHeThong(@RequestBody GiangVien giangVien) {
+	public GiangVien themSGiangVienVaoHeThong(@RequestBody GiangVienDto giangVien) {
 
 		try {
-			Khoa khoa = khoaService.layTheoMa(giangVien.getKhoa().getMaKhoa());
-			giangVien.setKhoa(khoa);
-			GiangVien ketQuaLuuGiangVien = giangVienService.luu(giangVien);
+			Khoa khoa = khoaService.layTheoMa(giangVien.getMaKhoa());
+			GiangVien giangVien2 = new GiangVien(giangVien.getMaGiangVien(), giangVien.getTenGiangVien(), 
+					giangVien.getSoDienThoai(), giangVien.getEmail(), giangVien.getCmnd(), giangVien.getHocVi(), giangVien.getNgaySinh(), 
+					giangVien.getNamCongTac(), khoa, giangVien.getAnhDaiDien(), giangVien.getGioiTinh() );
+			GiangVien ketQuaLuuGiangVien = giangVienService.luu(giangVien2);
 			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 			TaiKhoan taiKhoan = new TaiKhoan(giangVien.getMaGiangVien(), encoder.encode("1111"),
-					vaiTroService.layTheoMa(3L));
+					vaiTroService.layTheoMa(2L));
 
 			taiKhoanService.luu(taiKhoan);
+			return ketQuaLuuGiangVien;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
+	@PutMapping("/cap-nhat-giang-vien")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public GiangVien caNhatGiangVienVaoHeThong(@RequestBody GiangVienDto giangVien) {
+
+		try {
+			Khoa khoa = khoaService.layTheoMa(giangVien.getMaKhoa());
+			GiangVien giangVien2 = new GiangVien(giangVien.getMaGiangVien(), giangVien.getTenGiangVien(), 
+					giangVien.getSoDienThoai(), giangVien.getEmail(), giangVien.getCmnd(), giangVien.getHocVi(), giangVien.getNgaySinh(), 
+					giangVien.getNamCongTac(), khoa, giangVien.getAnhDaiDien(), giangVien.getGioiTinh() );
+			GiangVien ketQuaLuuGiangVien = giangVienService.capNhat(giangVien2);
+			
 			return ketQuaLuuGiangVien;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -195,6 +231,7 @@ public class QuanLyBoMonController {
 			Nhom nhom = nhomService.layTheoMa(duyetNhomRequest.getMa());
 
 			nhom.setTinhTrang(duyetNhomRequest.getTrangThai());
+			nhomService.capNhat(nhom);
 			return nhom;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -261,8 +298,87 @@ public class QuanLyBoMonController {
 	
 	@PostMapping("/them-sinh-vien-excel")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void themSinhVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
-		importer.addDataFDromExcel(file.getInputStream());
+	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
+		if (DeTaiImporter.isValidExcelFile(file)) {
+			try {
+				
+				List<SinhVien> sinhViens = sinhVienImporter.addDataFDromExcel(file.getInputStream());
+				sinhVienService.luuDanhSach(sinhViens);
+				return ResponseEntity.ok(sinhViens);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(500).body("Have Error");
+			}
+		}
+		return null;
 	}
+	
+	@PostMapping("/them-giang-vien-excel")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> themGiangVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
+		if (DeTaiImporter.isValidExcelFile(file)) {
+			try {
+				
+				List<GiangVien> giangViens = giangVienImporter.addDataFDromExcel(file.getInputStream());
+				giangVienService.luuDanhSach(giangViens);
+				return ResponseEntity.ok(giangViens);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(500).body("Have Error");
+			}
+		}
+		return null;
+	}
+	
+	@PostMapping("/them-phan-cong")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
+		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
+		GiangVien giangVien = giangVienService.layTheoMa(phanCongDto.getMaGiangVien());
+		PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
+		
+		return ResponseEntity.ok(phanCongService.luu(phanCong));
+	}
+	
+	@PutMapping("/cap-nhat-phan-cong")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> capNhatPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
+		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
+		GiangVien giangVien = giangVienService.layTheoMa(phanCongDto.getMaGiangVien());
+		PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
+		
+		return ResponseEntity.ok(phanCongService.capNhat(phanCong));
+	}
+	
+	@DeleteMapping("/xoa-phan-cong/{maPhanCong}")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> xoaPhanCong(@PathVariable("maPhanCong") String maPhanCong) throws Exception {
+		
+		return ResponseEntity.ok(phanCongService.xoa(maPhanCong));
+	}
+	
+	@GetMapping("/lay-ds-giang-vien")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> xoaPhanCong() throws Exception {
+		
+		return ResponseEntity.ok(giangVienService.layDanhSach());
+	}
+	
+	@PostMapping("/lay-ds-sinh-vien")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> layDsSinhVien(@RequestBody LayDeTaiRquestDto request) {
 
+		try {
+			
+			if (request.getMaHocKy() == null) {
+				return ResponseEntity.ok(sinhVienService.layTatCaSinhVien());
+			}
+			
+			return ResponseEntity.ok(sinhVienService.layTatCaSinhVienTheoHocKy(request.getMaHocKy(), request.getSoHocKy()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 }

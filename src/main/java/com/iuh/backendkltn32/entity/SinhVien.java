@@ -87,7 +87,7 @@ public class SinhVien implements Serializable {
 	}
 
 	public SinhVien(String maSinhVien, String tenSinhVien, String noiSinh, String dienThoai, String email,
-			Date ngaySinh, Integer namNhapHoc, Integer gioiTinh, String anhDaiDien, LopDanhNghia lopDanhNghia,
+			java.sql.Date ngaySinh, Integer namNhapHoc, Integer gioiTinh, String anhDaiDien, LopDanhNghia lopDanhNghia,
 			LopHocPhan lopHocPhan) {
 		super();
 		this.maSinhVien = maSinhVien;

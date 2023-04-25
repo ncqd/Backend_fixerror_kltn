@@ -210,7 +210,7 @@ public class NhomController {
 				});
 				List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getTenGiangVien()).toList();
 				List<String> ma = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getMaGiangVien()).toList();
-				List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3", ma.get(0));
+				List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3", ma.size() >0 ? ma.get(0) : "");
 				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(), 
 						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs, 
 						nhom.getDeTai().getGiangVien().getMaGiangVien(), 

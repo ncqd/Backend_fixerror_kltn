@@ -68,7 +68,7 @@ public class NhomController {
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
 	public ResponseEntity<?> dangKyNhom(@RequestBody DangKyNhomRequest request) throws Exception {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng Ký Nhóm",
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
 				request.getVaiTro());
 		System.out.println("NhomController - dang ky nhom - " + request);
 		if (keHoachs.size() > 0) {
@@ -171,9 +171,10 @@ public class NhomController {
 						e.printStackTrace();
 					}
 				});
-				List<String> tenGiangVienPB = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getTenGiangVien()).toList();
+				List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getTenGiangVien()).toList();
+				List<String> maGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getMaGiangVien()).toList();
 				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(), 
-						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPB);
+						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs, maGiangVienPBs);
 				if (!respones.contains(nhomRoleGVRespone)) {
 
 					respones.add(nhomRoleGVRespone);
@@ -206,7 +207,7 @@ public class NhomController {
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
 	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) throws Exception {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng Ký Nhóm",
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
 				request.getVaiTro());
 		System.out.println("NhomController - dang ky nhom - " + request);
 		if (keHoachs.size() > 0) {
@@ -216,7 +217,7 @@ public class NhomController {
 			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
 				throw new Exception("Thời gian đăng ký nhóm đã hết");
 			}
-
+			
 			try {
 				SinhVien sinhVien = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
 				if (sinhVien.getNhom() == null) {
@@ -224,6 +225,9 @@ public class NhomController {
 				}
 				if (request.getMaNhom() == null) {
 					return ResponseEntity.status(500).body("Ma nhom bang null");
+				}
+				if (sinhVien.getNhom().getDeTai() != null || sinhVien.getNhom().getTinhTrang() == 1) {
+					return ResponseEntity.status(500).body("Không thể rời nhóm");
 				}
 				sinhVien.setNhom(null);
 				sinhVienService.capNhat(sinhVien);

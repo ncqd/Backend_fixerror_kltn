@@ -35,7 +35,6 @@ public class PhieuChamMauController {
 	public PhieuChamMau themPhieuChamMau(@RequestBody PhieuChamMau phieuChamMau) {
 
 		try {
-				
 			return phieuChamMauService.luu(phieuChamMau);
 		} catch (Exception e) {
 			e.printStackTrace();

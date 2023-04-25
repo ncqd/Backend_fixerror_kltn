@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.dto;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,6 +24,12 @@ public class NhomPBResponeDto {
 	private String tenGiangVienHD;
 	private List<String> dsTenGiangVienPB;
 	private String maGiangVienHD;
+	private Timestamp thoiGianBatDau;
+	private Timestamp thoiGianKetThuc;
+	private String tietBatDau;
+	private String tietKetThuc;
+	private String phong;
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(maNhom);

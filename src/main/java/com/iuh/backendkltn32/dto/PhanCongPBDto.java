@@ -3,9 +3,6 @@ package com.iuh.backendkltn32.dto;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.iuh.backendkltn32.entity.GiangVien;
-import com.iuh.backendkltn32.entity.Nhom;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PhanCongDto {
+public class PhanCongPBDto {
 
 	private Integer maPhanCong;
 
@@ -29,15 +26,9 @@ public class PhanCongDto {
 	
 	private List<String> dsTenGiangPB;
 	
-	private Timestamp ngay;
+	private Timestamp thoiGianBatDauKeHoach;
 	
-	private String tietBatDau;
+	private Timestamp thoiGianBatDauKetThuc;
 	
-	private String tietKetThuc;
-	
-	private String phong;
-	
-	private String maHocKy;
-	
-
+	private String tiet;
 }

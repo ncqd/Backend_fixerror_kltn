@@ -37,5 +37,17 @@ public class PhieuChamMau {
 
 	@OneToMany(mappedBy = "maChuanDauRa", cascade = CascadeType.ALL)
 	private List<TieuChiChamDiem> tieuChiChamDiems;
+	
+	private String vaiTroDung;
+
+	public PhieuChamMau(String tenPhieuCham, List<TieuChiChamDiem> tieuChiChamDiems, String vaiTroDung) {
+		super();
+		this.tenPhieuCham = tenPhieuCham;
+		this.tieuChiChamDiems = tieuChiChamDiems;
+		this.vaiTroDung = vaiTroDung;
+	}
+
+	
+	
 
 }

@@ -38,10 +38,12 @@ public class LapKeHoachDto {
 	private String vaiTro;
 
 	private String maNguoiDung;
+	
+	private Integer maLoaiLich;
 
 	public LapKeHoachDto(Integer id, String tenKeHoach, String chuThich, List<String> dsNgayThucHienKhoaLuan,
 			HocKy hocKy, Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, Integer tinhTrang, String vaiTro,
-			String maNguoiDung) {
+			String maNguoiDung, Integer maLoaiLich) {
 		super();
 		this.id = id;
 		this.tenKeHoach = tenKeHoach;
@@ -53,6 +55,7 @@ public class LapKeHoachDto {
 		this.tinhTrang = tinhTrang;
 		this.vaiTro = vaiTro;
 		this.maNguoiDung = maNguoiDung;
+		this.maLoaiLich = maLoaiLich;
 	}
 	
 	

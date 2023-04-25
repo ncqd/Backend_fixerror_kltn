@@ -32,6 +32,7 @@ import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
+import com.iuh.backendkltn32.entity.LoaiKeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.PhanCong;
 import com.iuh.backendkltn32.entity.SinhVien;
@@ -145,7 +146,7 @@ public class QuanLyBoMonController {
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				hocKy, lapKeHoachDto.getThoiGianBatDau() , lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
+				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung(), new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()));
 		keHoachService.luu(keHoach);
 		return lapKeHoachDto;
 	}	
@@ -158,7 +159,7 @@ public class QuanLyBoMonController {
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				hocKy, lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
+				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung(), new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()));
 		keHoachService.capNhat(keHoach);
 		return lapKeHoachDto;
 	}
@@ -177,7 +178,7 @@ public class QuanLyBoMonController {
 		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
 		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()), new Timestamp(kh.getThoiGianKetThuc().getTime()),
-				kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
+				kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
 		return lapKeHoachDto;
 	}
 
@@ -190,7 +191,7 @@ public class QuanLyBoMonController {
 			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
 			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()), new Timestamp(kh.getThoiGianKetThuc().getTime()),
-					kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung());
+					kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
 				ds.add(lapKeHoachDto);
 		});
 		return ds;

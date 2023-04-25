@@ -96,8 +96,17 @@ public class NhomController {
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
 					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(),
-							null, sinhViens);
+					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+						try {
+							return sinhVienService.layTheoMa(sv);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						return null;
+					}).toList();
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom,
+							null, sinhViens, sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
@@ -110,8 +119,17 @@ public class NhomController {
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
 					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(),
-							null, sinhViens);
+					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+						try {
+							return sinhVienService.layTheoMa(sv);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						return null;
+					}).toList();
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom,
+							null, sinhViens,sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
@@ -124,8 +142,17 @@ public class NhomController {
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
 					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(),
-							nhom.getDeTai().getMaDeTai(), sinhViens);
+					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+						try {
+							return sinhVienService.layTheoMa(sv);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						return null;
+					}).toList();
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom,
+							nhom.getDeTai().getMaDeTai(), sinhViens, sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
@@ -144,7 +171,16 @@ public class NhomController {
 		if (!nhoms.isEmpty() && nhoms != null) {
 			nhoms.stream().forEach(nhom -> {
 				List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom.getMaNhom(), null, sinhViens);
+				List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+					try {
+						return sinhVienService.layTheoMa(sv);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				}).toList();
+				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
 				if (!respones.contains(nhomRoleGVRespone)) {
 
 					respones.add(nhomRoleGVRespone);

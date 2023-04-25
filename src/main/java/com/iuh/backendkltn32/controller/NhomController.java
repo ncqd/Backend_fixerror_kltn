@@ -172,9 +172,8 @@ public class NhomController {
 					}
 				});
 				List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getTenGiangVien()).toList();
-				List<String> maGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getMaGiangVien()).toList();
 				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(), 
-						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs, maGiangVienPBs);
+						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs, nhom.getDeTai().getGiangVien().getMaGiangVien());
 				if (!respones.contains(nhomRoleGVRespone)) {
 
 					respones.add(nhomRoleGVRespone);

@@ -1,10 +1,10 @@
 package com.iuh.backendkltn32.entity;
 
 import java.sql.Timestamp;
-import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,9 +56,13 @@ public class KeHoach {
 	
 	@Column(name = "maNguoiDung", nullable = true)
 	private String maNguoiDung;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "maLoai", nullable = true)
+	private LoaiKeHoach loaiKeHoach;
 
 	public KeHoach(String tenKeHoach, String chuThich, String dsNgayThucHienKhoaLuan, HocKy hocKy,
-			Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, Integer tinhTrang, String vaiTro, String maNguoiDung) {
+			Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, Integer tinhTrang, String vaiTro, String maNguoiDung, LoaiKeHoach loaiKeHoach) {
 		super();
 		this.tenKeHoach = tenKeHoach;
 		this.chuThich = chuThich;
@@ -69,6 +73,7 @@ public class KeHoach {
 		this.tinhTrang = tinhTrang;
 		this.vaiTro = vaiTro;
 		this.maNguoiDung = maNguoiDung;
+		this.loaiKeHoach = loaiKeHoach;
 	}
 
 	

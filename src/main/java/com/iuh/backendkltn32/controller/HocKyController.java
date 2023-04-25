@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.HocPhanKhoaLuanTotNghiep;
 import com.iuh.backendkltn32.entity.KeHoach;
+import com.iuh.backendkltn32.entity.LoaiKeHoach;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.HocPhanKhoaLuanTotNghiepService;
 import com.iuh.backendkltn32.service.KeHoachService;
@@ -67,22 +68,22 @@ public class HocKyController {
 		
 		keHoachService.luu(new KeHoach("Lịch thêm đề tài", "lịch dùng để cho giảng viên thêm, xóa, sửa đề tài của họ",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
-				"ROLE_GIANGVIEN", null));
+				"ROLE_GIANGVIEN", null, new LoaiKeHoach(5)));
 		keHoachService.luu(new KeHoach("Lịch chấm phản biện", "lịch biết giảng viên sẽ phản biện ngày nào và thời gian nhập điểm",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
-				"ROLE_GIANGVIEN", null));
+				"ROLE_GIANGVIEN", null, new LoaiKeHoach(5)));
 		keHoachService.luu(new KeHoach("Lịch gán đề tài cho nhóm", "lịch dùng để cho giảng viên gán đề tài cho nhóm sinh viên họ muốn hướng dẫn",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
-				"ROLE_GIANGVIEN", null));
+				"ROLE_GIANGVIEN", null, new LoaiKeHoach(5)));
 		keHoachService.luu(new KeHoach("Lịch đăng ký đề tài", "lịch sinh viên đăng ký đề tài",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
-				"ROLE_SINHVIEN", null));
+				"ROLE_SINHVIEN", null, new LoaiKeHoach(5)));
 		keHoachService.luu(new KeHoach("Lịch đăng ký nhóm", "lịch cho sinh viên đăng ký nhhóm",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
-				"ROLE_SINHVIEN", null));
+				"ROLE_SINHVIEN", null, new LoaiKeHoach(5)));
 		keHoachService.luu(new KeHoach("Lịch thêm đề tài", "lịch dùng để cho giảng viên thêm, xóa, sửa đề tài của họ",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
-				"ROLE_QUANLY", null));
+				"ROLE_QUANLY", null, new LoaiKeHoach(5)));
 
 		return hocKy;
 	}

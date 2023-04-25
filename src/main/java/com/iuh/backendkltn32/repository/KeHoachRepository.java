@@ -21,4 +21,7 @@ public interface KeHoachRepository extends JpaRepository<KeHoach, Integer>{
 
 	@Query(value = "select * from kehoach where maHocKy = :maHocKy and tenKeHoach = :tenKeHoach and vaiTro = :vaiTro   ;", nativeQuery = true)
 	List<KeHoach> layTheoTenVaMaHocKyVaiTro(@Param("maHocKy") String maHocKy,@Param("tenKeHoach") String tenKeHoach, @Param("vaiTro") String vaiTro);
+	
+	@Query(value = "select * from kehoach where maHocKy = :maHocKy and maLoai = :maLoai and  maNguoiDung = :maNguoiDung ;", nativeQuery = true)
+	List<KeHoach> layKeHoachTheoMaNguoiDungVaMaLoai(@Param("maHocKy") String maHocKy,@Param("maLoai")String maLoai, @Param("maNguoiDung") String maNguoiDung);
 }

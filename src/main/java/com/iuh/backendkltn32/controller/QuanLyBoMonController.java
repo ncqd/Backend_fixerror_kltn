@@ -52,10 +52,8 @@ public class QuanLyBoMonController {
 	@Autowired
 	private SinhVienService sinhVienService;
 
-
 	@Autowired
 	private GiangVienService giangVienService;
-
 
 	@Autowired
 	private DeTaiService deTaiService;
@@ -65,13 +63,13 @@ public class QuanLyBoMonController {
 
 	@Autowired
 	private KeHoachService keHoachService;
-	
+
 	@Autowired
 	private HocKyService hocKyService;
-	
+
 	@Autowired
 	private PhanCongService phanCongService;
-	
+
 	@GetMapping("/thong-tin-ca-nhan/{maQuanLy}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public GiangVien hienThiThongTinCaNhan(@PathVariable String maQuanLy, @RequestBody LoginRequest loginRequest) {
@@ -87,7 +85,6 @@ public class QuanLyBoMonController {
 		}
 		return null;
 	}
-	
 
 	@GetMapping("/xuat-ds-sinhvien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -145,11 +142,12 @@ public class QuanLyBoMonController {
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
-				hocKy, lapKeHoachDto.getThoiGianBatDau() , lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung(), new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()));
+				hocKy, lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
+				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung(),
+				new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()));
 		keHoachService.luu(keHoach);
 		return lapKeHoachDto;
-	}	
+	}
 
 	@PutMapping("/cap-nhat-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -159,7 +157,8 @@ public class QuanLyBoMonController {
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				hocKy, lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
-				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung(), new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()));
+				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung(),
+				new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()));
 		keHoachService.capNhat(keHoach);
 		return lapKeHoachDto;
 	}
@@ -174,11 +173,13 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto layKeHoachTheoMa(@PathVariable String maKeHoach) throws Exception {
 		KeHoach kh = keHoachService.layTheoMa(maKeHoach);
-		
-		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
+
+		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
+				: new String[0];
 		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
-				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()), new Timestamp(kh.getThoiGianKetThuc().getTime()),
-				kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
+				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
+				new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
+				kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
 		return lapKeHoachDto;
 	}
 
@@ -187,97 +188,128 @@ public class QuanLyBoMonController {
 	public List<LapKeHoachDto> layKeHoachTheoHk(@PathVariable String maHocKy) throws Exception {
 		List<LapKeHoachDto> ds = new ArrayList<>();
 		keHoachService.layKeHoachTheoMaHocKy(maHocKy).stream().forEach(kh -> {
-			
-			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
+
+			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null
+					? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
+					: new String[0];
 			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
-					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()), new Timestamp(kh.getThoiGianKetThuc().getTime()),
-					kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
-				ds.add(lapKeHoachDto);
+					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
+					new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
+					kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
+			ds.add(lapKeHoachDto);
 		});
 		return ds;
 	}
-	
+
 	@PostMapping("/them-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
 		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
-		List<PhanCong> phanCongs =  phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
+		List<PhanCong> phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 			GiangVien giangVien;
 			try {
 				if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
 					throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
 				}
 				giangVien = giangVienService.layTheoMa(ma);
-			
-			PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
-			phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
-			return phanCongService.luu(phanCong);
+
+				PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom,
+						giangVien);
+				phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+				return phanCongService.luu(phanCong);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return null;
 		}).toList();
-		
-		
+		Integer gioBatDau = Integer.parseInt(phanCongDto.getTietBatDau()) + 5;
+		Integer gioKetThuc = Integer.parseInt(phanCongDto.getTietKetThuc()) + 5;
+		Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
+		tgbd.setHours(gioBatDau);
+		Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
+		tgkt.setHours(gioKetThuc);
+		phanCongDto.getDsMaGiangVienPB().stream().forEach(ma -> {
+			try {
+				KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phanCongDto.getPhong(), null,
+						hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1, ma, ma,
+						new LoaiKeHoach(3));
+				keHoachService.luu(keHoach);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		});
+		sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+			try {
+
+				KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phanCongDto.getPhong(), null,
+						hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1, "ROLE_SINHVIEN", sv,
+						new LoaiKeHoach(3));
+				keHoachService.luu(keHoach);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 		return ResponseEntity.ok(phanCongs);
 	}
-	
+
 	@PutMapping("/cap-nhat-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> capNhatPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
 		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
-		List<PhanCong> phanCongs =  phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
+		List<PhanCong> phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 			GiangVien giangVien;
 			try {
 				if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
 					throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
 				}
 				giangVien = giangVienService.layTheoMa(ma);
-			
-			PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
-			phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
-			return phanCongService.capNhat(phanCong);
+
+				PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom,
+						giangVien);
+				phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+				return phanCongService.capNhat(phanCong);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return null;
 		}).toList();
-		
-		
+
 		return ResponseEntity.ok(phanCongs);
 	}
-	
+
 	@DeleteMapping("/xoa-phan-cong/{maPhanCong}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> xoaPhanCong(@PathVariable("maPhanCong") String maPhanCong) throws Exception {
-		
+
 		return ResponseEntity.ok(phanCongService.xoa(maPhanCong));
 	}
-	
+
 	@GetMapping("/lay-ds-giang-vien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> xoaPhanCong() throws Exception {
-		
+
 		return ResponseEntity.ok(giangVienService.layDanhSach());
 	}
-	
+
 	@PostMapping("/lay-ds-sinh-vien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> layDsSinhVien(@RequestBody LayDeTaiRquestDto request) {
 
 		try {
-			
+
 			if (request.getMaHocKy() == null) {
 				return ResponseEntity.ok(sinhVienService.layTatCaSinhVien());
 			}
-			
-			return ResponseEntity.ok(sinhVienService.layTatCaSinhVienTheoHocKy(request.getMaHocKy(), request.getSoHocKy()));
+
+			return ResponseEntity
+					.ok(sinhVienService.layTatCaSinhVienTheoHocKy(request.getMaHocKy(), request.getSoHocKy()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
+
 }

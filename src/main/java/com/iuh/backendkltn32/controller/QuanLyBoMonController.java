@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,43 +21,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.DuyetRequest;
-import com.iuh.backendkltn32.dto.GiangVienDto;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.PhanCongDto;
-import com.iuh.backendkltn32.dto.SinhVienDto;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
+import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
-import com.iuh.backendkltn32.entity.Khoa;
-import com.iuh.backendkltn32.entity.LopDanhNghia;
-import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.PhanCong;
 import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.entity.TaiKhoan;
-import com.iuh.backendkltn32.excel.DeTaiImporter;
-import com.iuh.backendkltn32.excel.GiangVienImporter;
-import com.iuh.backendkltn32.excel.SinhVienImporter;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
+import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KeHoachService;
-import com.iuh.backendkltn32.service.KhoaService;
-import com.iuh.backendkltn32.service.LopDanhNghiaService;
-import com.iuh.backendkltn32.service.LopHocPhanService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.PhanCongService;
 import com.iuh.backendkltn32.service.SinhVienService;
-import com.iuh.backendkltn32.service.TaiKhoanService;
-import com.iuh.backendkltn32.service.VaiTroService;
-import com.iuh.backendkltn32.service.impl.GiangVienServiceImpl;
 
 @RestController
 @RequestMapping("/api/quan-ly")
@@ -68,17 +51,10 @@ public class QuanLyBoMonController {
 	@Autowired
 	private SinhVienService sinhVienService;
 
-	@Autowired
-	private TaiKhoanService taiKhoanService;
-
-	@Autowired
-	private VaiTroService vaiTroService;
 
 	@Autowired
 	private GiangVienService giangVienService;
 
-	@Autowired
-	private KhoaService khoaService;
 
 	@Autowired
 	private DeTaiService deTaiService;
@@ -90,16 +66,7 @@ public class QuanLyBoMonController {
 	private KeHoachService keHoachService;
 	
 	@Autowired
-	private LopDanhNghiaService lopDanhNghiaService;
-	
-	@Autowired
-	private LopHocPhanService lopHocPhanService;
-	
-	@Autowired
-	private SinhVienImporter sinhVienImporter;
-	
-	@Autowired
-	private GiangVienImporter giangVienImporter;
+	private HocKyService hocKyService;
 	
 	@Autowired
 	private PhanCongService phanCongService;
@@ -119,77 +86,7 @@ public class QuanLyBoMonController {
 		}
 		return null;
 	}
-
-	@PostMapping("/them-sinh-vien")
-	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public SinhVien themSinhVienVaoHeThong(@RequestBody SinhVienDto sinhVien) {
-
-		try {
-			
-			LopDanhNghia lopDanhNghia = lopDanhNghiaService.layTheoMa(sinhVien.getMaLopDanhNghia());
-			
-			LopHocPhan lopHocPhan = lopHocPhanService.layTheoMa(sinhVien.getMaLopHocPhan());
-			
-			SinhVien sinhVien2 = new SinhVien(sinhVien.getMaSinhVien(), sinhVien.getTenSinhVien(), 
-					sinhVien.getNoiSinh(), sinhVien.getDienThoai(), sinhVien.getEmail(), sinhVien.getNgaySinh(), 
-					sinhVien.getNamNhapHoc(), sinhVien.getGioiTinh(), sinhVien.getAnhDaiDien(), lopDanhNghia, lopHocPhan);
-			SinhVien ketQuaLuuSinhVien = sinhVienService.luu(sinhVien2);
-			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-			TaiKhoan taiKhoan = new TaiKhoan(sinhVien.getMaSinhVien(), encoder.encode("1111"),
-					vaiTroService.layTheoMa(4L));
-
-			taiKhoanService.luu(taiKhoan);
-			return ketQuaLuuSinhVien;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
-	@PostMapping("/them-giang-vien")
-	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public GiangVien themSGiangVienVaoHeThong(@RequestBody GiangVienDto giangVien) {
-
-		try {
-			Khoa khoa = khoaService.layTheoMa(giangVien.getMaKhoa());
-			GiangVien giangVien2 = new GiangVien(giangVien.getMaGiangVien(), giangVien.getTenGiangVien(), 
-					giangVien.getSoDienThoai(), giangVien.getEmail(), giangVien.getCmnd(), giangVien.getHocVi(), giangVien.getNgaySinh(), 
-					giangVien.getNamCongTac(), khoa, giangVien.getAnhDaiDien(), giangVien.getGioiTinh() );
-			GiangVien ketQuaLuuGiangVien = giangVienService.luu(giangVien2);
-			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-			TaiKhoan taiKhoan = new TaiKhoan(giangVien.getMaGiangVien(), encoder.encode("1111"),
-					vaiTroService.layTheoMa(2L));
-
-			taiKhoanService.luu(taiKhoan);
-			return ketQuaLuuGiangVien;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-
-	}
 	
-	@PutMapping("/cap-nhat-giang-vien")
-	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public GiangVien caNhatGiangVienVaoHeThong(@RequestBody GiangVienDto giangVien) {
-
-		try {
-			Khoa khoa = khoaService.layTheoMa(giangVien.getMaKhoa());
-			GiangVien giangVien2 = new GiangVien(giangVien.getMaGiangVien(), giangVien.getTenGiangVien(), 
-					giangVien.getSoDienThoai(), giangVien.getEmail(), giangVien.getCmnd(), giangVien.getHocVi(), giangVien.getNgaySinh(), 
-					giangVien.getNamCongTac(), khoa, giangVien.getAnhDaiDien(), giangVien.getGioiTinh() );
-			GiangVien ketQuaLuuGiangVien = giangVienService.capNhat(giangVien2);
-			
-			return ketQuaLuuGiangVien;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-
-	}
 
 	@GetMapping("/xuat-ds-sinhvien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -209,7 +106,7 @@ public class QuanLyBoMonController {
 		excelExporter.export(response);
 	}
 
-	@PostMapping("/duyet-de-tai-theo-nam-hk")
+	@PostMapping("/duyet-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public DeTai pheDuyetDeTai(@RequestBody DuyetRequest duyetDeTaiRequest) {
 		try {
@@ -224,7 +121,7 @@ public class QuanLyBoMonController {
 
 	}
 
-	@PostMapping("/duyet-nhom-theo-nam-hk")
+	@PostMapping("/duyet-nhom")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public Nhom pheDuyetNhom(@RequestBody DuyetRequest duyetNhomRequest) {
 		try {
@@ -243,22 +140,24 @@ public class QuanLyBoMonController {
 	@PostMapping("/them-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto themKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
+		HocKy hocKy = hocKyService.layTheoMa(lapKeHoachDto.getMaHocKy());
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
-				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau() , lapKeHoachDto.getThoiGianKetThuc(),
+				hocKy, lapKeHoachDto.getThoiGianBatDau() , lapKeHoachDto.getThoiGianKetThuc(),
 				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.luu(keHoach);
 		return lapKeHoachDto;
-	}
+	}	
 
 	@PutMapping("/cap-nhat-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
+		HocKy hocKy = hocKyService.layTheoMa(lapKeHoachDto.getMaHocKy());
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
-				lapKeHoachDto.getHocKy(), lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
+				hocKy, lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
 				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung());
 		keHoachService.capNhat(keHoach);
 		return lapKeHoachDto;
@@ -274,6 +173,7 @@ public class QuanLyBoMonController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public LapKeHoachDto layKeHoachTheoMa(@PathVariable String maKeHoach) throws Exception {
 		KeHoach kh = keHoachService.layTheoMa(maKeHoach);
+		
 		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s") : new String[0];
 		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()), new Timestamp(kh.getThoiGianKetThuc().getTime()),
@@ -296,40 +196,6 @@ public class QuanLyBoMonController {
 		return ds;
 	}
 	
-	@PostMapping("/them-sinh-vien-excel")
-	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
-		if (DeTaiImporter.isValidExcelFile(file)) {
-			try {
-				
-				List<SinhVien> sinhViens = sinhVienImporter.addDataFDromExcel(file.getInputStream());
-				sinhVienService.luuDanhSach(sinhViens);
-				return ResponseEntity.ok(sinhViens);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(500).body("Have Error");
-			}
-		}
-		return null;
-	}
-	
-	@PostMapping("/them-giang-vien-excel")
-	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themGiangVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
-		if (DeTaiImporter.isValidExcelFile(file)) {
-			try {
-				
-				List<GiangVien> giangViens = giangVienImporter.addDataFDromExcel(file.getInputStream());
-				giangVienService.luuDanhSach(giangViens);
-				return ResponseEntity.ok(giangViens);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(500).body("Have Error");
-			}
-		}
-		return null;
-	}
-	
 	@PostMapping("/them-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
@@ -337,13 +203,15 @@ public class QuanLyBoMonController {
 		List<PhanCong> phanCongs =  phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 			GiangVien giangVien;
 			try {
+				if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+					throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+				}
 				giangVien = giangVienService.layTheoMa(ma);
 			
 			PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
 			phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
 			return phanCongService.luu(phanCong);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return null;
@@ -360,6 +228,9 @@ public class QuanLyBoMonController {
 		List<PhanCong> phanCongs =  phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 			GiangVien giangVien;
 			try {
+				if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+					throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+				}
 				giangVien = giangVienService.layTheoMa(ma);
 			
 			PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom, giangVien);
@@ -405,6 +276,7 @@ public class QuanLyBoMonController {
 			e.printStackTrace();
 		}
 		return null;
-
 	}
+	
+	
 }

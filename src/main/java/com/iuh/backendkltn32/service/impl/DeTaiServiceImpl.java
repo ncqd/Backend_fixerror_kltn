@@ -75,7 +75,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	@Override
 	public List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy, String maGiangVien) throws Exception {
 	
-		List<DeTai> dsDeTai = repository.layDsDeTaiTheoNamHocKy(maHocKy, soHocKy, maGiangVien);
+		List<DeTai> dsDeTai = repository.layDsDeTaiTheoNamHocKyTheoMaGiangVien(maHocKy, soHocKy, maGiangVien);
 		
 		return dsDeTai;
 	}
@@ -112,13 +112,26 @@ public class DeTaiServiceImpl implements DeTaiService {
 	@Override
 	public List<DeTai> layDsDeTaiTheoNamHocKyTheoTrangThai(String maHocKy, String soHocKy, String maGiangVien, Integer trangThai)
 			throws Exception {
-		return repository.layDsDeTaiTheoNamHocKyChuaPheDuyet(maHocKy, soHocKy, maGiangVien, trangThai);
+		return repository.layDsDeTaiTheoNamHocKyTheoTrangThaiCoMaGv(maHocKy, soHocKy, maGiangVien, trangThai);
 	}
 
 	@Override
 	public List<DeTai> luuDanhSach(List<DeTai> deTais) {
 		// TODO Auto-generated method stub
 		return repository.saveAll(deTais);
+	}
+
+	@Override
+	public List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy) throws Exception {
+		// TODO Auto-generated method stub
+		return repository.layDsDeTaiTheoNamHocKy(maHocKy, soHocKy);
+	}
+
+	@Override
+	public List<DeTai> layDsDeTaiTheoTrangThaiKhongMaGV(String maHocKy, String soHocKy, Integer trangThai)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return repository.layDsDeTaiTheoNamHocKyTheoTrangThai(maHocKy, soHocKy, trangThai);
 	}
 
 }

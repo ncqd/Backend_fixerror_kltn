@@ -58,7 +58,7 @@ public class DeTaiController {
 
 	@Autowired
 	private TaiKhoanService taiKhoanService;
-	
+
 	@Autowired
 	private DeTaiImporter deTaiImporter;
 
@@ -181,14 +181,30 @@ public class DeTaiController {
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public List<DeTai> layDanhSachDeTaiTheoNamHocKyTrangThai(@RequestBody LayDeTaiRquestDto layDeTaiRquestDto) {
 		try {
+
 			List<DeTai> dsDeTai = new ArrayList<>();
+			HocKy hocKy = new HocKy(layDeTaiRquestDto.getMaHocKy(), layDeTaiRquestDto.getSoHocKy(), null, null);
+			if (hocKy.getMaHocKy() == null) {
+				hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+			}
 			if (layDeTaiRquestDto.getTrangThai() == null) {
-				dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(layDeTaiRquestDto.getMaHocKy(),
-						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
+				if (layDeTaiRquestDto.getMaGiangVien() != null) {
+					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(),
+							hocKy.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
+				} else {
+					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(),
+							hocKy.getSoHocKy());
+				}
+
 			} else {
-				dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(layDeTaiRquestDto.getMaHocKy(),
-						layDeTaiRquestDto.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien(),
-						layDeTaiRquestDto.getTrangThai());
+				if (layDeTaiRquestDto.getMaGiangVien() != null) {
+					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(),
+							hocKy.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien(),
+							layDeTaiRquestDto.getTrangThai());
+				} else {
+					dsDeTai = deTaiService.layDsDeTaiTheoTrangThaiKhongMaGV(hocKy.getMaHocKy(),
+							hocKy.getSoHocKy(), layDeTaiRquestDto.getTrangThai());
+				}
 			}
 
 			return dsDeTai;
@@ -261,12 +277,13 @@ public class DeTaiController {
 
 	@PostMapping("/them-de-tai-excel/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> importExcel(@PathVariable("maGiangVien") String maGiangVien, @RequestPart("file") MultipartFile file) {
+	public ResponseEntity<?> importExcel(@PathVariable("maGiangVien") String maGiangVien,
+			@RequestPart("file") MultipartFile file) {
 		if (DeTaiImporter.isValidExcelFile(file)) {
 			try {
-				
+
 				GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
-				List<DeTai> deTais = deTaiImporter.addDataFDromExcel(file.getInputStream(),giangVien);
+				List<DeTai> deTais = deTaiImporter.addDataFDromExcel(file.getInputStream(), giangVien);
 				deTaiService.luuDanhSach(deTais);
 				return ResponseEntity.ok(deTais);
 			} catch (Exception e) {

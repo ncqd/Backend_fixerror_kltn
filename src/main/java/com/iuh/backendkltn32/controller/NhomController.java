@@ -214,9 +214,11 @@ public class NhomController {
 				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(), 
 						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs, 
 						nhom.getDeTai().getGiangVien().getMaGiangVien(), 
-						keHoachs.get(0).getThoiGianBatDau(), keHoachs.get(0).getThoiGianKetThuc(),
-						(keHoachs.get(0).getThoiGianBatDau().getHours()-5) + "", (keHoachs.get(0).getThoiGianKetThuc().getHours()-5) + "",
-						keHoachs.get(0).getChuThich());
+						keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianBatDau() : null, 
+						keHoachs.size() > 0?  keHoachs.get(0).getThoiGianKetThuc(): null,
+						keHoachs.size() > 0? (keHoachs.get(0).getThoiGianBatDau().getHours()-5) + "": null , 
+						keHoachs.size() > 0? (keHoachs.get(0).getThoiGianKetThuc().getHours()-5) + "": null ,		
+						keHoachs.size() > 0?keHoachs.get(0).getChuThich() : "");
 				if (!respones.contains(nhomRoleGVRespone)) {
 
 					respones.add(nhomRoleGVRespone);

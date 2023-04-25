@@ -9,7 +9,10 @@ import com.iuh.backendkltn32.entity.HocKy;
 
 public interface HocKyRepository extends JpaRepository<HocKy, String>{
 	
-	@Query(value = "select * from hocky order by maHocKy desc limit 1; " ,nativeQuery = true)
+	@Query(value = "select * from hocky select * from hocky where CURDATE() < ADDDATE(thoiGianKetThuc, INTERVAL 31 DAY) "
+			+ "and  CURDATE() > ADDDATE(thoiGianBatDau, INTERVAL 31 DAY) "
+			+ "order by maHocKy desc limit 1 "
+			+ " ; " ,nativeQuery = true)
 	HocKy layHocKyCuoiCungTrongDS();
 	
 	

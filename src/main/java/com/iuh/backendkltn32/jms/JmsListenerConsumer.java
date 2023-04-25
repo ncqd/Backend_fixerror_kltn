@@ -130,6 +130,9 @@ public class JmsListenerConsumer implements MessageListener {
 						 throw new Exception(
 								"Khong the dang ky nhom vi sinh vien " + sinhVien2.getTenSinhVien() + " da co nhom");
 					}
+					if (!nhomJoin.getMatKhauNhom().equals(request.getPassword())) {
+						 throw new Exception("Mật khẩu nhóm sai");
+					}
 					sinhVien2.setNhom(nhomJoin);
 					sinhVienService.capNhat(sinhVien2);
 					return ResponseEntity.ok(nhomJoin);

@@ -63,4 +63,10 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 		return repository.layTieuChiChamDiemTheoPhieuCham(maPhieu);
 	}
 
+	@Override
+	public List<TieuChiChamDiem> layHet() {
+		// TODO Auto-generated method stub
+		return repository.findAll();
+	}
+
 }

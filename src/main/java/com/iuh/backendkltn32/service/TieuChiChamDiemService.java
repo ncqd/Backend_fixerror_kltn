@@ -7,5 +7,7 @@ import com.iuh.backendkltn32.entity.TieuChiChamDiem;
 public interface TieuChiChamDiemService extends AbstractService<TieuChiChamDiem> {
 	
 	List<TieuChiChamDiem> laydsTieuChiChamDiemTheoPhieuCham(String maPhieu);
+	
+	List<TieuChiChamDiem> layHet();
 
 }

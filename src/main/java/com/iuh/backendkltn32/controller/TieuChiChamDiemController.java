@@ -66,7 +66,18 @@ public class TieuChiChamDiemController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public List<TieuChiChamDiem> layTieuChiChamDiemTheoMaPhieu(@PathVariable("maPhieuCham") String ma) {
 		try {
-			return null;
+			return tieuChiChamDiemService.laydsTieuChiChamDiemTheoPhieuCham(ma);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@GetMapping("/lay-het")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public List<TieuChiChamDiem> layHetTieuChamDiem() {
+		try {
+			return tieuChiChamDiemService.layHet();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

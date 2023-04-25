@@ -40,7 +40,7 @@ public class TieuChiChamDiem {
 	private Double diemToiDa;
 
 	@ManyToOne
-	@JoinColumn(name = "maPhieuMau", nullable = false)
+	@JoinColumn(name = "maPhieuMau", nullable = true)
 	@JsonIgnore
 	private PhieuChamMau phieuChamMau;
 

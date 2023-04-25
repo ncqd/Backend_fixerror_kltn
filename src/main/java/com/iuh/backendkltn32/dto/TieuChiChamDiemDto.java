@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public class TieuChiChamDiemDto {
 
-	private String maChuanDauRa;
+	private Integer maChuanDauRa;
 	
 	private String tenChuanDauRa;
 	

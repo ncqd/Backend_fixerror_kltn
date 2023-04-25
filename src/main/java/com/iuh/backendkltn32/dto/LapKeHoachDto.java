@@ -26,6 +26,8 @@ public class LapKeHoachDto {
 	private List<String> dsNgayThucHienKhoaLuan;
 
 	private HocKy hocKy;
+	
+	private String maHocKy;
 
 	private Timestamp thoiGianBatDau;
 
@@ -36,5 +38,23 @@ public class LapKeHoachDto {
 	private String vaiTro;
 
 	private String maNguoiDung;
+
+	public LapKeHoachDto(Integer id, String tenKeHoach, String chuThich, List<String> dsNgayThucHienKhoaLuan,
+			HocKy hocKy, Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, Integer tinhTrang, String vaiTro,
+			String maNguoiDung) {
+		super();
+		this.id = id;
+		this.tenKeHoach = tenKeHoach;
+		this.chuThich = chuThich;
+		this.dsNgayThucHienKhoaLuan = dsNgayThucHienKhoaLuan;
+		this.hocKy = hocKy;
+		this.thoiGianBatDau = thoiGianBatDau;
+		this.thoiGianKetThuc = thoiGianKetThuc;
+		this.tinhTrang = tinhTrang;
+		this.vaiTro = vaiTro;
+		this.maNguoiDung = maNguoiDung;
+	}
+	
+	
 
 }

@@ -22,7 +22,7 @@ public class NhomPBResponeDto {
 	private Map<String, String> dsMaSinhVien;
 	private String tenGiangVienHD;
 	private List<String> dsTenGiangVienPB;
-	private List<String> dsMaGiangVienPB;
+	private String maGiangVienHD;
 	@Override
 	public int hashCode() {
 		return Objects.hash(maNhom);

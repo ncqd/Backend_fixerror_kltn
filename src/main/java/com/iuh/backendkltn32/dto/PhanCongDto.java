@@ -25,5 +25,7 @@ public class PhanCongDto {
 	private String maNhom;
 
 	private List<String> dsMaGiangVienPB;
+	
+	private List<String> dsTenGiangPB;
 
 }

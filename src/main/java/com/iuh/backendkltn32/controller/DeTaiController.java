@@ -67,7 +67,7 @@ public class DeTaiController {
 	public DeTai themDeTai(@RequestBody DeTai deTai, @PathVariable("maGiangVien") String maGiangVien) throws Exception {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		TaiKhoan taiKhoan = taiKhoanService.layTheoMa(maGiangVien);
-		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng ký đề tài",
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch thêm đề tài",
 				taiKhoan.getVaiTro().getTenVaiTro().name());
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
@@ -121,7 +121,7 @@ public class DeTaiController {
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public String xoaDeTai(@PathVariable String maDeTai) throws Exception {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Đăng ký đề tài",
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch thêm đề tài",
 				"ROLE_GIANGVIEN");
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
@@ -149,7 +149,7 @@ public class DeTaiController {
 	public DeTai suaDeTai(@RequestBody DeTai deTai) throws Exception {
 
 		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
-		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Đăng ký đề tài",
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Lịch thêm đề tài",
 				"ROLE_GIANGVIEN");
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
@@ -189,21 +189,19 @@ public class DeTaiController {
 			}
 			if (layDeTaiRquestDto.getTrangThai() == null) {
 				if (layDeTaiRquestDto.getMaGiangVien() != null) {
-					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(),
-							hocKy.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien());
+					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+							layDeTaiRquestDto.getMaGiangVien());
 				} else {
-					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(),
-							hocKy.getSoHocKy());
+					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
 				}
 
 			} else {
 				if (layDeTaiRquestDto.getMaGiangVien() != null) {
-					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(),
-							hocKy.getSoHocKy(), layDeTaiRquestDto.getMaGiangVien(),
-							layDeTaiRquestDto.getTrangThai());
+					dsDeTai = deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+							layDeTaiRquestDto.getMaGiangVien(), layDeTaiRquestDto.getTrangThai());
 				} else {
-					dsDeTai = deTaiService.layDsDeTaiTheoTrangThaiKhongMaGV(hocKy.getMaHocKy(),
-							hocKy.getSoHocKy(), layDeTaiRquestDto.getTrangThai());
+					dsDeTai = deTaiService.layDsDeTaiTheoTrangThaiKhongMaGV(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+							layDeTaiRquestDto.getTrangThai());
 				}
 			}
 
@@ -251,16 +249,18 @@ public class DeTaiController {
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_GIANGVIEN')")
 	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) throws Exception {
 		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
-		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Đăng ký đề tài",
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Lịch đăng ký đề tài",
 				request.getVaiTro());
+		keHoachs.addAll(keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Lịch gán đề tài cho nhóm",
+				request.getVaiTro()));
 		if (keHoachs.size() > 0) {
-			KeHoach keHoach = keHoachs.get(0);
-			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
-			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-				throw new Exception("Thời gian đăng ký đề tài đã hết");
+			for (KeHoach keHoach : keHoachs) {
+				if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+					throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+				} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+					throw new Exception("Thời gian đăng ký đề tài đã hết");
+				}
 			}
-
 			try {
 				producer.sendMessageOnDeTaiChanel(request);
 				return listenerConsumer.listenerDeTaiChannel();
@@ -272,7 +272,6 @@ public class DeTaiController {
 		} else {
 			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
 		}
-
 	}
 
 	@PostMapping("/them-de-tai-excel/{maGiangVien}")

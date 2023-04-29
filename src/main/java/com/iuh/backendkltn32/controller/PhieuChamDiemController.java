@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.DiemThanhPhanDto;
 import com.iuh.backendkltn32.dto.PhieuChamDiemDto;
+import com.iuh.backendkltn32.dto.PhieuChamMauDto2;
 import com.iuh.backendkltn32.dto.TieuChiChamDiemDto;
 import com.iuh.backendkltn32.entity.DiemThanhPhan;
 import com.iuh.backendkltn32.entity.PhieuCham;
-import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.DiemThanhPhanService;
@@ -42,7 +42,7 @@ public class PhieuChamDiemController {
 	@Autowired
 	private GiangVienService giangVienService;
 	
-//	@Autowired
+	@Autowired
 	private DiemThanhPhanService diemThanhPhanService;
 
 	@PostMapping("/them-phieu-cham")
@@ -107,6 +107,64 @@ public class PhieuChamDiemController {
 	public PhieuCham layPhieuCham(@PathVariable("maPhieu") String maPhieu) throws Exception {
 		try {
 			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(maPhieu);
+			return phieuChamUpdate;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@PutMapping("/cham-diem")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public PhieuCham chamDiem(@RequestBody List<DiemThanhPhanDto> diemThanhPhanDtos) throws Exception {
+		try {
+			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(diemThanhPhanDtos.get(0).getMaPhieuCham());
+
+			List<DiemThanhPhan> dsDiemThanhPhans = diemThanhPhanService.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu());
+			if (diemThanhPhanDtos.size() > dsDiemThanhPhans.size()) {
+				throw new Exception("Danh Sách chấm điểm không hợp lệ");
+			}
+			List<DiemThanhPhan> dsDiemThanhPhanUpdate = new ArrayList<>();
+			dsDiemThanhPhans.stream().forEach(dtp -> {
+				diemThanhPhanDtos.stream().forEach(dtpa -> {
+					if (dtp.getTieuChiChamDiem().getMaChuanDauRa().equals(dtpa.getMaTieuChiCham())) {
+						dtp.setDiemThanhPhan(dtpa.getDiem());
+						dsDiemThanhPhanUpdate.add(dtp);
+					}
+				});
+			});
+			diemThanhPhanService.capNhatAll(dsDiemThanhPhanUpdate);
+			phieuChamUpdate.setDsDiemThanhPhan(dsDiemThanhPhans);
+			phieuChamUpdate = phieuChamService.capNhat(phieuChamUpdate);
+			return phieuChamUpdate;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@PutMapping("/sua-diem")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public PhieuCham suaDiem(@RequestBody List<DiemThanhPhanDto> diemThanhPhanDtos) throws Exception {
+		try {
+			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(diemThanhPhanDtos.get(0).getMaPhieuCham());
+
+			List<DiemThanhPhan> dsDiemThanhPhans = diemThanhPhanService.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu());
+			if (diemThanhPhanDtos.size() > dsDiemThanhPhans.size()) {
+				throw new Exception("Danh Sách chấm điểm không hợp lệ");
+			}
+			List<DiemThanhPhan> dsDiemThanhPhanUpdate = new ArrayList<>();
+			dsDiemThanhPhans.stream().forEach(dtp -> {
+				diemThanhPhanDtos.stream().forEach(dtpa -> {
+					if (dtp.getTieuChiChamDiem().getMaChuanDauRa().equals(dtpa.getMaTieuChiCham())) {
+						dtp.setDiemThanhPhan(dtpa.getDiem());
+						dsDiemThanhPhanUpdate.add(dtp);
+					}
+				});
+			});
+			diemThanhPhanService.capNhatAll(dsDiemThanhPhanUpdate);
+			phieuChamUpdate.setDsDiemThanhPhan(dsDiemThanhPhans);
+			phieuChamUpdate = phieuChamService.capNhat(phieuChamUpdate);
 			return phieuChamUpdate;
 		} catch (Exception e) {
 			e.printStackTrace();

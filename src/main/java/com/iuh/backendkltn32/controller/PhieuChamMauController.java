@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.PhieuChamDiemDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto;
+import com.iuh.backendkltn32.dto.PhieuChamMauDto2;
 import com.iuh.backendkltn32.entity.PhieuChamMau;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
 import com.iuh.backendkltn32.service.PhieuChamMauService;
@@ -23,13 +26,13 @@ import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 @RestController
 @RequestMapping("/api/phieu-mau")
 public class PhieuChamMauController {
-	
+
 	@Autowired
 	private PhieuChamMauService phieuChamMauService;
-	
+
 	@Autowired
 	private TieuChiChamDiemService tieuChiChamDiemService;
-	
+
 	@GetMapping("/lay/{maPhieu}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public PhieuChamMau layPhieuMau(@PathVariable("maPhieu") String ma) {
@@ -40,59 +43,62 @@ public class PhieuChamMauController {
 		}
 		return null;
 	}
-	
+
 	@PostMapping("/them")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public PhieuChamMau themPhieuChamMau(@RequestBody PhieuChamMauDto phieuChamMau) {
+	public PhieuChamMau themPhieuChamMau(@RequestBody PhieuChamMauDto phieuChamMau) throws Exception {
 
-		try {
-			List<TieuChiChamDiem> tieuChiChamDiems = phieuChamMau.getTieuChiChamDiems().stream().map(tc -> {
-				try {
-					return tieuChiChamDiemService.layTheoMa(tc);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return null;
-			}).toList();
-			return phieuChamMauService.luu(new PhieuChamMau(phieuChamMau.getTenPhieuCham(), tieuChiChamDiems, phieuChamMau.getVaiTroDung()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		return phieuChamMauService.luu(new PhieuChamMau(phieuChamMau.getTenPhieuCham(),
+				phieuChamMau.getTieuChiChamDiems().toString(), phieuChamMau.getVaiTroDung()));
 	}
-	
+
 	@PutMapping("/cap-nhat")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public PhieuChamMau capNhatPhieuChamMau(@RequestBody PhieuChamMau phieuChamMau) {
 
 		try {
-				
+
 			return phieuChamMauService.capNhat(phieuChamMau);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	@DeleteMapping("/xoa/{ma}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public String xoaPhieuChamMau(@PathVariable("ma") String ma) {
 
 		try {
-				
+
 			return phieuChamMauService.xoa(ma);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	@GetMapping("/lay-het/{vaiTroNguoiDung}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<PhieuChamMau> layHet(@PathVariable("vaiTroNguoiDung") String vaiTroNguoiDung) {
+	public List<PhieuChamMauDto2> layHet(@PathVariable("vaiTroNguoiDung") String vaiTroNguoiDung) {
 		try {
-			return phieuChamMauService.layHet(vaiTroNguoiDung);
+			
+			List<PhieuChamMauDto2> phieuChamMauDto2s =  new ArrayList<>();
+			phieuChamMauService.layHet(vaiTroNguoiDung).stream().forEach(pc -> {
+				List<String> maTieuChiChamDiems = Arrays.asList(pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length()-1).split(",\\s"));
+				List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
+					try {
+						return tieuChiChamDiemService.layTheoMa(tc);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				}).toList();
+				phieuChamMauDto2s.add(new PhieuChamMauDto2(pc.getTenPhieuCham(), tieuChiChamDiems, pc.getVaiTroDung()));
+			});		
+				
+			return phieuChamMauDto2s;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

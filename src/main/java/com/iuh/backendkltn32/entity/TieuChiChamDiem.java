@@ -39,11 +39,6 @@ public class TieuChiChamDiem {
 	@Column(name = "diemToiDa", nullable = false)
 	private Double diemToiDa;
 
-	@ManyToOne
-	@JoinColumn(name = "maPhieuMau", nullable = true)
-	@JsonIgnore
-	private PhieuChamMau phieuChamMau;
-
 	public TieuChiChamDiem(String tenChuanDauRa, Double diemToiDa) {
 		super();
 		this.tenChuanDauRa = tenChuanDauRa;

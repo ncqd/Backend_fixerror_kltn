@@ -63,9 +63,11 @@ public class HocKyController {
 		if (hocKyCuoiCung == null) {
 			maHK = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)).substring(2);
 		}
-		
-		maHK = hocKyCuoiCung.getMaHocKy().substring(2).equals("2") ?  (Long.parseLong(hocKyCuoiCung.getMaHocKy().substring(0, 2)) + 1) + "" :
-			Long.parseLong(hocKyCuoiCung.getMaHocKy().substring(0, 2)) + "";
+		else {
+			
+			maHK = hocKyCuoiCung.getMaHocKy().substring(2).equals("2") ?  (Long.parseLong(hocKyCuoiCung.getMaHocKy().substring(0, 2)) + 1) + "" :
+				Long.parseLong(hocKyCuoiCung.getMaHocKy().substring(0, 2)) + "";
+		}
 		
 		String soHocKy = hocKy.getThoiGianBatDau().getMonth()+1 >= 8 && hocKy.getThoiGianBatDau().getMonth()+1 < 12 ? "1" : "2";
 		hocKy.setMaHocKy(maHK + soHocKy);

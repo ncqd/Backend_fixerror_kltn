@@ -27,11 +27,14 @@ public class PhieuChamMauDto {
 	
 	private String vaiTroDung;
 	
-	public PhieuChamMauDto(String tenPhieuCham, List<String> tieuChiChamDiems, String vaiTroDung) {
+	private String maHocKy;
+	
+	public PhieuChamMauDto(String tenPhieuCham, List<String> tieuChiChamDiems, String vaiTroDung, String maHocKy) {
 		super();
 		this.tenPhieuCham = tenPhieuCham;
 		this.tieuChiChamDiems = tieuChiChamDiems;
 		this.vaiTroDung = vaiTroDung;
+		this.maHocKy = maHocKy;
 	}
 
 }

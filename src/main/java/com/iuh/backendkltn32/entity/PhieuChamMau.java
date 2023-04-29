@@ -38,12 +38,16 @@ public class PhieuChamMau {
 	private String tieuChiChamDiems;
 	
 	private String vaiTroDung;
+	
+	@Column(name = "maHocKy", nullable = true)
+	private String maHocKy;
 
-	public PhieuChamMau(String tenPhieuCham, String tieuChiChamDiems, String vaiTroDung) {
+	public PhieuChamMau(String tenPhieuCham, String tieuChiChamDiems, String vaiTroDung, String maHocKy) {
 		super();
 		this.tenPhieuCham = tenPhieuCham;
 		this.tieuChiChamDiems = tieuChiChamDiems;
 		this.vaiTroDung = vaiTroDung;
+		this.maHocKy = maHocKy;
 	}
 
 	

@@ -18,12 +18,15 @@ import com.iuh.backendkltn32.dto.PhieuChamDiemDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto2;
 import com.iuh.backendkltn32.dto.TieuChiChamDiemDto;
 import com.iuh.backendkltn32.entity.DiemThanhPhan;
+import com.iuh.backendkltn32.entity.KetQua;
 import com.iuh.backendkltn32.entity.PhieuCham;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.DiemThanhPhanService;
 import com.iuh.backendkltn32.service.GiangVienService;
+import com.iuh.backendkltn32.service.KetQuaService;
 import com.iuh.backendkltn32.service.PhieuChamService;
+import com.iuh.backendkltn32.service.SinhVienService;
 import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 
 @RestController
@@ -44,13 +47,19 @@ public class PhieuChamDiemController {
 	
 	@Autowired
 	private DiemThanhPhanService diemThanhPhanService;
+	
+	@Autowired
+	private SinhVienService sinhVienService;
+	
+	@Autowired
+	private KetQuaService ketQuaService;
 
 	@PostMapping("/cham-diem")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public PhieuCham themPhieuCham(@RequestBody PhieuChamDiemDto phieuCham) throws Exception {
 
 		try {
-			PhieuCham phieuChamAdd = phieuChamService.luu(new PhieuCham(phieuCham.getTenPhieu(), null, null, null,
+			PhieuCham phieuChamAdd = phieuChamService.luu(new PhieuCham(Math.random()+"" ,phieuCham.getTenPhieu(), null, null, null,
 					deTaiService.layTheoMa(phieuCham.getMaDeTai()),
 					giangVienService.layTheoMa(phieuCham.getMaGiangVien())));
 
@@ -58,11 +67,26 @@ public class PhieuChamDiemController {
 			for (TieuChiChamDiemDto tc : phieuCham.getDsTieuChiChamDiem()) {
 				TieuChiChamDiem tieuChiChamDiem = tieuChiChamDiemService.layTheoMa(tc.getMaChuanDauRa()+"");
 				
-				DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAdd, tieuChiChamDiem, null);
+				DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAdd, tieuChiChamDiem, tc.getDiemThanhPhan()+"");
 				diemThanhPhanService.luu(diemThanhPhan);
 				dsDiemThanhPhans.add(diemThanhPhan);
 			}
 			phieuChamAdd.setDsDiemThanhPhan(dsDiemThanhPhans);
+			phieuChamAdd = phieuChamService.capNhat(phieuChamAdd);
+			List<KetQua> ketQuas = new ArrayList<>();
+			String maPhieCHamAdd = phieuChamAdd.getMaPhieu();
+			dsDiemThanhPhans.stream().forEach(dtp -> {
+				KetQua ketQua = new KetQua();
+				try {
+					ketQua.setPhieuCham(phieuChamService.layTheoMa(maPhieCHamAdd));
+					ketQua.setSinhVien(sinhVienService.layTheoMa(phieuCham.getMaSinhVien()));
+					ketQuas.add(ketQuaService.luu(ketQua));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+			phieuChamAdd.setDsKetQua(ketQuas);
 			phieuChamAdd = phieuChamService.capNhat(phieuChamAdd);
 			return phieuChamAdd;
 		} catch (Exception e) {

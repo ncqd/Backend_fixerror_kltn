@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.DangKyNhomRequest;
+import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
+import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.PhieuChamDiemDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto2;
@@ -49,7 +52,7 @@ public class PhieuChamMauController {
 	public PhieuChamMau themPhieuChamMau(@RequestBody PhieuChamMauDto phieuChamMau) throws Exception {
 
 		return phieuChamMauService.luu(new PhieuChamMau(phieuChamMau.getTenPhieuCham(),
-				phieuChamMau.getTieuChiChamDiems().toString(), phieuChamMau.getVaiTroDung()));
+				phieuChamMau.getTieuChiChamDiems().toString(), phieuChamMau.getVaiTroDung(), phieuChamMau.getMaHocKy()));
 	}
 
 	@PutMapping("/cap-nhat")
@@ -78,13 +81,13 @@ public class PhieuChamMauController {
 		return null;
 	}
 
-	@GetMapping("/lay-het/{vaiTroNguoiDung}")
+	@PostMapping("/lay-het/{vaiTroNguoiDung}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<PhieuChamMauDto2> layHet(@PathVariable("vaiTroNguoiDung") String vaiTroNguoiDung) {
+	public List<PhieuChamMauDto2> layHet(@RequestBody LayKeHoachRequest request) {
 		try {
 			
 			List<PhieuChamMauDto2> phieuChamMauDto2s =  new ArrayList<>();
-			phieuChamMauService.layHet(vaiTroNguoiDung).stream().forEach(pc -> {
+			phieuChamMauService.layHet(request.getVaiTro(), request.getMaHocKy()).stream().forEach(pc -> {
 				List<String> maTieuChiChamDiems = Arrays.asList(pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length()-1).split(",\\s"));
 				List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
 					try {

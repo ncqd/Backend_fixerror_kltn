@@ -11,6 +11,6 @@ import com.iuh.backendkltn32.entity.DiemThanhPhan;
 
 public interface DiemThanhPhanRepository extends JpaRepository<DiemThanhPhan, Long>{
 
-	@Query(value = "select * from diemthanhphan where maPhieu = :maPhieu")
+	@Query(value = "select * from diemthanhphan where maPhieu = :maPhieu  ; ", nativeQuery = true)
 	public List<DiemThanhPhan> layTheoMaPhieuCham(@Param("maPhieu") String maPhiehCham);
 }

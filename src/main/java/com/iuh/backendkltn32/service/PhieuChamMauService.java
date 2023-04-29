@@ -6,6 +6,6 @@ import com.iuh.backendkltn32.entity.PhieuChamMau;
 
 public interface PhieuChamMauService extends AbstractService<PhieuChamMau>{
 	
-	List<PhieuChamMau> layHet(String vaiTroNguoiDung);
+	List<PhieuChamMau> layHet(String vaiTroNguoiDung, String maHocKy);
 
 }

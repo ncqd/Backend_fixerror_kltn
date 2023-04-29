@@ -16,4 +16,5 @@ public interface NhomService extends AbstractService<Nhom>{
 	
 	List<Nhom> layTatCaNhomTheoTinhTrang(String maHocKy, String soHocKy, Integer tinhTrang);
 
+	List<Nhom> layNhomTheoVaiTro(String maHocKy, String viTriPhaCong, String maGiangVien);
 }

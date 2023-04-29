@@ -95,4 +95,10 @@ public class NhomServiceImpl implements NhomService{
 		return repository.layNhomTheoTinhTrang(maHocKy, soHocKy, tinhTrang);
 	}
 
+	@Override
+	public List<Nhom> layNhomTheoVaiTro(String maHocKy, String viTriPhaCong, String maGiangVien) {
+		// TODO Auto-generated method stub
+		return repository.layNhomTheoPhanCongHK(maHocKy, viTriPhaCong, maGiangVien);
+	}
+
 }

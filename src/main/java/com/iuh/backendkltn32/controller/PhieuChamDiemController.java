@@ -56,11 +56,8 @@ public class PhieuChamDiemController {
 
 			List<DiemThanhPhan> dsDiemThanhPhans = new ArrayList<>();
 			for (TieuChiChamDiemDto tc : phieuCham.getDsTieuChiChamDiem()) {
-				TieuChiChamDiem tieuChiChamDiem = null;
-				if (tc.getMaChuanDauRa() == null) {
-					tieuChiChamDiem = tieuChiChamDiemService
-							.luu(new TieuChiChamDiem(tc.getTenChuanDauRa(), tc.getDiemToiDa()));
-				}
+				TieuChiChamDiem tieuChiChamDiem = tieuChiChamDiemService.layTheoMa(tc.getMaChuanDauRa()+"");
+				
 				DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAdd, tieuChiChamDiem, null);
 				diemThanhPhanService.luu(diemThanhPhan);
 				dsDiemThanhPhans.add(diemThanhPhan);

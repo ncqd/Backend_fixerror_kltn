@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.DangKyNhomRequest;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
+import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.NhomPBResponeDto;
 import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
 import com.iuh.backendkltn32.dto.NhomSinhVienDto;
+import com.iuh.backendkltn32.dto.NhomVaiTro;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
@@ -56,7 +58,7 @@ public class NhomController {
 
 	@Autowired
 	private KeHoachService keHoachService;
-	
+
 	@Autowired
 	private PhanCongService phanCongService;
 
@@ -105,17 +107,17 @@ public class NhomController {
 						}
 						return null;
 					}).toList();
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom,
-							null, sinhViens, sinhViens2);
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
 			}
 		}
-		
+
 		if (request.getTrangThai() != null && request.getMaGiangVien() == null) {
-			nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), request.getTrangThai());
-			
+			nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(),
+					request.getTrangThai());
+
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
 					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
@@ -128,8 +130,7 @@ public class NhomController {
 						}
 						return null;
 					}).toList();
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom,
-							null, sinhViens,sinhViens2);
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
@@ -151,8 +152,8 @@ public class NhomController {
 						}
 						return null;
 					}).toList();
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom,
-							nhom.getDeTai().getMaDeTai(), sinhViens, sinhViens2);
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, nhom.getDeTai().getMaDeTai(),
+							sinhViens, sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
@@ -190,16 +191,16 @@ public class NhomController {
 		}
 		return respones;
 	}
-	
+
 	@PostMapping("/lay-ds-nhom-phan-bien")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDeTaiRquestDto request) throws Exception {
 		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
 		Set<NhomPBResponeDto> respones = new HashSet<>();
 		if (!nhoms.isEmpty() && nhoms != null) {
-			
+
 			nhoms.stream().forEach(nhom -> {
-				Map<String, String> sinhViens =  new HashMap<>();
+				Map<String, String> sinhViens = new HashMap<>();
 				sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 					try {
 						sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
@@ -208,17 +209,21 @@ public class NhomController {
 						e.printStackTrace();
 					}
 				});
-				List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getTenGiangVien()).toList();
-				List<String> ma = phanCongService.layPhanCongTheoMaNhom(nhom).stream().map(pc-> pc.getGiangVien().getMaGiangVien()).toList();
-				List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3", ma.size() >0 ? ma.get(0) : "");
-				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(), 
-						nhom.getDeTai().getTenDeTai(), sinhViens, nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs, 
-						nhom.getDeTai().getGiangVien().getMaGiangVien(), 
-						keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianBatDau() : null, 
-						keHoachs.size() > 0?  keHoachs.get(0).getThoiGianKetThuc(): null,
-						keHoachs.size() > 0? (keHoachs.get(0).getThoiGianBatDau().getHours()-5) + "": null , 
-						keHoachs.size() > 0? (keHoachs.get(0).getThoiGianKetThuc().getHours()-5) + "": null ,		
-						keHoachs.size() > 0?keHoachs.get(0).getChuThich() : "");
+				List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
+						.map(pc -> pc.getGiangVien().getTenGiangVien()).toList();
+				List<String> ma = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
+						.map(pc -> pc.getGiangVien().getMaGiangVien()).toList();
+				List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3",
+						ma.size() > 0 ? ma.get(0) : "");
+				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(),
+						nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens,
+						nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs,
+						nhom.getDeTai().getGiangVien().getMaGiangVien(),
+						keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianBatDau() : null,
+						keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianKetThuc() : null,
+						keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianBatDau().getHours() - 5) + "" : null,
+						keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianKetThuc().getHours() - 5) + "" : null,
+						keHoachs.size() > 0 ? keHoachs.get(0).getChuThich() : "");
 				if (!respones.contains(nhomRoleGVRespone)) {
 
 					respones.add(nhomRoleGVRespone);
@@ -261,7 +266,7 @@ public class NhomController {
 			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
 				throw new Exception("Thời gian đăng ký nhóm đã hết");
 			}
-			
+
 			try {
 				SinhVien sinhVien = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
 				if (sinhVien.getNhom() == null) {
@@ -287,6 +292,68 @@ public class NhomController {
 			throw new Exception("Chưa có kế hoạch đăng ký nhóm");
 		}
 
+	}
+
+	@PostMapping("/lay-ds-nhom-theo-vai-tro")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws Exception {
+		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
+		Set<NhomVaiTro> respones = new HashSet<>();
+		if (request.getVaiTro() == null) {
+			request.setVaiTro("HD");
+		}
+		if (request.getVaiTro().equals("HD")) {
+			List<Nhom> nhoms = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					request.getMaNguoiDung());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+						try {
+							SinhVien sv1 = sinhVienService.layTheoMa(sv);
+							respones.add(new NhomVaiTro(sv1.getMaSinhVien(), sv1.getTenSinhVien(), nhom.getMaNhom(),
+									nhom.getDeTai().getMaDeTai()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+				});
+			}
+		} else {
+			String viTriPhanCong = "";
+			switch (request.getVaiTro()) {
+
+			case "PB":
+				viTriPhanCong = "Phan Bien";
+				break;
+			case "CT":
+				viTriPhanCong = "Chu Tich";
+				break;
+			case "TK":
+				viTriPhanCong = "Thu Ky";
+				break;
+			default:
+				viTriPhanCong = "Phan Bien";
+				break;
+			}
+			List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), viTriPhanCong, request.getMaNguoiDung());
+			
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+						try {
+							SinhVien sv1 = sinhVienService.layTheoMa(sv);
+							respones.add(new NhomVaiTro(sv1.getMaSinhVien(), sv1.getTenSinhVien(), nhom.getMaNhom(),
+									nhom.getDeTai().getMaDeTai()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+				});
+
+			}
+		}
+
+		return respones;
 	}
 
 }

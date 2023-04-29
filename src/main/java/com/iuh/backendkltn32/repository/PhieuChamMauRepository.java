@@ -10,6 +10,6 @@ import com.iuh.backendkltn32.entity.PhieuChamMau;
 
 public interface PhieuChamMauRepository extends JpaRepository<PhieuChamMau, Integer>{
 
-	@Query(value = "select * from phieuchammau where vaiTroDung = :vaiTroNguoiDung  ", nativeQuery = true)
-	List<PhieuChamMau> phieuChamMaus(@Param("vaiTroNguoiDung")String vaiTroNguoiDung);
+	@Query(value = "select * from phieuchammau where vaiTroDung = :vaiTroNguoiDung and maHocKy = :maHocKy ", nativeQuery = true)
+	List<PhieuChamMau> phieuChamMaus(@Param("vaiTroNguoiDung")String vaiTroNguoiDung, @Param("maHocKy")String maHocKy);
 }

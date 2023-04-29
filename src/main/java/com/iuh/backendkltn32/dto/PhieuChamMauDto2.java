@@ -29,6 +29,7 @@ public class PhieuChamMauDto2 {
 	private List<TieuChiChamDiem> tieuChiChamDiems;
 	
 	private List<DiemThanhPhan> diemThanhPhans;
+	private String maHocKy;
 
 	public PhieuChamMauDto2(String tenPhieuCham, List<TieuChiChamDiem> tieuChiChamDiems, String vaiTroDung) {
 		super();

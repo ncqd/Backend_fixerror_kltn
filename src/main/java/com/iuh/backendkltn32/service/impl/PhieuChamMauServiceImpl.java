@@ -63,9 +63,8 @@ public class PhieuChamMauServiceImpl implements PhieuChamMauService{
 	}
 
 	@Override
-	public List<PhieuChamMau> layHet(String vaiTroNguoiDung) {
-		// TODO Auto-generated method stub
-		return repository.phieuChamMaus(vaiTroNguoiDung);
+	public List<PhieuChamMau> layHet(String vaiTroNguoiDung, String maHocKy) {
+		return repository.phieuChamMaus(vaiTroNguoiDung, maHocKy);
 	}
 
 }

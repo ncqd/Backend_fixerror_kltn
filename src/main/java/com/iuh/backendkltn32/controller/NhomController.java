@@ -182,8 +182,8 @@ public class NhomController {
 				}).toList();
 				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
 				if (!respones.contains(nhomRoleGVRespone)) {
-
 					respones.add(nhomRoleGVRespone);
+					System.out.println("ds Nhom " + respones);
 				}
 			});
 

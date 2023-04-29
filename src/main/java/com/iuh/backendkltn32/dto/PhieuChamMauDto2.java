@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.OneToMany;
 
+import com.iuh.backendkltn32.entity.DiemThanhPhan;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
 
 import lombok.AllArgsConstructor;
@@ -17,17 +18,19 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PhieuChamMauDto {
+public class PhieuChamMauDto2 {
 
 	private Integer maPhieuMau;
 
 	private String tenPhieuCham;
-
-	private List<String> tieuChiChamDiems;
 	
 	private String vaiTroDung;
 	
-	public PhieuChamMauDto(String tenPhieuCham, List<String> tieuChiChamDiems, String vaiTroDung) {
+	private List<TieuChiChamDiem> tieuChiChamDiems;
+	
+	private List<DiemThanhPhan> diemThanhPhans;
+
+	public PhieuChamMauDto2(String tenPhieuCham, List<TieuChiChamDiem> tieuChiChamDiems, String vaiTroDung) {
 		super();
 		this.tenPhieuCham = tenPhieuCham;
 		this.tieuChiChamDiems = tieuChiChamDiems;

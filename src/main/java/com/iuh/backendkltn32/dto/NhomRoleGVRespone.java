@@ -36,6 +36,13 @@ public class NhomRoleGVRespone {
 		NhomRoleGVRespone other = (NhomRoleGVRespone) obj;
 		return Objects.equals(nhom.getMaNhom(), other.nhom.getMaNhom());
 	}
+	@Override
+	public String toString() {
+		return "NhomRoleGVRespone [nhom=" + nhom + ", maDeTai=" + maDeTai + ", dsMaSinhVien=" + dsMaSinhVien
+				+ ", sinhViens=" + sinhViens + "]";
+	}
+	
+	
 	
 	
 }

@@ -24,6 +24,7 @@ import com.iuh.backendkltn32.dto.NhomPBResponeDto;
 import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
 import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.dto.NhomVaiTro;
+import com.iuh.backendkltn32.dto.SinhVienNhomVaiTroDto;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
@@ -299,6 +300,7 @@ public class NhomController {
 	public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws Exception {
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		Set<NhomVaiTro> respones = new HashSet<>();
+		List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
 		if (request.getVaiTro() == null) {
 			request.setVaiTro("HD");
 		}
@@ -310,12 +312,14 @@ public class NhomController {
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {
 							SinhVien sv1 = sinhVienService.layTheoMa(sv);
-							respones.add(new NhomVaiTro(sv1.getMaSinhVien(), sv1.getTenSinhVien(), nhom.getMaNhom(),
-									nhom.getDeTai().getMaDeTai()));
+							sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					});
+					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
+							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens));
 				});
 			}
 		} else {
@@ -336,18 +340,19 @@ public class NhomController {
 				break;
 			}
 			List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), viTriPhanCong, request.getMaNguoiDung());
-			
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {
 							SinhVien sv1 = sinhVienService.layTheoMa(sv);
-							respones.add(new NhomVaiTro(sv1.getMaSinhVien(), sv1.getTenSinhVien(), nhom.getMaNhom(),
-									nhom.getDeTai().getMaDeTai()));
+							sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					});
+					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
+							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens));
 				});
 
 			}

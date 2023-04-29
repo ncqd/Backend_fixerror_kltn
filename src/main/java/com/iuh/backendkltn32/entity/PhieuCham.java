@@ -26,7 +26,7 @@ public class PhieuCham {
 	@Id
 	private String maPhieu;
 	
-	@Column(name = "tenPhieu", columnDefinition = "nvarchar(255)" ,nullable = false)
+	@Column(name = "tenPhieu", columnDefinition = "nvarchar(255)" ,nullable = true)
 	private String tenPhieu;
 	
 	@Column(name = "diemPhieuCham", nullable = true)

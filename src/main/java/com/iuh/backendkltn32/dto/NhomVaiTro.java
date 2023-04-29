@@ -21,5 +21,12 @@ public class NhomVaiTro {
 	private String maDeTai;
 	private String tenDeTai;
 	private List<SinhVienNhomVaiTroDto> sinhVien;
+	@Override
+	public String toString() {
+		return "NhomVaiTro [maNhom=" + maNhom + ", tenNhom=" + tenNhom + ", maDeTai=" + maDeTai + ", tenDeTai="
+				+ tenDeTai + ", sinhVien=" + sinhVien + "]";
+	}
+	
+	
 
 }

@@ -300,7 +300,7 @@ public class NhomController {
 	public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws Exception {
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		Set<NhomVaiTro> respones = new HashSet<>();
-		List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
+		
 		if (request.getVaiTro() == null) {
 			request.setVaiTro("HD");
 		}
@@ -309,6 +309,7 @@ public class NhomController {
 					request.getMaNguoiDung());
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
+					List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {
 							SinhVien sv1 = sinhVienService.layTheoMa(sv);
@@ -320,6 +321,7 @@ public class NhomController {
 					});
 					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
 							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens));
+					System.out.println(respones);
 				});
 			}
 		} else {
@@ -342,6 +344,7 @@ public class NhomController {
 			List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), viTriPhanCong, request.getMaNguoiDung());
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
+					List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {
 							SinhVien sv1 = sinhVienService.layTheoMa(sv);
@@ -353,6 +356,7 @@ public class NhomController {
 					});
 					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
 							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens));
+					sinhViens.clear();
 				});
 
 			}

@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -27,12 +30,16 @@ public class KetQua {
 	
 	@ManyToOne
 	@JoinColumn(name = "maPhieu", nullable = false)
+	@JsonIgnore
 	private PhieuCham phieuCham;
-	
 
 	private Double diemTongKet;
 
 	public Double getDiemTongKet() {
+		this.diemTongKet = (double) 0;
+		phieuCham.getDsDiemThanhPhan().stream().forEach(diem -> {
+			this.diemTongKet += Double.parseDouble(diem.getDiemThanhPhan());
+		});
 		return diemTongKet;
 	}
 

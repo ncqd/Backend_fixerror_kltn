@@ -13,5 +13,11 @@ public class SinhVienNhomVaiTroDto {
 	
 	private String maSinhVien;
 	private String tenSinhVien;
+	@Override
+	public String toString() {
+		return "SinhVienNhomVaiTroDto [maSinhVien=" + maSinhVien + ", tenSinhVien=" + tenSinhVien + "]";
+	}
+	
+	
 
 }

@@ -45,7 +45,7 @@ public class PhieuChamDiemController {
 	@Autowired
 	private DiemThanhPhanService diemThanhPhanService;
 
-	@PostMapping("/them-phieu-cham")
+	@PostMapping("/cham-diem")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public PhieuCham themPhieuCham(@RequestBody PhieuChamDiemDto phieuCham) throws Exception {
 
@@ -111,7 +111,7 @@ public class PhieuChamDiemController {
 		return null;
 	}
 	
-	@PutMapping("/cham-diem")
+	@PutMapping("/cham-diem-a")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public PhieuCham chamDiem(@RequestBody List<DiemThanhPhanDto> diemThanhPhanDtos) throws Exception {
 		try {

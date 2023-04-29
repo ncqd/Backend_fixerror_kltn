@@ -16,9 +16,10 @@ import lombok.Setter;
 @Setter
 public class NhomVaiTro {
 	
-	private String maSinhVien;
-	private String tenSinhVien;
 	private String maNhom;
+	private String tenNhom;
 	private String maDeTai;
+	private String tenDeTai;
+	private List<SinhVienNhomVaiTroDto> sinhVien;
 
 }

@@ -41,4 +41,15 @@ public class TinNhan {
 	@Column(name = "createdAt", nullable = false)
 	private Timestamp createdAt;
 
+	public TinNhan(String noiDung, String maNguoiGui, String maNGuoiNhan, Integer trangThai, Timestamp createdAt) {
+		super();
+		this.noiDung = noiDung;
+		this.maNguoiGui = maNguoiGui;
+		this.maNGuoiNhan = maNGuoiNhan;
+		this.trangThai = trangThai;
+		this.createdAt = createdAt;
+	}
+	
+	
+
 }

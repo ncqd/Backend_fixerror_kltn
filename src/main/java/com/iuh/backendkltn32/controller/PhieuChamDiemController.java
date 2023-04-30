@@ -64,10 +64,11 @@ public class PhieuChamDiemController {
 					giangVienService.layTheoMa(phieuCham.getMaGiangVien())));
 
 			List<DiemThanhPhan> dsDiemThanhPhans = new ArrayList<>();
+			Double diemTong = (double) 0;
 			for (TieuChiChamDiemDto tc : phieuCham.getDsTieuChiChamDiem()) {
 				TieuChiChamDiem tieuChiChamDiem = tieuChiChamDiemService.layTheoMa(tc.getMaChuanDauRa()+"");
 				
-				DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAdd, tieuChiChamDiem, tc.getDiemThanhPhan()+"");
+				DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAdd, tieuChiChamDiem, tc.getDiemThanhPhan() == null ? "0" : "" +tc.getDiemThanhPhan());
 				diemThanhPhanService.luu(diemThanhPhan);
 				dsDiemThanhPhans.add(diemThanhPhan);
 			}

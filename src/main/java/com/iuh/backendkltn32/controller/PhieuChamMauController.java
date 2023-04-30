@@ -21,8 +21,10 @@ import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.PhieuChamDiemDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto2;
+import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.PhieuChamMau;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
+import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.PhieuChamMauService;
 import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 
@@ -35,6 +37,9 @@ public class PhieuChamMauController {
 
 	@Autowired
 	private TieuChiChamDiemService tieuChiChamDiemService;
+	
+	@Autowired
+	private HocKyService hocKyService;
 
 	@GetMapping("/lay/{maPhieu}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -50,9 +55,22 @@ public class PhieuChamMauController {
 	@PostMapping("/them")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public PhieuChamMau themPhieuChamMau(@RequestBody PhieuChamMauDto phieuChamMau) throws Exception {
+		Double diemTong = (double) 0;
+		for (String matc : phieuChamMau.getTieuChiChamDiems()) {
+			try {
+				diemTong += tieuChiChamDiemService.layTheoMa(matc).getDiemToiDa();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
-		return phieuChamMauService.luu(new PhieuChamMau(phieuChamMau.getTenPhieuCham(),
-				phieuChamMau.getTieuChiChamDiems().toString(), phieuChamMau.getVaiTroDung(), phieuChamMau.getMaHocKy()));
+		if (diemTong != 10) {
+			throw new Exception("Khong Duoc Qua 10 Diem");
+		}
+		return phieuChamMauService
+				.luu(new PhieuChamMau(phieuChamMau.getTenPhieuCham(), phieuChamMau.getTieuChiChamDiems().toString(),
+						phieuChamMau.getVaiTroDung(), phieuChamMau.getMaHocKy()));
 	}
 
 	@PutMapping("/cap-nhat")
@@ -83,11 +101,39 @@ public class PhieuChamMauController {
 
 	@PostMapping("/lay-het/{vaiTroNguoiDung}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<PhieuChamMauDto2> layHet(@RequestBody LayKeHoachRequest request) {
+	public List<PhieuChamMauDto2> layHet(@PathVariable("vaiTroNguoiDung") String vaiTroNguoiDung) {
 		try {
-			
+			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+			List<PhieuChamMauDto2> phieuChamMauDto2s = new ArrayList<>();
+			phieuChamMauService.layHet(vaiTroNguoiDung, hocKy.getMaHocKy()).stream().forEach(pc -> {
+				List<String> maTieuChiChamDiems = Arrays.asList(
+						pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length() - 1).split(",\\s"));
+				List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
+					try {
+						return tieuChiChamDiemService.layTheoMa(tc);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				}).toList();
+				phieuChamMauDto2s.add(new PhieuChamMauDto2(pc.getTenPhieuCham(), tieuChiChamDiems, pc.getVaiTroDung()));
+			});
+
+			return phieuChamMauDto2s;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@PostMapping("/lay/{vaiTroNguoiDung}")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
+	public PhieuChamMauDto2 layPhieuMauMoi(@PathVariable("vaiTroNguoiDung") String vaiTroNguoiDung) {
+		try {
+			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 			List<PhieuChamMauDto2> phieuChamMauDto2s =  new ArrayList<>();
-			phieuChamMauService.layHet(request.getVaiTro(), request.getMaHocKy()).stream().forEach(pc -> {
+			phieuChamMauService.layHet(vaiTroNguoiDung, hocKy.getMaHocKy()).stream().forEach(pc -> {
 				List<String> maTieuChiChamDiems = Arrays.asList(pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length()-1).split(",\\s"));
 				List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
 					try {
@@ -99,9 +145,9 @@ public class PhieuChamMauController {
 					return null;
 				}).toList();
 				phieuChamMauDto2s.add(new PhieuChamMauDto2(pc.getTenPhieuCham(), tieuChiChamDiems, pc.getVaiTroDung()));
-			});		
-				
-			return phieuChamMauDto2s;
+			});
+
+			return phieuChamMauDto2s.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

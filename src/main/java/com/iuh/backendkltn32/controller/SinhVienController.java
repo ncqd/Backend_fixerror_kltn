@@ -142,4 +142,17 @@ public class SinhVienController {
 		}
 		return null;
 	}
+	
+	@GetMapping("/xem-thong-tin/{maSinhVien}")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
+	public SinhVien hienThiThongTinCaNhan(@PathVariable("maSinhVien") String maSinhVien) {
+		try {
+			SinhVien sinhVien = sinhVienService.layTheoMa(maSinhVien);
+
+			return sinhVien;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

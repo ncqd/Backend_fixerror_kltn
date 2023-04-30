@@ -108,4 +108,31 @@ public class PhieuChamMauController {
 		return null;
 	}
 
+	@PostMapping("/lay/{vaiTroNguoiDung}")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
+	public PhieuChamMauDto2 layPhieuMauMoi(@PathVariable("vaiTroNguoiDung") String vaiTroNguoiDung) {
+		try {
+			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+			List<PhieuChamMauDto2> phieuChamMauDto2s =  new ArrayList<>();
+			phieuChamMauService.layHet(vaiTroNguoiDung, hocKy.getMaHocKy()).stream().forEach(pc -> {
+				List<String> maTieuChiChamDiems = Arrays.asList(pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length()-1).split(",\\s"));
+				List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
+					try {
+						return tieuChiChamDiemService.layTheoMa(tc);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				}).toList();
+				phieuChamMauDto2s.add(new PhieuChamMauDto2(pc.getTenPhieuCham(), tieuChiChamDiems, pc.getVaiTroDung()));
+			});
+
+			return phieuChamMauDto2s.get(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

@@ -229,13 +229,16 @@ public class QuanLyBoMonController {
 	@PostMapping("/them-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
-		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
+		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
 		List<PhanCong> phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 			GiangVien giangVien;
 			try {
-				if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
-					throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+				if (nhom != null) {
+					if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+						throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+					}
 				}
+				
 				giangVien = giangVienService.layTheoMa(ma);
 
 				PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom,
@@ -264,7 +267,7 @@ public class QuanLyBoMonController {
 			}
 
 		});
-		sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+		sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom()== null ? "123" : nhom.getMaNhom() ).stream().forEach(sv -> {
 			try {
 
 				KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phanCongDto.getPhong(), null,

@@ -21,8 +21,10 @@ import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.PhieuChamDiemDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto;
 import com.iuh.backendkltn32.dto.PhieuChamMauDto2;
+import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.PhieuChamMau;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
+import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.PhieuChamMauService;
 import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 
@@ -35,6 +37,9 @@ public class PhieuChamMauController {
 
 	@Autowired
 	private TieuChiChamDiemService tieuChiChamDiemService;
+	
+	@Autowired
+	private HocKyService hocKyService;
 
 	@GetMapping("/lay/{maPhieu}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -96,11 +101,11 @@ public class PhieuChamMauController {
 
 	@PostMapping("/lay-het/{vaiTroNguoiDung}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<PhieuChamMauDto2> layHet(@RequestBody LayKeHoachRequest request) {
+	public List<PhieuChamMauDto2> layHet(@PathVariable("vaiTroNguoiDung") String vaiTroNguoiDung) {
 		try {
-
+			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 			List<PhieuChamMauDto2> phieuChamMauDto2s = new ArrayList<>();
-			phieuChamMauService.layHet(request.getVaiTro(), request.getMaHocKy()).stream().forEach(pc -> {
+			phieuChamMauService.layHet(vaiTroNguoiDung, hocKy.getMaHocKy()).stream().forEach(pc -> {
 				List<String> maTieuChiChamDiems = Arrays.asList(
 						pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length() - 1).split(",\\s"));
 				List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {

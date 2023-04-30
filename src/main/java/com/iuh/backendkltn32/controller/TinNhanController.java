@@ -38,11 +38,11 @@ public class TinNhanController {
 
 		tinNhanSerivce.layTinNhanTheoMaNguoiNhan(maNguoiNhan).stream().forEach(tn -> {
 			try {
-				if (tn.getMaNguoiGui().startsWith("11")) {
-					tinNhans.add(new TinNhanDto(tn.getId(), null, tn.getNoiDung(), tn.getTrangThai(),
-							giangVienService.layTheoMa(tn.getMaNguoiGui()), tn.getCreatedAt()));
+				if (tn.getMaNGuoiNhan().startsWith("11")) {
+					tinNhans.add(new TinNhanDto(tn.getId(), giangVienService.layTheoMa(tn.getMaNguoiGui()), tn.getNoiDung(), tn.getTrangThai(),
+							giangVienService.layTheoMa("12392401"), tn.getCreatedAt()));
 				} else {
-					tinNhans.add(new TinNhanDto(tn.getId(), null, tn.getNoiDung(), tn.getTrangThai(),
+					tinNhans.add(new TinNhanDto(tn.getId(), sinhVienService.layTheoMa(tn.getMaNGuoiNhan()), tn.getNoiDung(), tn.getTrangThai(),
 							sinhVienService.layTheoMa(tn.getMaNguoiGui()), tn.getCreatedAt()));
 				}
 			} catch (Exception e) {

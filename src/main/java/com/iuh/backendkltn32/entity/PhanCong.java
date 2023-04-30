@@ -33,7 +33,7 @@ public class PhanCong {
 	private Boolean chamCong;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "maNhom", nullable = false)
+	@JoinColumn(name = "maNhom", nullable = true)
 	private Nhom nhom;
 	
 	@ManyToOne(fetch = FetchType.EAGER)

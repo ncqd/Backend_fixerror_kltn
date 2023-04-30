@@ -14,5 +14,6 @@ public class DuyetRequest {
 	private String ma;
 	private Integer trangThai;
 	private String maHocKy;
+	private String loiNhan;
 
 }

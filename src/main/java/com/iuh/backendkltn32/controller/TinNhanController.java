@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,7 @@ public class TinNhanController {
 
 	@GetMapping("/lay-tin-nhan/{maNguoiNhan}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public List<TinNhanDto> layTinNhanTheoMaNguoiNhan(@PathVariable String maNguoiNhan) {
+	public List<TinNhanDto> layTinNhanTheoMaNguoiNhan(@PathVariable("maNguoiNhan") String maNguoiNhan) {
 		List<TinNhanDto> tinNhans = new ArrayList<>();
 
 		tinNhanSerivce.layTinNhanTheoMaNguoiNhan(maNguoiNhan).stream().forEach(tn -> {

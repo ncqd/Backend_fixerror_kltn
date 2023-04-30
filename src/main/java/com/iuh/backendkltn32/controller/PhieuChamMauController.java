@@ -50,9 +50,22 @@ public class PhieuChamMauController {
 	@PostMapping("/them")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public PhieuChamMau themPhieuChamMau(@RequestBody PhieuChamMauDto phieuChamMau) throws Exception {
+		Double diemTong = (double) 0;
+		for (String matc : phieuChamMau.getTieuChiChamDiems()) {
+			try {
+				diemTong += tieuChiChamDiemService.layTheoMa(matc).getDiemToiDa();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
-		return phieuChamMauService.luu(new PhieuChamMau(phieuChamMau.getTenPhieuCham(),
-				phieuChamMau.getTieuChiChamDiems().toString(), phieuChamMau.getVaiTroDung(), phieuChamMau.getMaHocKy()));
+		if (diemTong != 10) {
+			throw new Exception("Khong Duoc Qua 10 Diem");
+		}
+		return phieuChamMauService
+				.luu(new PhieuChamMau(phieuChamMau.getTenPhieuCham(), phieuChamMau.getTieuChiChamDiems().toString(),
+						phieuChamMau.getVaiTroDung(), phieuChamMau.getMaHocKy()));
 	}
 
 	@PutMapping("/cap-nhat")
@@ -85,10 +98,11 @@ public class PhieuChamMauController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public List<PhieuChamMauDto2> layHet(@RequestBody LayKeHoachRequest request) {
 		try {
-			
-			List<PhieuChamMauDto2> phieuChamMauDto2s =  new ArrayList<>();
+
+			List<PhieuChamMauDto2> phieuChamMauDto2s = new ArrayList<>();
 			phieuChamMauService.layHet(request.getVaiTro(), request.getMaHocKy()).stream().forEach(pc -> {
-				List<String> maTieuChiChamDiems = Arrays.asList(pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length()-1).split(",\\s"));
+				List<String> maTieuChiChamDiems = Arrays.asList(
+						pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length() - 1).split(",\\s"));
 				List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
 					try {
 						return tieuChiChamDiemService.layTheoMa(tc);
@@ -99,8 +113,8 @@ public class PhieuChamMauController {
 					return null;
 				}).toList();
 				phieuChamMauDto2s.add(new PhieuChamMauDto2(pc.getTenPhieuCham(), tieuChiChamDiems, pc.getVaiTroDung()));
-			});		
-				
+			});
+
 			return phieuChamMauDto2s;
 		} catch (Exception e) {
 			e.printStackTrace();

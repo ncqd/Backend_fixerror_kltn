@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,8 +29,8 @@ import com.iuh.backendkltn32.dto.SinhVienNhomVaiTroDto;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
-import com.iuh.backendkltn32.entity.PhanCong;
 import com.iuh.backendkltn32.entity.SinhVien;
+import com.iuh.backendkltn32.entity.TinNhan;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.HocKyService;
@@ -37,6 +38,7 @@ import com.iuh.backendkltn32.service.KeHoachService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.PhanCongService;
 import com.iuh.backendkltn32.service.SinhVienService;
+import com.iuh.backendkltn32.service.TinNhanSerivce;
 
 @RestController
 @RequestMapping("/api/nhom")
@@ -62,6 +64,9 @@ public class NhomController {
 
 	@Autowired
 	private PhanCongService phanCongService;
+
+	@Autowired
+	private TinNhanSerivce tinNhanSerivce;
 
 	/*
 	 * // case1: tao moi -> check: co nhom chua ???? // TH1: -> chua co //TH2: -> co
@@ -103,7 +108,6 @@ public class NhomController {
 						try {
 							return sinhVienService.layTheoMa(sv);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						return null;
@@ -126,7 +130,6 @@ public class NhomController {
 						try {
 							return sinhVienService.layTheoMa(sv);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						return null;
@@ -148,7 +151,6 @@ public class NhomController {
 						try {
 							return sinhVienService.layTheoMa(sv);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						return null;
@@ -177,7 +179,6 @@ public class NhomController {
 					try {
 						return sinhVienService.layTheoMa(sv);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					return null;
@@ -206,7 +207,6 @@ public class NhomController {
 					try {
 						sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				});
@@ -216,6 +216,7 @@ public class NhomController {
 						.map(pc -> pc.getGiangVien().getMaGiangVien()).toList();
 				List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3",
 						ma.size() > 0 ? ma.get(0) : "");
+				@SuppressWarnings("deprecation")
 				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(),
 						nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens,
 						nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs,
@@ -251,6 +252,23 @@ public class NhomController {
 		NhomSinhVienDto respones = new NhomSinhVienDto(nhom, sinhViens, nhom.getTinhTrang(), nhom.getDeTai());
 
 		return respones;
+	}
+
+	@PostMapping("/dang-ky-co-san")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
+	public ResponseEntity<?> dangKyNhomCoSan(DangKyNhomRequest request) throws Exception {
+		List<String> sinhVienTrongNhom = sinhVienService.layTatCaSinhVienTheoNhom(request.getMaNhom());
+		if (sinhVienTrongNhom.size() >= 2) {
+			throw new Exception("Nhóm Đã Đủ Thành Viên");
+		}
+		SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
+		TinNhan tinNhan = new TinNhan(
+				"Có Sinh Viên Muốn Đăng nhóm của bạn " + sinhVienXinGiaNhap.getMaSinhVien() + " "
+						+ sinhVienXinGiaNhap.getTenSinhVien(),
+				request.getDsMaSinhVien().get(0), sinhVienTrongNhom.get(0), 0,
+				new Timestamp(System.currentTimeMillis()));
+		tinNhanSerivce.luu(tinNhan);
+		return ResponseEntity.ok("Tin Nhan Da Gui Di Thanh Cong");
 	}
 
 	@PostMapping("/roi-nhom")
@@ -300,7 +318,7 @@ public class NhomController {
 	public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws Exception {
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		Set<NhomVaiTro> respones = new HashSet<>();
-		
+
 		if (request.getVaiTro() == null) {
 			request.setVaiTro("HD");
 		}
@@ -314,20 +332,19 @@ public class NhomController {
 						try {
 							SinhVien sv1 = sinhVienService.layTheoMa(sv);
 							sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
-							
+
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					});
-					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
-							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens));
+					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+							nhom.getDeTai().getTenDeTai(), sinhViens));
 					System.out.println(respones);
 				});
 			}
 		} else {
 			String viTriPhanCong = "";
 			switch (request.getVaiTro()) {
-
 			case "PB":
 				viTriPhanCong = "Phan Bien";
 				break;
@@ -341,7 +358,8 @@ public class NhomController {
 				viTriPhanCong = "Phan Bien";
 				break;
 			}
-			List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), viTriPhanCong, request.getMaNguoiDung());
+			List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), viTriPhanCong,
+					request.getMaNguoiDung());
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
 					List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
@@ -349,19 +367,18 @@ public class NhomController {
 						try {
 							SinhVien sv1 = sinhVienService.layTheoMa(sv);
 							sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
-							
+
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					});
-					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
-							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens));
+					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+							nhom.getDeTai().getTenDeTai(), sinhViens));
 					sinhViens.clear();
 				});
 
 			}
 		}
-
 		return respones;
 	}
 

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.TinNhan;
 import com.iuh.backendkltn32.repository.TinNhanRepository;
 import com.iuh.backendkltn32.service.TinNhanSerivce;
@@ -29,7 +28,6 @@ public class TinNhanServiceImpl implements TinNhanSerivce {
 
 	@Override
 	public TinNhan luu(TinNhan obj) throws Exception {
-		// TODO Auto-generated method stub
 		return repository.save(obj);
 	}
 

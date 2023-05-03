@@ -202,13 +202,17 @@ public class KeHoachController {
 		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 		int date = 0;
 		for (KeHoach kh : keHoachService.layTheoTenVaMaHocKyVaiTro(maHocKy, "Lịch chấm phản biện", "ROLE_GIANGVIEN")) {
-			while (kh.getThoiGianKetThuc().getDate() - date > 0) {
-				Date ngay = new Date(kh.getThoiGianBatDau().getYear() + 1900, kh.getThoiGianBatDau().getMonth() + 1,
-						kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
-								: kh.getThoiGianBatDau().getDate() + date);
-				result.add(new NgayDto(ngay, format.format(date)));
-				date++;
+			if (kh.getMaNguoiDung() == null) {
+				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
+					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear() , kh.getThoiGianBatDau().getMonth() + 1,
+							kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
+									: kh.getThoiGianBatDau().getDate() + date, kh.getThoiGianBatDau().getHours(),
+									kh.getThoiGianBatDau().getMinutes(), kh.getThoiGianBatDau().getSeconds(), kh.getThoiGianBatDau().getNanos());
+					result.add(new NgayDto(ngay, format.format(ngay)));
+					date++;
+				}
 			}
+			
 		}
 		return result;
 	}

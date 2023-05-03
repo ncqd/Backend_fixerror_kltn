@@ -273,6 +273,54 @@ public class QuanLyBoMonController {
 		});
 		return ResponseEntity.ok(phanCongs);
 	}
+	
+	@PostMapping("/them-ds-phan-cong")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto> phanCongDtos) throws Exception {
+		List<PhanCong> phanCongs = new ArrayList<>();
+		for (PhanCongDto phanCongDto : phanCongDtos) {
+			Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
+			phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
+				GiangVien giangVien;
+				try {
+					if (nhom != null) {
+						if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+							throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+						}
+					}
+					
+					giangVien = giangVienService.layTheoMa(ma);
+
+					PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom,
+							giangVien);
+					phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+					return phanCongService.luu(phanCong);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}).toList();
+			Integer gioBatDau = Integer.parseInt(phanCongDto.getTietBatDau()) + 5;
+			Integer gioKetThuc = Integer.parseInt(phanCongDto.getTietKetThuc()) + 5;
+			Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
+			tgbd.setHours(gioBatDau);
+			Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
+			tgkt.setHours(gioKetThuc);
+			sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom()== null ? "123" : nhom.getMaNhom() ).stream().forEach(sv -> {
+				try {
+
+					KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phanCongDto.getPhong(), null,
+							hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1, "ROLE_SINHVIEN", sv,
+							new LoaiKeHoach(3));
+					keHoachService.luu(keHoach);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
+		return ResponseEntity.ok(phanCongs);
+		
+	}
 
 	@PutMapping("/cap-nhat-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")

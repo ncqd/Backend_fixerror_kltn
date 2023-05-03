@@ -115,7 +115,8 @@ public class SinhVienServiceImpl implements  SinhVienService {
 	}
 
 	@Override
-	public List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(String maNhom, String tenPhieu) {
+	public String timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(String maNhom, String tenPhieu) {
+		System.out.println(maNhom + " " + tenPhieu);
 		return sinhVienRepository.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemLon(maNhom, tenPhieu);
 	}
 

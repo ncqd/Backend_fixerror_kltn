@@ -108,6 +108,17 @@ public class SinhVienServiceImpl implements  SinhVienService {
 		return sinhVienRepository.layTatCaSinhVienTheoHocKy(maHocKy, soHocKy);
 	}
 
+	@Override
+	public List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(String maNhom, String tenPhieu) {
+		// TODO Auto-generated method stub
+		return sinhVienRepository.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(maNhom, tenPhieu);
+	}
+
+	@Override
+	public List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(String maNhom, String tenPhieu) {
+		return sinhVienRepository.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemLon(maNhom, tenPhieu);
+	}
+
 	
 
 }

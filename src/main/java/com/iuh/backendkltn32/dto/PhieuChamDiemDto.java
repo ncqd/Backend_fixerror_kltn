@@ -19,6 +19,7 @@ public class PhieuChamDiemDto {
 	private Double ketQuaTong;
 	private String maDeTai;
 	private String maGiangVien;
-	private String maSinhVien;
+	private List<SinhVienNhomVaiTroDto> sinhVien;
+	private List<BangDiemDto> bangDiem;
 
 }

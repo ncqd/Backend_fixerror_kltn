@@ -87,7 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/tieu-chi-cham-diem/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY")
 			.and()
 			.authorizeHttpRequests()
-			.antMatchers("/api/phieu-cham-diem/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY")
+			.antMatchers("/api/phieu-cham/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY")
 			.and()
 			.authorizeHttpRequests()
 			.antMatchers("/api/phieu-mau/**").hasAnyAuthority("ROLE_GIANGVIEN", "ROLE_QUANLY")

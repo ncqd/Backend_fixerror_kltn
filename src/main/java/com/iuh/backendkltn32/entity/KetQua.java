@@ -34,7 +34,7 @@ public class KetQua {
 	private PhieuCham phieuCham;
 
 	private Double diemTongKet;
-
+	
 	public Double getDiemTongKet() {
 		this.diemTongKet = (double) 0;
 		phieuCham.getDsDiemThanhPhan().stream().forEach(diem -> {
@@ -66,8 +66,4 @@ public class KetQua {
 	public void setPhieuCham(PhieuCham phieuCham) {
 		this.phieuCham = phieuCham;
 	}
-
-
-	
-
 }

@@ -60,6 +60,9 @@ public class KeHoach {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "maLoai", nullable = true)
 	private LoaiKeHoach loaiKeHoach;
+	
+	@Column(name = "phong", nullable = true)
+	private String phong;
 
 	public KeHoach(String tenKeHoach, String chuThich, String dsNgayThucHienKhoaLuan, HocKy hocKy,
 			Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, Integer tinhTrang, String vaiTro, String maNguoiDung, LoaiKeHoach loaiKeHoach) {
@@ -75,8 +78,21 @@ public class KeHoach {
 		this.maNguoiDung = maNguoiDung;
 		this.loaiKeHoach = loaiKeHoach;
 	}
-
 	
+	public KeHoach(String tenKeHoach, String chuThich, String dsNgayThucHienKhoaLuan, HocKy hocKy,
+			Timestamp thoiGianBatDau, Timestamp thoiGianKetThuc, Integer tinhTrang, String vaiTro, String maNguoiDung, LoaiKeHoach loaiKeHoach, String phong) {
+		super();
+		this.tenKeHoach = tenKeHoach;
+		this.chuThich = chuThich;
+		this.dsNgayThucHienKhoaLuan = dsNgayThucHienKhoaLuan;
+		this.hocKy = hocKy;
+		this.thoiGianBatDau = thoiGianBatDau;
+		this.thoiGianKetThuc = thoiGianKetThuc;
+		this.tinhTrang = tinhTrang;
+		this.vaiTro = vaiTro;
+		this.maNguoiDung = maNguoiDung;
+		this.loaiKeHoach = loaiKeHoach;
+		this.phong= phong;
+	}
 	
-
 }

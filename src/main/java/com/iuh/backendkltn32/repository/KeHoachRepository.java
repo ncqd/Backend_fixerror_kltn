@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,7 @@ public interface KeHoachRepository extends JpaRepository<KeHoach, Integer>{
 	
 	@Query(value = "select * from kehoach where maHocKy = :maHocKy and maLoai = :maLoai and  maNguoiDung = :maNguoiDung ;", nativeQuery = true)
 	List<KeHoach> layKeHoachTheoMaNguoiDungVaMaLoai(@Param("maHocKy") String maHocKy,@Param("maLoai")String maLoai, @Param("maNguoiDung") String maNguoiDung);
+	
+	@Query(value = "select maNguoiDung from kehoach where thoiGianBatDau = :thoiGianBatDau and phong = :phong and vaiTro = 'ROLE_GIANGVIEN' ;", nativeQuery = true)
+	List<String> layMaNGuoiDung(@Param("thoiGianBatDau") Timestamp thoiGianBatDau,@Param("phong")String phong);
 }

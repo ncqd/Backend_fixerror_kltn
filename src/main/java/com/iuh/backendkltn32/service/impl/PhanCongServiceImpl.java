@@ -68,4 +68,10 @@ public class PhanCongServiceImpl implements PhanCongService {
 		return repository.findByNhom(nhom);
 	}
 
+	@Override
+	public List<PhanCong> layPhanCongTheoMaNhomVaTen(String maNshom, String ten) {
+		// TODO Auto-generated method stub
+		return repository.timTheoTenVaMaNhom(maNshom, ten);
+	}
+
 }

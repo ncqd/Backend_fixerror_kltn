@@ -130,6 +130,7 @@ public class PhieuChamDiemController {
 
 			phieuChams.add(phieuChamAddSV1);
 			if (phieuCham.getSinhVien().size() >= 2) {
+				
 				phieuChamAddSV2 = phieuChamService.luu(new PhieuCham(Math.random() + "", phieuCham.getTenPhieu(), null,
 						null, null, deTaiService.layTheoMa(phieuCham.getMaDeTai()),
 						giangVienService.layTheoMa(phieuCham.getMaGiangVien())));

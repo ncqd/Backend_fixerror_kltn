@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.DangKyNhomRequest;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
+import com.iuh.backendkltn32.dto.LayDsNhomPBDto;
 import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.NhomPBResponeDto;
 import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
@@ -196,13 +197,15 @@ public class NhomController {
 
 	@PostMapping("/lay-ds-nhom-phan-bien")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDeTaiRquestDto request) throws Exception {
-		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
+	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws Exception {
+		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
+		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1);
+		String valid = request.getVaiTro() == "PB"? "HD":"PB";
 		Set<NhomPBResponeDto> respones = new HashSet<>();
 		if (!nhoms.isEmpty() && nhoms != null) {
 			nhoms.stream().forEach(nhom -> {
 				if (sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
-						request.getMaGiangVien()).size() > 0) {
+						valid).size() > 0 && phanCongService.layPhanCongTheoMaNhom(nhom) == null) {
 					Map<String, String> sinhViens = new HashMap<>();
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {
@@ -228,7 +231,6 @@ public class NhomController {
 							keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianKetThuc().getHours() - 5) + "" : null,
 							keHoachs.size() > 0 ? keHoachs.get(0).getChuThich() : "");
 					if (!respones.contains(nhomRoleGVRespone)) {
-
 						respones.add(nhomRoleGVRespone);
 					}
 				}

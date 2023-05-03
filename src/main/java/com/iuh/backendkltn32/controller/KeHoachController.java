@@ -323,7 +323,7 @@ public class KeHoachController {
 				tgbd.setHours(6);
 				tgbd.setMinutes(30);
 				tgkt.setHours(8);
-				tgbd.setMinutes(10);
+				tgkt.setMinutes(10);
 				break;
 			case "3-4":
 				tgbd.setHours(8);
@@ -377,6 +377,7 @@ public class KeHoachController {
 		}
 		Phong phong = new Phong(100, "aaa");
 		Timestamp tgbd = new Timestamp(System.currentTimeMillis());
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		keHoachService.layTheoTenKhongMaNguoiDung(keHoachHocKyDto.getMaHocKy(), tenLich, "ROLE_GIANGVIEN")
 				.forEach(kh -> {
 					String tiet = "";
@@ -410,8 +411,8 @@ public class KeHoachController {
 								gv.add(giangVienService.layTheoMa(maGV));
 							}
 
-							result.add(new KeHoachDto(tiet, kh.getThoiGianBatDau(),
-									phongService.layTheoMa(kh.getPhong()), gv));
+							result.add(new KeHoachDto(kh.getId()+"", kh.getTenKeHoach(),tiet, format.format(kh.getThoiGianBatDau()),
+									phongService.layTheoMa(kh.getPhong()).getTenPhong(), gv));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

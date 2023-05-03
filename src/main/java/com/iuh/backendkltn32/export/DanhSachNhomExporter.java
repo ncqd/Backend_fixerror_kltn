@@ -168,11 +168,9 @@ public class DanhSachNhomExporter {
 		writeHeaderLine();
         writeDataLines();
 
-        ServletOutputStream outputStream = response.getOutputStream();
-		workbook.write(outputStream);
+		workbook.write(response.getOutputStream());
 		workbook.close();
 
-		outputStream.close();
 
 	}
 

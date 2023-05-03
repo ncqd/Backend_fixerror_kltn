@@ -23,7 +23,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 	@Query(value = "select  * from nhom where maNhom like %:maNhomTemp% order by maNhom desc limit 1", nativeQuery = true)
 	Nhom layNhomTheoThoiGianThuc(@Param("maNhomTemp") String maNhom);
 
-	@Query(value = "select n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s  "
+	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s  "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l  "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h  "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k  " 
@@ -33,7 +33,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 	List<Nhom> layNhomTheoMaGiangVien(@Param("maHocKy") String maHocKy, @Param("soHocKy") String soHocKy,
 			@Param("maGiangVien") String maGiangVien);
 	
-	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+	@Query(value = "select distinct n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy "

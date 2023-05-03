@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class BackendKltn32Application {
 
 	public static void main(String[] args) {
-		TimeZone.setDefault(TimeZone.getDefault());
 		SpringApplication.run(BackendKltn32Application.class, args);
 	}
 

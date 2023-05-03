@@ -200,38 +200,39 @@ public class NhomController {
 		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
 		Set<NhomPBResponeDto> respones = new HashSet<>();
 		if (!nhoms.isEmpty() && nhoms != null) {
-
 			nhoms.stream().forEach(nhom -> {
-				Map<String, String> sinhViens = new HashMap<>();
-				sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
-					try {
-						sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				});
-				List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
-						.map(pc -> pc.getGiangVien().getTenGiangVien()).toList();
-				List<String> ma = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
-						.map(pc -> pc.getGiangVien().getMaGiangVien()).toList();
-				List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3",
-						ma.size() > 0 ? ma.get(0) : "");
-				@SuppressWarnings("deprecation")
-				NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(),
-						nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens,
-						nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs,
-						nhom.getDeTai().getGiangVien().getMaGiangVien(),
-						keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianBatDau() : null,
-						keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianKetThuc() : null,
-						keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianBatDau().getHours() - 5) + "" : null,
-						keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianKetThuc().getHours() - 5) + "" : null,
-						keHoachs.size() > 0 ? keHoachs.get(0).getChuThich() : "");
-				if (!respones.contains(nhomRoleGVRespone)) {
+				if (sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
+						request.getMaGiangVien()).size() > 0) {
+					Map<String, String> sinhViens = new HashMap<>();
+					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+						try {
+							sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+					List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
+							.map(pc -> pc.getGiangVien().getTenGiangVien()).toList();
+					List<String> ma = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
+							.map(pc -> pc.getGiangVien().getMaGiangVien()).toList();
+					List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3",
+							ma.size() > 0 ? ma.get(0) : "");
+					@SuppressWarnings("deprecation")
+					NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(),
+							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens,
+							nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs,
+							nhom.getDeTai().getGiangVien().getMaGiangVien(),
+							keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianBatDau() : null,
+							keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianKetThuc() : null,
+							keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianBatDau().getHours() - 5) + "" : null,
+							keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianKetThuc().getHours() - 5) + "" : null,
+							keHoachs.size() > 0 ? keHoachs.get(0).getChuThich() : "");
+					if (!respones.contains(nhomRoleGVRespone)) {
 
-					respones.add(nhomRoleGVRespone);
+						respones.add(nhomRoleGVRespone);
+					}
 				}
 			});
-
 		}
 		return respones;
 	}
@@ -256,11 +257,12 @@ public class NhomController {
 
 	@PostMapping("/dang-ky-co-san")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> dangKyNhomCoSan(DangKyNhomRequest request) throws Exception {
+	public ResponseEntity<?> dangKyNhomCoSan(@RequestBody DangKyNhomRequest request) throws Exception {
 		List<String> sinhVienTrongNhom = sinhVienService.layTatCaSinhVienTheoNhom(request.getMaNhom());
 		if (sinhVienTrongNhom.size() >= 2) {
 			throw new Exception("Nhóm Đã Đủ Thành Viên");
 		}
+		System.out.println(request.getDsMaSinhVien() + " aaaaaa");
 		SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
 		TinNhan tinNhan = new TinNhan(
 				"Có Sinh Viên Muốn Đăng nhóm của bạn " + sinhVienXinGiaNhap.getMaSinhVien() + " "
@@ -327,19 +329,23 @@ public class NhomController {
 					request.getMaNguoiDung());
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
-					List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
-					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
-						try {
-							SinhVien sv1 = sinhVienService.layTheoMa(sv);
-							sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+					if (sinhVienService
+							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
+							.contains(nhom.getMaNhom())) {
+						List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
+						sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+							try {
+								SinhVien sv1 = sinhVienService.layTheoMa(sv);
+								sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
 
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					});
-					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
-							nhom.getDeTai().getTenDeTai(), sinhViens));
-					System.out.println(respones);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						});
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), sinhViens));
+
+					}
 				});
 			}
 		} else {
@@ -362,19 +368,23 @@ public class NhomController {
 					request.getMaNguoiDung());
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
-					List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
-					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
-						try {
-							SinhVien sv1 = sinhVienService.layTheoMa(sv);
-							sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+					if (sinhVienService
+							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
+							.contains(nhom.getMaNhom())) {
+						List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
+						sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+							try {
 
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					});
-					respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
-							nhom.getDeTai().getTenDeTai(), sinhViens));
-					sinhViens.clear();
+								SinhVien sv1 = sinhVienService.layTheoMa(sv);
+								sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						});
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), sinhViens));
+						sinhViens.clear();
+					}
 				});
 
 			}

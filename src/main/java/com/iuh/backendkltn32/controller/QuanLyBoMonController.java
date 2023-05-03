@@ -50,6 +50,7 @@ import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KeHoachService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.PhanCongService;
+import com.iuh.backendkltn32.service.PhieuChamService;
 import com.iuh.backendkltn32.service.SinhVienService;
 import com.iuh.backendkltn32.service.TinNhanSerivce;
 
@@ -83,6 +84,9 @@ public class QuanLyBoMonController {
 
 	@Autowired
 	private DanhSachNhomExporter danhSachNhomExporter;
+	
+	@Autowired
+	private PhieuChamService phieuChamService;
 
 	@GetMapping("/thong-tin-ca-nhan/{maQuanLy}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -183,7 +187,7 @@ public class QuanLyBoMonController {
 						.substring(1, lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString().length() - 1) : null,
 				hocKy, lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
 				lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), lapKeHoachDto.getMaNguoiDung(),
-				new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()));
+				new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich()), "");
 		keHoachService.capNhat(keHoach);
 		return lapKeHoachDto;
 	}
@@ -256,17 +260,6 @@ public class QuanLyBoMonController {
 		tgbd.setHours(gioBatDau);
 		Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
 		tgkt.setHours(gioKetThuc);
-		phanCongDto.getDsMaGiangVienPB().stream().forEach(ma -> {
-			try {
-				KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phanCongDto.getPhong(), null,
-						hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1, ma, ma, new LoaiKeHoach(3));
-				keHoachService.luu(keHoach);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		});
 		sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom()== null ? "123" : nhom.getMaNhom() ).stream().forEach(sv -> {
 			try {
 
@@ -342,7 +335,7 @@ public class QuanLyBoMonController {
 	@GetMapping("/xuat-ds-nhom")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public void xuatDSNhom(HttpServletResponse response) throws Exception {
-		response.setContentType("application/octet-stream");
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());

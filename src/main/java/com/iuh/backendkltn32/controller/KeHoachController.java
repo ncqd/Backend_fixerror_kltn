@@ -306,7 +306,7 @@ public class KeHoachController {
 		return result;
 	}
 
-	@PostMapping("/tao-kehoach-giang-pb")
+	@PostMapping("/tao-kehoach-giangvien-pb")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public List<KeHoach> taoKeHoachGiangVienPb(@RequestBody KeHoachGvDto keHoachGvDto) throws Exception {
 		List<KeHoach> result = new ArrayList<>();

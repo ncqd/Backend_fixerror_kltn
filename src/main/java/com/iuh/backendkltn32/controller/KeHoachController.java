@@ -424,5 +424,81 @@ public class KeHoachController {
 
 		return result;
 	}
+	
+	@GetMapping("/tach-ke-hoach-hd")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public List<NgayDto> tachKeHoachHD() {
+		List<NgayDto> result = new ArrayList<>();
+		String maHocKy = hocKyService.layHocKyCuoiCungTrongDS().getMaHocKy();
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		int date = 0;
+		for (KeHoach kh : keHoachService.layTheoTenVaMaHocKyVaiTro(maHocKy, "Lịch chấm hội đồng", "ROLE_GIANGVIEN")) {
+			if (kh.getMaNguoiDung() == null) {
+				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
+					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(),
+							kh.getThoiGianBatDau().getMonth() + 1,
+							kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
+									: kh.getThoiGianBatDau().getDate() + date,
+							kh.getThoiGianBatDau().getHours(), kh.getThoiGianBatDau().getMinutes(),
+							kh.getThoiGianBatDau().getSeconds(), kh.getThoiGianBatDau().getNanos());
+					result.add(new NgayDto(ngay, format.format(ngay)));
+					date++;
+				}
+			}
+
+		}
+		return result;
+	}
+	
+	@PostMapping("/tao-kehoach-giangvien-hd")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public List<KeHoach> taoKeHoachGiangVienhhd(@RequestBody KeHoachGvDto keHoachGvDto) throws Exception {
+		List<KeHoach> result = new ArrayList<>();
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		for (String ma : keHoachGvDto.getDsMaGiangVienPB()) {
+			Timestamp tgbd = new Timestamp(keHoachGvDto.getNgay().getTime());
+			Timestamp tgkt = new Timestamp(keHoachGvDto.getNgay().getTime());
+			switch (keHoachGvDto.getTiet()) {
+			case "1-2":
+				tgbd.setHours(6);
+				tgbd.setMinutes(30);
+				tgkt.setHours(8);
+				tgkt.setMinutes(10);
+				break;
+			case "3-4":
+				tgbd.setHours(8);
+				tgbd.setMinutes(10);
+				tgkt.setHours(10);
+				break;
+			case "5-6":
+				tgbd.setHours(10);
+				tgkt.setHours(11);
+				tgbd.setMinutes(40);
+				break;
+			case "7-8":
+				tgbd.setHours(12);
+				tgbd.setMinutes(30);
+				tgkt.setHours(2);
+				tgbd.setMinutes(10);
+				break;
+			case "9-10":
+				tgbd.setHours(14);
+				tgbd.setMinutes(10);
+				tgkt.setHours(3);
+				tgbd.setMinutes(50);
+				break;
+			case "11-12":
+				tgbd.setHours(16);
+				tgkt.setHours(17);
+				tgbd.setMinutes(40);
+				break;
+			}
+			KeHoach keHoach = new KeHoach("Lịch chấm hội đồng", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt,
+					1, "ROLE_GIANGVIEN", ma, new LoaiKeHoach(3), keHoachGvDto.getPhong());
+			result.add(keHoachService.luu(keHoach));
+		}
+
+		return result;
+	}
 
 }

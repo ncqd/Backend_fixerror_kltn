@@ -104,4 +104,10 @@ public class KeHoachServiceImpl implements KeHoachService {
 		return repository.layMaNGuoiDung(thoiGianBatDau, phong);
 	}
 
+	@Override
+	public List<String> layPhong(Timestamp thoiGianBatDau) {
+		// TODO Auto-generated method stub
+		return repository.layPhong(thoiGianBatDau);
+	}
+
 }

@@ -401,7 +401,8 @@ public class KeHoachController {
 						tiet = "11-12";
 						break;
 					}
-					if (!phong.getId().toString().equals(kh.getPhong()) || tgbd.getHours() != kh.getThoiGianBatDau().getHours()) {
+					if (!phong.getId().toString().equals(kh.getPhong()) || tgbd.getHours() != kh.getThoiGianBatDau().getHours()
+							|| tgbd.getDate() != kh.getThoiGianBatDau().getDate()) {
 						System.out.println(kh);
 						try {
 							phong.setId(Integer.parseInt(kh.getPhong()));

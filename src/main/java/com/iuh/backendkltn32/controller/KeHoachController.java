@@ -1,6 +1,7 @@
 package com.iuh.backendkltn32.controller;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,6 +22,7 @@ import com.iuh.backendkltn32.dto.KeHoachGvDto;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LapKeHoachValidateDto;
 import com.iuh.backendkltn32.dto.LayKeHoachRequest;
+import com.iuh.backendkltn32.dto.NgayDto;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
@@ -189,15 +191,17 @@ public class KeHoachController {
 
 	@GetMapping("/tach-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public List<Date> tachKeHoach() {
-		List<Date> result = new ArrayList<>();
+	public List<NgayDto> tachKeHoach() {
+		List<NgayDto> result = new ArrayList<>();
 		String maHocKy = hocKyService.layHocKyCuoiCungTrongDS().getMaHocKy();
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 		int date = 0;
 		for (KeHoach kh : keHoachService.layTheoTenVaMaHocKyVaiTro(maHocKy, "Lịch chấm phản biện", "ROLE_GIANGVIEN")) {
-			if (kh.getThoiGianKetThuc().getDate() - date > 0) {
-				result.add(new Date(kh.getThoiGianBatDau().getYear() + 1900, kh.getThoiGianBatDau().getMonth() + 1,
+			while (kh.getThoiGianKetThuc().getDate() - date > 0) {
+				Date ngay = new Date(kh.getThoiGianBatDau().getYear() + 1900, kh.getThoiGianBatDau().getMonth() + 1,
 						kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
-								: kh.getThoiGianBatDau().getDate() + date));
+								: kh.getThoiGianBatDau().getDate() + date);
+				result.add(new NgayDto(ngay, format.format(date)));
 				date++;
 			}
 		}

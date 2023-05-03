@@ -353,7 +353,7 @@ public class KeHoachController {
 				tgbd.setMinutes(40);
 				break;
 			}
-			KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt,
+			KeHoach keHoach = new KeHoach("Lịch chấm phản biện", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt,
 					1, "ROLE_GIANGVIEN", ma, new LoaiKeHoach(3), keHoachGvDto.getPhong());
 			result.add(keHoachService.luu(keHoach));
 		}
@@ -401,7 +401,7 @@ public class KeHoachController {
 						tiet = "11-12";
 						break;
 					}
-					if (!phong.getId().toString().equals(kh.getPhong()) && tgbd.getHours() != kh.getThoiGianBatDau().getHours()) {
+					if (!phong.getId().toString().equals(kh.getPhong()) || tgbd.getHours() != kh.getThoiGianBatDau().getHours()) {
 						System.out.println(kh);
 						try {
 							phong.setId(Integer.parseInt(kh.getPhong()));
@@ -410,12 +410,12 @@ public class KeHoachController {
 							for (String maGV : keHoachService.layTheoPhongTg(kh.getPhong(), kh.getThoiGianBatDau())) {
 								gv.add(giangVienService.layTheoMa(maGV));
 							}
-
 							result.add(new KeHoachDto(kh.getId()+"", kh.getTenKeHoach(),tiet, format.format(kh.getThoiGianBatDau()),
 									phongService.layTheoMa(kh.getPhong()).getTenPhong(), gv));
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
+						
 					}
 
 				});

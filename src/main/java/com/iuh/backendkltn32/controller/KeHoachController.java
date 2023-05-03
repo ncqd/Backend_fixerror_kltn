@@ -407,6 +407,7 @@ public class KeHoachController {
 						try {
 							phong.setId(Integer.parseInt(kh.getPhong()));
 							tgbd.setHours(kh.getThoiGianBatDau().getHours());
+							tgbd.setDate(kh.getThoiGianBatDau().getDate());
 							List<GiangVien> gv = new ArrayList<>();
 							for (String maGV : keHoachService.layTheoPhongTg(kh.getPhong(), kh.getThoiGianBatDau())) {
 								gv.add(giangVienService.layTheoMa(maGV));

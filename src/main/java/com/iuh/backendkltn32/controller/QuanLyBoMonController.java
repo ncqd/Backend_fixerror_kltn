@@ -33,6 +33,7 @@ import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.PhanCongDto;
+import com.iuh.backendkltn32.dto.PhanCongDto2;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
@@ -276,9 +277,9 @@ public class QuanLyBoMonController {
 	
 	@PostMapping("/them-ds-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto> phanCongDtos) throws Exception {
+	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto2> phanCongDtos) throws Exception {
 		List<PhanCong> phanCongs = new ArrayList<>();
-		for (PhanCongDto phanCongDto : phanCongDtos) {
+		for (PhanCongDto2 phanCongDto : phanCongDtos) {
 			Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
 			phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 				GiangVien giangVien;
@@ -300,12 +301,43 @@ public class QuanLyBoMonController {
 				}
 				return null;
 			}).toList();
-			Integer gioBatDau = Integer.parseInt(phanCongDto.getTietBatDau()) + 5;
-			Integer gioKetThuc = Integer.parseInt(phanCongDto.getTietKetThuc()) + 5;
 			Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
-			tgbd.setHours(gioBatDau);
 			Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
-			tgkt.setHours(gioKetThuc);
+			switch (phanCongDto.getTiet()) {
+			case "1-2":
+				tgbd.setHours(6);
+				tgbd.setMinutes(30);
+				tgkt.setHours(8);
+				tgkt.setMinutes(10);
+				break;
+			case "3-4":
+				tgbd.setHours(8);
+				tgbd.setMinutes(10);
+				tgkt.setHours(10);
+				break;
+			case "5-6":
+				tgbd.setHours(10);
+				tgkt.setHours(11);
+				tgbd.setMinutes(40);
+				break;
+			case "7-8":
+				tgbd.setHours(12);
+				tgbd.setMinutes(30);
+				tgkt.setHours(2);
+				tgbd.setMinutes(10);
+				break;
+			case "9-10":
+				tgbd.setHours(14);
+				tgbd.setMinutes(10);
+				tgkt.setHours(3);
+				tgbd.setMinutes(50);
+				break;
+			case "11-12":
+				tgbd.setHours(16);
+				tgkt.setHours(17);
+				tgbd.setMinutes(40);
+				break;
+			}
 			sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom()== null ? "123" : nhom.getMaNhom() ).stream().forEach(sv -> {
 				try {
 

@@ -306,10 +306,11 @@ public class KeHoachController {
 		return result;
 	}
 
-	@PostMapping("/tao-kehoach-giang-pb")
+	@PostMapping("/tao-kehoach-giangvien-pb")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public List<KeHoach> taoKeHoachGiangVienPb(@RequestBody KeHoachGvDto keHoachGvDto) throws Exception {
 		List<KeHoach> result = new ArrayList<>();
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		for (String ma : keHoachGvDto.getDsMaGiangVienPB()) {
 			Timestamp tgbd = new Timestamp(keHoachGvDto.getNgay().getTime());
 			Timestamp tgkt = new Timestamp(keHoachGvDto.getNgay().getTime());
@@ -349,7 +350,7 @@ public class KeHoachController {
 				break;
 			}
 			KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", keHoachGvDto.getPhong(), null,
-					hocKyService.layTheoMa(keHoachGvDto.getMaHocKy()), tgbd, tgkt, 1, "ROLE_GIANGVIEN", ma,
+					hocKy, tgbd, tgkt, 1, "ROLE_GIANGVIEN", ma,
 					new LoaiKeHoach(3), keHoachGvDto.getPhong());
 			result.add(keHoachService.luu(keHoach));
 		}

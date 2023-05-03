@@ -329,7 +329,7 @@ public class NhomController {
 					request.getMaNguoiDung());
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
-					if (sinhVienService
+					if (!sinhVienService
 							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
 							.contains(nhom.getMaNhom())) {
 						List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();

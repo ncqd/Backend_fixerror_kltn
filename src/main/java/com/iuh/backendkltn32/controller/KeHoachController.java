@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.KeHoachDto;
 import com.iuh.backendkltn32.dto.KeHoachGvDto;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LapKeHoachValidateDto;
+import com.iuh.backendkltn32.dto.LayKeHoachHocKyDto;
 import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.NgayDto;
 import com.iuh.backendkltn32.entity.GiangVien;
@@ -49,7 +51,7 @@ public class KeHoachController {
 
 	@Autowired
 	private GiangVienService giangVienService;
-	
+
 	@Autowired
 	private PhongService phongService;
 
@@ -199,20 +201,22 @@ public class KeHoachController {
 	public List<NgayDto> tachKeHoach() {
 		List<NgayDto> result = new ArrayList<>();
 		String maHocKy = hocKyService.layHocKyCuoiCungTrongDS().getMaHocKy();
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		int date = 0;
 		for (KeHoach kh : keHoachService.layTheoTenVaMaHocKyVaiTro(maHocKy, "Lịch chấm phản biện", "ROLE_GIANGVIEN")) {
 			if (kh.getMaNguoiDung() == null) {
 				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
-					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear() , kh.getThoiGianBatDau().getMonth() + 1,
+					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(),
+							kh.getThoiGianBatDau().getMonth() + 1,
 							kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
-									: kh.getThoiGianBatDau().getDate() + date, kh.getThoiGianBatDau().getHours(),
-									kh.getThoiGianBatDau().getMinutes(), kh.getThoiGianBatDau().getSeconds(), kh.getThoiGianBatDau().getNanos());
+									: kh.getThoiGianBatDau().getDate() + date,
+							kh.getThoiGianBatDau().getHours(), kh.getThoiGianBatDau().getMinutes(),
+							kh.getThoiGianBatDau().getSeconds(), kh.getThoiGianBatDau().getNanos());
 					result.add(new NgayDto(ngay, format.format(ngay)));
 					date++;
 				}
 			}
-			
+
 		}
 		return result;
 	}
@@ -261,7 +265,7 @@ public class KeHoachController {
 		}
 		List<String> phongs = keHoachService.layPhong(temp);
 		for (Phong phong : phongService.layHetPhong()) {
-			if (!phongs.contains(phong.getId()+"")) {
+			if (!phongs.contains(phong.getId() + "")) {
 				result.add(phong);
 			}
 		}
@@ -344,16 +348,76 @@ public class KeHoachController {
 				tgbd.setMinutes(50);
 				break;
 			case "11-12":
-				tgbd.setHours(4);
-				tgkt.setHours(5);
+				tgbd.setHours(16);
+				tgkt.setHours(17);
 				tgbd.setMinutes(40);
 				break;
 			}
-			KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", keHoachGvDto.getPhong(), null,
-					hocKy, tgbd, tgkt, 1, "ROLE_GIANGVIEN", ma,
-					new LoaiKeHoach(3), keHoachGvDto.getPhong());
+			KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt,
+					1, "ROLE_GIANGVIEN", ma, new LoaiKeHoach(3), keHoachGvDto.getPhong());
 			result.add(keHoachService.luu(keHoach));
 		}
+
+		return result;
+	}
+
+	@PostMapping("/lay-lich-hocky-pb")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public List<KeHoachDto> layLichTheoHKPB(@RequestBody LayKeHoachHocKyDto keHoachHocKyDto) throws Exception {
+		List<KeHoachDto> result = new ArrayList<>();
+		String tenLich = "";
+		switch (keHoachHocKyDto.getLich()) {
+		case "PB":
+			tenLich = "Lịch chấm phản biện";
+			break;
+
+		case "HD":
+			tenLich = "Lịch chấm hội đồng";
+			break;
+		}
+		Phong phong = new Phong(100, "aaa");
+		Timestamp tgbd = new Timestamp(System.currentTimeMillis());
+		keHoachService.layTheoTenKhongMaNguoiDung(keHoachHocKyDto.getMaHocKy(), tenLich, "ROLE_GIANGVIEN")
+				.forEach(kh -> {
+					String tiet = "";
+					switch (kh.getThoiGianBatDau().getHours()) {
+					case 6:
+						tiet = "1-2";
+						break;
+					case 8:
+						tiet = "3-4";
+						break;
+					case 10:
+						tiet = "5-6";
+						break;
+					case 12:
+						tiet = "7-8";
+						break;
+					case 14:
+						tiet = "9-10";
+						break;
+					case 16:
+						tiet = "11-12";
+						break;
+					}
+					if (!phong.getId().toString().equals(kh.getPhong()) && tgbd.getHours() != kh.getThoiGianBatDau().getHours()) {
+						System.out.println(kh);
+						try {
+							phong.setId(Integer.parseInt(kh.getPhong()));
+							tgbd.setHours(kh.getThoiGianBatDau().getHours());
+							List<GiangVien> gv = new ArrayList<>();
+							for (String maGV : keHoachService.layTheoPhongTg(kh.getPhong(), kh.getThoiGianBatDau())) {
+								gv.add(giangVienService.layTheoMa(maGV));
+							}
+
+							result.add(new KeHoachDto(tiet, kh.getThoiGianBatDau(),
+									phongService.layTheoMa(kh.getPhong()), gv));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+				});
 
 		return result;
 	}

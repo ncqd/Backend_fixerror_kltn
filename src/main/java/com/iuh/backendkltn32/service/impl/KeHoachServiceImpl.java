@@ -116,4 +116,10 @@ public class KeHoachServiceImpl implements KeHoachService {
 		return repository.layTheoTenKhongMaNguoiDung(maHocKy, tenKeHoach, vaiTro);
 	}
 
+	@Override
+	public List<String> layTheoPhongTg(String phong, Timestamp thoiGianBatDau) {
+		// TODO Auto-generated method stub
+		return repository.layTheoPhongTg(phong, thoiGianBatDau);
+	}
+
 }

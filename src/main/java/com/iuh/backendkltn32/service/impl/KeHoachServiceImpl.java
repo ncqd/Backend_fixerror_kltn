@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.service.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,6 +96,12 @@ public class KeHoachServiceImpl implements KeHoachService {
 	public List<KeHoach> layKeHoachTheoMaHocKyVaMaLoai(String maHocKy, String maLoai, String maNguoiDung) {
 		// TODO Auto-generated method stub
 		return repository.layKeHoachTheoMaNguoiDungVaMaLoai(maHocKy, maLoai, maNguoiDung);
+	}
+
+	@Override
+	public List<String> layMaNGuoiDung(Timestamp thoiGianBatDau, String phong) {
+		// TODO Auto-generated method stub
+		return repository.layMaNGuoiDung(thoiGianBatDau, phong);
 	}
 
 }

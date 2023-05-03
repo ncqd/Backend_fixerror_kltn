@@ -42,12 +42,16 @@ public class DiemThanhPhan {
 	
 	@Column(name = "diemThanhPhan", nullable = true)
 	private String diemThanhPhan;
+	
+	@Column(name = "yKien", columnDefinition = "nvarchar(500)", nullable = true)
+	private String yKien;
 
-	public DiemThanhPhan(PhieuCham phieuCham, TieuChiChamDiem tieuChiChamDiem, String diemThanhPhan) {
+	public DiemThanhPhan(PhieuCham phieuCham, TieuChiChamDiem tieuChiChamDiem, String diemThanhPhan, String yKien) {
 		super();
 		this.phieuCham = phieuCham;
 		this.tieuChiChamDiem = tieuChiChamDiem;
 		this.diemThanhPhan = diemThanhPhan;
+		this.yKien = yKien;
 	}
 	
 	

@@ -1,7 +1,9 @@
 package com.iuh.backendkltn32.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
 
 import com.iuh.backendkltn32.entity.KeHoach;
 
@@ -17,4 +19,5 @@ public interface KeHoachService extends AbstractService<KeHoach>{
 	
 	List<KeHoach> layKeHoachTheoMaHocKyVaMaLoai(String maHocKy, String maLoai, String maNguoiDung);
 
+	List<String> layMaNGuoiDung(Timestamp thoiGianBatDau,String phong);
 }

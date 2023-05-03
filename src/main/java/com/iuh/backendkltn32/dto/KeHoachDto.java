@@ -17,9 +17,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class KeHoachDto {
 	
+	private String maLich;
+	private String tenLich;
 	private String tiet;
-	private Timestamp ngay;
-	private Phong phong;
+	private String ngay;
+	private String phong;
 	private List<GiangVien> dsGiangVienPB;
 
 }

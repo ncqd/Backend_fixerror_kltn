@@ -94,5 +94,15 @@ public class KeHoach {
 		this.loaiKeHoach = loaiKeHoach;
 		this.phong= phong;
 	}
+
+	@Override
+	public String toString() {
+		return "KeHoach [id=" + id + ", tenKeHoach=" + tenKeHoach + ", chuThich=" + chuThich
+				+ ", dsNgayThucHienKhoaLuan=" + dsNgayThucHienKhoaLuan + ", hocKy=" + hocKy + ", thoiGianBatDau="
+				+ thoiGianBatDau + ", thoiGianKetThuc=" + thoiGianKetThuc + ", tinhTrang=" + tinhTrang + ", vaiTro="
+				+ vaiTro + ", maNguoiDung=" + maNguoiDung + ", loaiKeHoach=" + loaiKeHoach + ", phong=" + phong + "]";
+	}
+	
+	
 	
 }

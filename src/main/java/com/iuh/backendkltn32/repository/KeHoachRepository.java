@@ -26,12 +26,15 @@ public interface KeHoachRepository extends JpaRepository<KeHoach, Integer>{
 	@Query(value = "select * from kehoach where maHocKy = :maHocKy and maLoai = :maLoai and  maNguoiDung = :maNguoiDung ;", nativeQuery = true)
 	List<KeHoach> layKeHoachTheoMaNguoiDungVaMaLoai(@Param("maHocKy") String maHocKy,@Param("maLoai")String maLoai, @Param("maNguoiDung") String maNguoiDung);
 	
-	@Query(value = "select maNguoiDung from kehoach where thoiGianBatDau = :thoiGianBatDau and phong = :phong and vaiTro = 'ROLE_GIANGVIEN' ;", nativeQuery = true)
-	List<String> layMaNGuoiDung(@Param("thoiGianBatDau") Timestamp thoiGianBatDau,@Param("phong")String phong);
+	@Query(value = "select maNguoiDung from kehoach where thoiGianBatDau = :thoiGianBatDau and vaiTro = 'ROLE_GIANGVIEN' ;", nativeQuery = true)
+	List<String> layMaNGuoiDung(@Param("thoiGianBatDau") Timestamp thoiGianBatDau);
 	
 	@Query(value = "select phong from kehoach where thoiGianBatDau = :thoiGianBatDau and vaiTro = 'ROLE_GIANGVIEN' ;", nativeQuery = true)
 	List<String> layPhong(@Param("thoiGianBatDau") Timestamp thoiGianBatDau);
 	
-	@Query(value = "select * from kehoach where maHocKy = :maHocKy and tenKeHoach = :tenKeHoach and vaiTro = :vaiTro and maNguoiDung = null  ;", nativeQuery = true)
+	@Query(value = "select * from kehoach where maHocKy = :maHocKy and tenKeHoach = :tenKeHoach and vaiTro = :vaiTro and maNguoiDung is not null  ;", nativeQuery = true)
 	List<KeHoach> layTheoTenKhongMaNguoiDung(@Param("maHocKy") String maHocKy,@Param("tenKeHoach") String tenKeHoach, @Param("vaiTro") String vaiTro);
+	
+	@Query(value = "select maNguoiDung from kehoach where phong = :phong and thoiGianBatDau = :thoiGianBatDau ;", nativeQuery = true)
+	List<String> layTheoPhongTg(@Param("phong") String phong,@Param("thoiGianBatDau") Timestamp thoiGianBatDau);
 }

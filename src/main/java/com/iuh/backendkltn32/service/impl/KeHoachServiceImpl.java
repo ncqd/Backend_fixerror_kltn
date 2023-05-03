@@ -101,7 +101,7 @@ public class KeHoachServiceImpl implements KeHoachService {
 	@Override
 	public List<String> layMaNGuoiDung(Timestamp thoiGianBatDau, String phong) {
 		// TODO Auto-generated method stub
-		return repository.layMaNGuoiDung(thoiGianBatDau, phong);
+		return repository.layMaNGuoiDung(thoiGianBatDau);
 	}
 
 	@Override
@@ -114,6 +114,12 @@ public class KeHoachServiceImpl implements KeHoachService {
 	public List<KeHoach> layTheoTenKhongMaNguoiDung(String maHocKy, String tenKeHoach, String vaiTro) {
 		// TODO Auto-generated method stub
 		return repository.layTheoTenKhongMaNguoiDung(maHocKy, tenKeHoach, vaiTro);
+	}
+
+	@Override
+	public List<String> layTheoPhongTg(String phong, Timestamp thoiGianBatDau) {
+		// TODO Auto-generated method stub
+		return repository.layTheoPhongTg(phong, thoiGianBatDau);
 	}
 
 }

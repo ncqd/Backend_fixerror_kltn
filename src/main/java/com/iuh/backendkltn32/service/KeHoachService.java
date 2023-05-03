@@ -20,4 +20,6 @@ public interface KeHoachService extends AbstractService<KeHoach>{
 	List<KeHoach> layKeHoachTheoMaHocKyVaMaLoai(String maHocKy, String maLoai, String maNguoiDung);
 
 	List<String> layMaNGuoiDung(Timestamp thoiGianBatDau,String phong);
+	
+	List<String> layPhong(Timestamp thoiGianBatDau);
 }

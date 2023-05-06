@@ -403,7 +403,6 @@ public class KeHoachController {
 					}
 					if (!phong.getId().toString().equals(kh.getPhong()) || tgbd.getHours() != kh.getThoiGianBatDau().getHours()
 							|| tgbd.getDate() != kh.getThoiGianBatDau().getDate()) {
-						System.out.println(kh);
 						try {
 							phong.setId(Integer.parseInt(kh.getPhong()));
 							tgbd.setHours(kh.getThoiGianBatDau().getHours());
@@ -436,7 +435,7 @@ public class KeHoachController {
 			if (kh.getMaNguoiDung() == null) {
 				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
 					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(),
-							kh.getThoiGianBatDau().getMonth() + 1,
+							kh.getThoiGianBatDau().getMonth(),
 							kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
 									: kh.getThoiGianBatDau().getDate() + date,
 							kh.getThoiGianBatDau().getHours(), kh.getThoiGianBatDau().getMinutes(),

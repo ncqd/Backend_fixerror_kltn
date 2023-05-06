@@ -197,7 +197,7 @@ public class NhomController {
 
 	@PostMapping("/lay-ds-nhom-phan-bien")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws Exception {
+		public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws Exception {
 		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
 		String valid = request.getVaiTro().equals("PB")? "HD":"PB";
 		Set<NhomPBResponeDto> respones = new HashSet<>();
@@ -354,10 +354,11 @@ public class NhomController {
 				});
 			}
 		} else {
+			System.out.println(request.getVaiTro());
 			String viTriPhanCong = "";
 			switch (request.getVaiTro()) {
 			case "PB":
-				viTriPhanCong = "Phan Bien";
+				viTriPhanCong = "phan bien";
 				break;
 			case "CT":
 				viTriPhanCong = "Chu Tich";
@@ -373,9 +374,10 @@ public class NhomController {
 					request.getMaNguoiDung());
 			if (!nhoms.isEmpty() && nhoms != null) {
 				nhoms.stream().forEach(nhom -> {
-					if (sinhVienService
+					if (!sinhVienService
 							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
-							.contains(nhom.getMaNhom())) {
+							.contains(nhom.getMaNhom()) || sinhVienService
+							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro()).size() == 0) {
 						List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
 						sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 							try {
@@ -388,7 +390,6 @@ public class NhomController {
 						});
 						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
 								nhom.getDeTai().getTenDeTai(), sinhViens));
-						sinhViens.clear();
 					}
 				});
 

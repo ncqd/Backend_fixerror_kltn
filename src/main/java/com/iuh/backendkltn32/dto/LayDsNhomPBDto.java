@@ -12,6 +12,7 @@ import lombok.Setter;
 public class LayDsNhomPBDto {
 	
 	private String maHocKy;
+	private String soHocKy;
 	private String vaiTro;
 
 }

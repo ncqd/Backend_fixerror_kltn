@@ -29,8 +29,8 @@ public interface SinhVienRepository extends JpaRepository<SinhVien, String> {
 			+ "on k.maPhieu = p.maPhieu where maNhom = :maNhom and tenPhieu = :tenPhieu  ", nativeQuery = true)
 	List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(@Param("maNhom") String maNhom,@Param("tenPhieu") String tenPhieu);
 	
-	@Query(value = "select distinct s.maNhom from sinhvien s join ketqua k "
-			+ "on s.maSinhVien = k.maSinhVien join phieucham p "
-			+ "on k.maPhieu = p.maPhieu where maNhom = :maNhom and tenPhieu like :tenPhieu and diemPhieuCham >= 5 ", nativeQuery = true)
-	List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemLon(@Param("maNhom") String maNhom,@Param("tenPhieu") String tenPhieu);
+	@Query(value = "select distinct s.maNhom from sinhvien s join ketqua k  "
+			+ "on s.maSinhVien = k.maSinhVien join phieucham p  "
+			+ "on k.maPhieu = p.maPhieu where maNhom = :maNhom and tenPhieu like :tenPhieu1 and diemPhieuCham >= 5 ", nativeQuery = true)
+	String timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemLon(@Param("maNhom") String maNhom,@Param("tenPhieu1") String tenPhieu);
 }

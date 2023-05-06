@@ -33,6 +33,7 @@ import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.PhanCongDto;
+import com.iuh.backendkltn32.dto.PhanCongDto2;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
@@ -272,6 +273,85 @@ public class QuanLyBoMonController {
 			}
 		});
 		return ResponseEntity.ok(phanCongs);
+	}
+	
+	@PostMapping("/them-ds-phan-cong")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto2> phanCongDtos) throws Exception {
+		List<PhanCong> phanCongs = new ArrayList<>();
+		for (PhanCongDto2 phanCongDto : phanCongDtos) {
+			Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
+			phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
+				GiangVien giangVien;
+				try {
+					if (nhom != null) {
+						if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+							throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+						}
+					}
+					
+					giangVien = giangVienService.layTheoMa(ma);
+
+					PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom,
+							giangVien);
+					phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+					return phanCongService.luu(phanCong);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}).toList();
+			Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
+			Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
+			switch (phanCongDto.getTiet()) {
+			case "1-2":
+				tgbd.setHours(6);
+				tgbd.setMinutes(30);
+				tgkt.setHours(8);
+				tgkt.setMinutes(10);
+				break;
+			case "3-4":
+				tgbd.setHours(8);
+				tgbd.setMinutes(10);
+				tgkt.setHours(10);
+				break;
+			case "5-6":
+				tgbd.setHours(10);
+				tgkt.setHours(11);
+				tgbd.setMinutes(40);
+				break;
+			case "7-8":
+				tgbd.setHours(12);
+				tgbd.setMinutes(30);
+				tgkt.setHours(2);
+				tgbd.setMinutes(10);
+				break;
+			case "9-10":
+				tgbd.setHours(14);
+				tgbd.setMinutes(10);
+				tgkt.setHours(3);
+				tgbd.setMinutes(50);
+				break;
+			case "11-12":
+				tgbd.setHours(16);
+				tgkt.setHours(17);
+				tgbd.setMinutes(40);
+				break;
+			}
+			sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom()== null ? "123" : nhom.getMaNhom() ).stream().forEach(sv -> {
+				try {
+
+					KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phanCongDto.getPhong(), null,
+							hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1, "ROLE_SINHVIEN", sv,
+							new LoaiKeHoach(3));
+					keHoachService.luu(keHoach);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
+		return ResponseEntity.ok(phanCongs);
+		
 	}
 
 	@PutMapping("/cap-nhat-phan-cong")

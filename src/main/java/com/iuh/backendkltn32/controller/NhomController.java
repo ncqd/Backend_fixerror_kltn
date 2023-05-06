@@ -198,14 +198,17 @@ public class NhomController {
 	@PostMapping("/lay-ds-nhom-phan-bien")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws Exception {
-		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
-		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1);
-		String valid = request.getVaiTro() == "PB"? "HD":"PB";
+		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
+		String valid = request.getVaiTro().equals("PB")? "HD":"PB";
 		Set<NhomPBResponeDto> respones = new HashSet<>();
 		if (!nhoms.isEmpty() && nhoms != null) {
 			nhoms.stream().forEach(nhom -> {
+				System.out.println(sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
+						valid));
 				if (sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
-						valid).size() > 0 && phanCongService.layPhanCongTheoMaNhom(nhom) == null) {
+						valid) != null && phanCongService.layPhanCongTheoMaNhomVaTen(nhom.getMaNhom(), request.getVaiTro().equals("PB") ? "Phan Bien" 
+								: "Hoi Dong").size() == 0) {
+					System.out.println(nhom);
 					Map<String, String> sinhViens = new HashMap<>();
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {

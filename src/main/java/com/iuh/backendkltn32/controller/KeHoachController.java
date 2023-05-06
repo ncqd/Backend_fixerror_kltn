@@ -403,7 +403,6 @@ public class KeHoachController {
 					}
 					if (!phong.getId().toString().equals(kh.getPhong()) || tgbd.getHours() != kh.getThoiGianBatDau().getHours()
 							|| tgbd.getDate() != kh.getThoiGianBatDau().getDate()) {
-						System.out.println(kh);
 						try {
 							phong.setId(Integer.parseInt(kh.getPhong()));
 							tgbd.setHours(kh.getThoiGianBatDau().getHours());

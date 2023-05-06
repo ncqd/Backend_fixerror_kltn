@@ -282,26 +282,27 @@ public class QuanLyBoMonController {
 		List<PhanCong> phanCongs = new ArrayList<>();
 		for (PhanCongDto2 phanCongDto : phanCongDtos) {
 			Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
-			phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
-				GiangVien giangVien;
-				try {
-					if (nhom != null) {
-						if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
-							throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
-						}
-					}
-					
-					giangVien = giangVienService.layTheoMa(ma);
 
-					PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom,
-							giangVien);
-					phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
-					return phanCongService.luu(phanCong);
-				} catch (Exception e) {
-					e.printStackTrace();
+				for (String ma : phanCongDto.getDsMaGiangVienPB()) {
+					GiangVien giangVien;
+					try {
+						if (nhom != null) {
+							if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+								return ResponseEntity.status(500).body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+							}
+						}
+						System.out.println(ma);
+						giangVien = giangVienService.layTheoMa(ma);
+
+						PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(), nhom,
+								giangVien);
+						phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+						phanCongs.add(phanCongService.luu(phanCong));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-				return null;
-			}).toList();
+
 			Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
 			Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
 			switch (phanCongDto.getTiet()) {

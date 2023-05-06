@@ -82,6 +82,9 @@ public class HocKyController {
 		keHoachService.luu(new KeHoach("Lịch chấm phản biện", "lịch biết giảng viên sẽ phản biện ngày nào và thời gian nhập điểm",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
 				"ROLE_GIANGVIEN", null, new LoaiKeHoach(5)));
+		keHoachService.luu(new KeHoach("Lịch chấm hội đồng", "lịch biết giảng viên sẽ phản biện ngày nào và thời gian nhập điểm",
+				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
+				"ROLE_GIANGVIEN", null, new LoaiKeHoach(5)));
 		keHoachService.luu(new KeHoach("Lịch gán đề tài cho nhóm", "lịch dùng để cho giảng viên gán đề tài cho nhóm sinh viên họ muốn hướng dẫn",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
 				"ROLE_GIANGVIEN", null, new LoaiKeHoach(5)));

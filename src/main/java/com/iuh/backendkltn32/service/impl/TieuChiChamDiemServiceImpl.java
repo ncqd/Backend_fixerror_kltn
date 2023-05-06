@@ -69,4 +69,10 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 		return repository.findAll();
 	}
 
+	@Override
+	public List<TieuChiChamDiem> luuDs(List<TieuChiChamDiem> dsChamDiems) {
+		// TODO Auto-generated method stub
+		return repository.saveAll(dsChamDiems);
+	}
+
 }

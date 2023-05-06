@@ -25,7 +25,7 @@ import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.TaiKhoan;
-import com.iuh.backendkltn32.excel.DeTaiImporter;
+import com.iuh.backendkltn32.importer.DeTaiImporter;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.DeTaiService;

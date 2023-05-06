@@ -44,13 +44,10 @@ public class Nhom implements Serializable{
 	@Column(name = "dkDeTai", nullable = false)
 	private Integer tinhTrangDeTai;
 	
-	@Column(name = "matKhauNhom", nullable = false)
-	private String matKhauNhom;
-
 	@Override
 	public String toString() {
 		return "Nhom [maNhom=" + maNhom + ", tenNhom=" + tenNhom + ", deTai=" + deTai + ", tinhTrang=" + tinhTrang
-				+ ", tinhTrangDeTai=" + tinhTrangDeTai + ", matKhauNhom=" + matKhauNhom + "]";
+				+ ", tinhTrangDeTai=" + tinhTrangDeTai + "]";
 	}
 	
 }

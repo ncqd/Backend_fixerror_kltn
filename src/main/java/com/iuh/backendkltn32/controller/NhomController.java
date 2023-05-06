@@ -79,7 +79,6 @@ public class NhomController {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
 				request.getVaiTro());
-		System.out.println("NhomController - dang ky nhom - " + request);
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
@@ -187,7 +186,6 @@ public class NhomController {
 				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
 				if (!respones.contains(nhomRoleGVRespone)) {
 					respones.add(nhomRoleGVRespone);
-					System.out.println("ds Nhom " + respones);
 				}
 			});
 
@@ -203,12 +201,9 @@ public class NhomController {
 		Set<NhomPBResponeDto> respones = new HashSet<>();
 		if (!nhoms.isEmpty() && nhoms != null) {
 			nhoms.stream().forEach(nhom -> {
-				System.out.println(sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
-						valid));
 				if (sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
 						valid) != null && phanCongService.layPhanCongTheoMaNhomVaTen(nhom.getMaNhom(), request.getVaiTro().equals("PB") ? "Phan Bien" 
 								: "Hoi Dong").size() == 0) {
-					System.out.println(nhom);
 					Map<String, String> sinhViens = new HashMap<>();
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {
@@ -267,10 +262,9 @@ public class NhomController {
 		if (sinhVienTrongNhom.size() >= 2) {
 			throw new Exception("Nhóm Đã Đủ Thành Viên");
 		}
-		System.out.println(request.getDsMaSinhVien() + " aaaaaa");
 		SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
 		TinNhan tinNhan = new TinNhan(
-				"Có Sinh Viên Muốn Đăng nhóm của bạn " + sinhVienXinGiaNhap.getMaSinhVien() + " "
+				"Có Sinh Viên Muốn đăng nhóm của bạn " + sinhVienXinGiaNhap.getMaSinhVien() + " "
 						+ sinhVienXinGiaNhap.getTenSinhVien(),
 				request.getDsMaSinhVien().get(0), sinhVienTrongNhom.get(0), 0,
 				new Timestamp(System.currentTimeMillis()));
@@ -284,7 +278,6 @@ public class NhomController {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
 				request.getVaiTro());
-		System.out.println("NhomController - dang ky nhom - " + request);
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {

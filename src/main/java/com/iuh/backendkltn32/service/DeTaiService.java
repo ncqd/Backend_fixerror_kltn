@@ -2,6 +2,8 @@ package com.iuh.backendkltn32.service;
 
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
+
 import com.iuh.backendkltn32.entity.DeTai;
 
 public interface DeTaiService extends AbstractService<DeTai> {
@@ -21,5 +23,7 @@ public interface DeTaiService extends AbstractService<DeTai> {
 	List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy) throws Exception;
 	
 	List<DeTai> layDsDeTaiTheoTrangThaiKhongMaGV(String maHocKy, String soHocKy, Integer trangThai) throws Exception;
+	
+	List<DeTai> layDsDeTaiXuaExcel(String maHocKy);
 	
 }

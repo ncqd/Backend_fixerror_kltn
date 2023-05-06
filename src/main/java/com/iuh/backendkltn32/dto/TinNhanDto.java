@@ -1,6 +1,5 @@
 package com.iuh.backendkltn32.dto;
 
-import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +17,6 @@ public class TinNhanDto {
 	private String noiDung;
 	private Integer trangThai;
 	private Object nguoiGui;
-	private Timestamp createdAt;
+	private String createdAt;
 
 }

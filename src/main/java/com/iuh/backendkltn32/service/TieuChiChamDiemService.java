@@ -9,5 +9,7 @@ public interface TieuChiChamDiemService extends AbstractService<TieuChiChamDiem>
 	List<TieuChiChamDiem> laydsTieuChiChamDiemTheoPhieuCham(String maPhieu);
 	
 	List<TieuChiChamDiem> layHet();
+	
+	List<TieuChiChamDiem> luuDs(List<TieuChiChamDiem> dsChamDiems);
 
 }

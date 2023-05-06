@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,15 +36,16 @@ public class TinNhanController {
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public List<TinNhanDto> layTinNhanTheoMaNguoiNhan(@PathVariable("maNguoiNhan") String maNguoiNhan) {
 		List<TinNhanDto> tinNhans = new ArrayList<>();
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
 		tinNhanSerivce.layTinNhanTheoMaNguoiNhan(maNguoiNhan).stream().forEach(tn -> {
 			try {
 				if (tn.getMaNGuoiNhan().startsWith("11")) {
 					tinNhans.add(new TinNhanDto(tn.getId(), giangVienService.layTheoMa(tn.getMaNguoiGui()), tn.getNoiDung(), tn.getTrangThai(),
-							giangVienService.layTheoMa("12392401"), tn.getCreatedAt()));
+							giangVienService.layTheoMa("12392401"), format.format(tn.getCreatedAt())));
 				} else {
 					tinNhans.add(new TinNhanDto(tn.getId(), sinhVienService.layTheoMa(tn.getMaNGuoiNhan()), tn.getNoiDung(), tn.getTrangThai(),
-							sinhVienService.layTheoMa(tn.getMaNguoiGui()), tn.getCreatedAt()));
+							sinhVienService.layTheoMa(tn.getMaNguoiGui()),format.format(tn.getCreatedAt())));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -58,21 +60,46 @@ public class TinNhanController {
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public TinNhanDto layTinNhanTheoMaNguoiNhan(@RequestBody TinNhanDto tinNhanDto) {
 
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			TinNhan tin = tinNhanSerivce.layTheoMa(tinNhanDto.getId() + "");
 			tin.setTrangThai(tinNhanDto.getTrangThai());
 			tin = tinNhanSerivce.capNhat(tin);
 			if (tin.getMaNguoiGui().startsWith("11")) {
 				return new TinNhanDto(tin.getId(), null, tin.getNoiDung(), tin.getTrangThai(),
-						giangVienService.layTheoMa(tin.getMaNguoiGui()), tin.getCreatedAt());
+						giangVienService.layTheoMa(tin.getMaNguoiGui()), format.format(tin.getCreatedAt()));
 			}
 			return new TinNhanDto(tin.getId(), null, tin.getNoiDung(), tin.getTrangThai(),
-					sinhVienService.layTheoMa(tin.getMaNguoiGui()), tin.getCreatedAt());
+					sinhVienService.layTheoMa(tin.getMaNguoiGui()),  format.format(tin.getCreatedAt()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return tinNhanDto;
 
+	}
+	
+	@GetMapping("/lay-tin-nhan-chua-doc/{maNguoiNhan}")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public List<TinNhanDto> layTinNhanTheoMaNguoiNhanChuaXacNhan(@PathVariable("maNguoiNhan") String maNguoiNhan) {
+		List<TinNhanDto> tinNhans = new ArrayList<>();
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+		tinNhanSerivce.layTinNhanTheoMaNguoiNhanCuaXacNhan(maNguoiNhan).stream().forEach(tn -> {
+			try {
+				if (tn.getMaNGuoiNhan().startsWith("11")) {
+					tinNhans.add(new TinNhanDto(tn.getId(), giangVienService.layTheoMa(tn.getMaNguoiGui()), tn.getNoiDung(), tn.getTrangThai(),
+							giangVienService.layTheoMa("12392401"), format.format(tn.getCreatedAt())));
+				} else {
+					tinNhans.add(new TinNhanDto(tn.getId(), sinhVienService.layTheoMa(tn.getMaNGuoiNhan()), tn.getNoiDung(), tn.getTrangThai(),
+							sinhVienService.layTheoMa(tn.getMaNguoiGui()),format.format(tn.getCreatedAt())));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		});
+
+		return tinNhans;
 	}
 
 }

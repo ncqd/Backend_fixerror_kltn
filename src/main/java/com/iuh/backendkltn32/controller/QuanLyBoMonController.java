@@ -43,6 +43,7 @@ import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.PhanCong;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TinNhan;
+import com.iuh.backendkltn32.export.DanhSachDeTaiExporter;
 import com.iuh.backendkltn32.export.DanhSachNhomExporter;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 import com.iuh.backendkltn32.service.DeTaiService;
@@ -132,7 +133,7 @@ public class QuanLyBoMonController {
 			deTaiService.capNhat(deTai);
 			TinNhan tinNhan;
 			if (duyetDeTaiRequest.getTrangThai() == 1) {
-				tinNhan = new TinNhan("Đề này chưa đủ điều kiện duyệt.\nChi Tiết: \n" + duyetDeTaiRequest.getLoiNhan(),
+				tinNhan = new TinNhan("Đề "+ deTai.getTenDeTai() +" chưa đủ điều kiện duyệt.Chi Tiết: " + duyetDeTaiRequest.getLoiNhan(),
 						"12392401", deTai.getGiangVien().getMaGiangVien(), 0,
 						new Timestamp(System.currentTimeMillis()));
 			} else {
@@ -412,10 +413,10 @@ public class QuanLyBoMonController {
 		return null;
 	}
 
-	@GetMapping("/xuat-ds-nhom")
+	@PostMapping("/xuat-ds-nhom")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public void xuatDSNhom(HttpServletResponse response) throws Exception {
-		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setContentType("application/vnd.ms-excel");
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
@@ -425,5 +426,20 @@ public class QuanLyBoMonController {
 		danhSachNhomExporter = new DanhSachNhomExporter(hocKyService, nhomService, sinhVienService);
 		danhSachNhomExporter.export(response);
 	}
+	
+	@PostMapping("/xuat-ds-de-tai")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public void xuatDSDeTai(HttpServletResponse response) throws Exception {
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=danh-de-tai_" + currentDateTime + ".xlsx";
+		response.setHeader(headerKey, headerValue);
+		
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		DanhSachDeTaiExporter danhSachDeTaiExporter = new DanhSachDeTaiExporter(deTaiService, hocKy.getMaHocKy());
+		danhSachDeTaiExporter.export(response);
+	}
 }

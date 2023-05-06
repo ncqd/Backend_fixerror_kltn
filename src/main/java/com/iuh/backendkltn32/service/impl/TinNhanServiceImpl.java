@@ -64,4 +64,10 @@ public class TinNhanServiceImpl implements TinNhanSerivce {
 		return repository.layTinNhanTheoMaNguoiNhan(maNguoiNhan);
 	}
 
+	@Override
+	public List<TinNhan> layTinNhanTheoMaNguoiNhanCuaXacNhan(String maNguoiNhan) {
+		// TODO Auto-generated method stub
+		return repository.layTinNhanTheoMaNguoiNhanChuaXacNhan(maNguoiNhan);
+	}
+
 }

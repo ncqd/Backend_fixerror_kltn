@@ -11,5 +11,8 @@ import com.iuh.backendkltn32.entity.TinNhan;
 public interface TinNhanRepository extends JpaRepository<TinNhan, Integer> {
 
 	@Query(value = "select * from tinnhan where maNguoiNhan = :maNguoiNhan and trangThai = 0", nativeQuery = true)
+	List<TinNhan> layTinNhanTheoMaNguoiNhanChuaXacNhan(@Param("maNguoiNhan")String maNguoiNhan);
+	
+	@Query(value = "select * from tinnhan where maNguoiNhan = :maNguoiNhan", nativeQuery = true)
 	List<TinNhan> layTinNhanTheoMaNguoiNhan(@Param("maNguoiNhan")String maNguoiNhan);
 }

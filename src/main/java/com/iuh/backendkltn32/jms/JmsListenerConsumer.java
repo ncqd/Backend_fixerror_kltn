@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.jms;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.jms.MapMessage;
@@ -17,10 +18,12 @@ import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
+import com.iuh.backendkltn32.entity.TinNhan;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.SinhVienService;
+import com.iuh.backendkltn32.service.TinNhanSerivce;
 import com.iuh.backendkltn32.utils.Constants;
 
 @Component
@@ -43,6 +46,9 @@ public class JmsListenerConsumer implements MessageListener {
 
 	@Autowired
 	private HocKyService hocKyService;
+	
+	@Autowired
+	private TinNhanSerivce tinNhanSerivce;
 
 	public String receiveMessage() {
 		try {
@@ -87,7 +93,7 @@ public class JmsListenerConsumer implements MessageListener {
 			List<String> dsMaSv = (List<String>) mapMessage.getObject("dsMaSinhVien");
 			System.out.println("Listener - maNhom - " + mapMessage);
 			DangKyNhomRequest request = new DangKyNhomRequest(dsMaSv, mapMessage.getString("maNhom"), 
-					mapMessage.getString("maDeTai"), mapMessage.getString("password"), null);
+					mapMessage.getString("maDeTai"),  null);
 			System.out.println("Listener - dang ky nhom - " + request);
 			try {
 				if (request.getMaNhom() == null) {
@@ -107,7 +113,7 @@ public class JmsListenerConsumer implements MessageListener {
 					if (request.getMaDeTai() != null) {
 						deTai = deTaiService.layTheoMa(request.getMaDeTai());
 					}
-					Nhom nhom = nhomService.luu(new Nhom(maNhomMoi, "Nhom " + maNhomMoi.substring(5), deTai, 0, 0, request.getPassword()));
+					Nhom nhom = nhomService.luu(new Nhom(maNhomMoi, "Nhom " + maNhomMoi.substring(5), deTai, 0, 0));
 					for (String maSv : request.getDsMaSinhVien()) {
 						SinhVien sv = sinhVienService.layTheoMa(maSv);
 						sv.setNhom(nhom);
@@ -130,11 +136,10 @@ public class JmsListenerConsumer implements MessageListener {
 						 throw new Exception(
 								"Khong the dang ky nhom vi sinh vien " + sinhVien2.getTenSinhVien() + " da co nhom");
 					}
-					if (!nhomJoin.getMatKhauNhom().equals(request.getPassword())) {
-						 throw new Exception("Mật khẩu nhóm sai");
-					}
 					sinhVien2.setNhom(nhomJoin);
 					sinhVienService.capNhat(sinhVien2);
+					tinNhanSerivce.luu(new TinNhan("Bạn Đã Được Gia Nhập Nhóm " + nhomJoin.getMaNhom(),
+							request.getDsMaSinhVien().get(0), request.getDsMaSinhVien().get(1), 0, new Timestamp(System.currentTimeMillis())));
 					return ResponseEntity.ok(nhomJoin);
 
 				}

@@ -59,7 +59,6 @@ public class DangNhapController {
 	@PostMapping("/dang-nhap")
 	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws Exception {
 		String tenTaiKhoan = loginRequest.getTenTaiKhoan();
-		// Xác thực từ username và password.
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(tenTaiKhoan, loginRequest.getPassword()));
 

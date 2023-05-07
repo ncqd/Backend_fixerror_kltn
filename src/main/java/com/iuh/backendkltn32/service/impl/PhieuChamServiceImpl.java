@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +68,12 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 		repository.save(phieuChamKhongTonTai);
 
 		return phieuChamKhongTonTai;
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuCham(String maGiangVien) {
+		// TODO Auto-generated method stub
+		return repository.layDsDeTaiTheoNamHocKy(maGiangVien);
 	}
 
 }

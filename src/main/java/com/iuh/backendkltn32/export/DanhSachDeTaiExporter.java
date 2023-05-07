@@ -94,7 +94,7 @@ public class DanhSachDeTaiExporter {
 	}
 
 	private void writeDataLines() throws Exception {
-		int rowCount = 6;
+		int rowCount = 1;
 
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
@@ -119,6 +119,7 @@ public class DanhSachDeTaiExporter {
 			int columnCount = 0;
 			createCell(row, columnCount++, deTai.getMaDeTai(), style);
 			createCell(row, columnCount++, deTai.getGiangVien().getTenGiangVien(), style);
+			createCell(row, columnCount++, deTai.getTenDeTai(), style);
 			createCell(row, columnCount++, deTai.getMucTieuDeTai(), style);
 			createCell(row, columnCount++, deTai.getSanPhamDuKien(), style);
 			createCell(row, columnCount++, deTai.getMoTa(), style);

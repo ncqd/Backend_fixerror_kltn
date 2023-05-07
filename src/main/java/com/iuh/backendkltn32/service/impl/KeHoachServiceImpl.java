@@ -122,4 +122,9 @@ public class KeHoachServiceImpl implements KeHoachService {
 		return repository.layTheoPhongTg(phong, thoiGianBatDau);
 	}
 
+	@Override
+	public List<KeHoach> layTheoPhongTGChuaChiaNhom(String phong, Timestamp thoiGianBatDau) {
+		return repository.layTheoPhongTGChuaChiaNhom(phong, thoiGianBatDau);
+	}
+
 }

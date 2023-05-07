@@ -26,4 +26,6 @@ public interface KeHoachService extends AbstractService<KeHoach>{
 	List<KeHoach> layTheoTenKhongMaNguoiDung( String maHocKy,String tenKeHoach, String vaiTro);
 	
 	List<String> layTheoPhongTg( String phong, Timestamp thoiGianBatDau);
+
+	List<KeHoach> layTheoPhongTGChuaChiaNhom(String phong, Timestamp thoiGianBatDau);
 }

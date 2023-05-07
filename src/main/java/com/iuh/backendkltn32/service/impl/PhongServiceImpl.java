@@ -51,4 +51,9 @@ public class PhongServiceImpl implements PhongService{
 		return repository.findAll();
 	}
 
+	@Override
+	public Phong layPhongTheoTenPhong(String tenPhong) {
+		return repository.layPhongTheoTen(tenPhong);
+	}
+
 }

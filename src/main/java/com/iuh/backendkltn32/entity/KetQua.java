@@ -15,16 +15,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @Entity
 @Table(name = "KetQua")
-public class KetQua {
+public class KetQua implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "maSinhVien", nullable = false)
 	private SinhVien sinhVien;
 	

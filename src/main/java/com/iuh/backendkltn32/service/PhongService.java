@@ -8,4 +8,6 @@ public interface PhongService extends AbstractService<Phong>{
 	
 	List<Phong> layHetPhong();
 
+	Phong layPhongTheoTenPhong(String tenPhong);
+
 }

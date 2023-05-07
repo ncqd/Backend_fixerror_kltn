@@ -401,6 +401,7 @@ public class KeHoachController {
 						tiet = "11-12";
 						break;
 					}
+					if (keHoachService.layTheoPhongTGChuaChiaNhom(kh.getPhong(), kh.getThoiGianBatDau()).size() == 0) {
 					if (!phong.getId().toString().equals(kh.getPhong()) || tgbd.getHours() != kh.getThoiGianBatDau().getHours()
 							|| tgbd.getDate() != kh.getThoiGianBatDau().getDate()) {
 						try {
@@ -416,6 +417,7 @@ public class KeHoachController {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
+					}
 						
 					}
 

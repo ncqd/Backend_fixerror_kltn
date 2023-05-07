@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.iuh.backendkltn32.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iuh.backendkltn32.dto.DiemThanhPhanDto;
-import com.iuh.backendkltn32.dto.PhieuChamDiemDto;
-import com.iuh.backendkltn32.dto.PhieuChamMauDto2;
-import com.iuh.backendkltn32.dto.TieuChiChamDiemDto;
 import com.iuh.backendkltn32.entity.DiemThanhPhan;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KetQua;
@@ -281,13 +278,27 @@ public class PhieuChamDiemController {
 		return null;
 	}
 	
-	@GetMapping("/lay-phieu-cham/{maGiangVien}")
-	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<PhieuCham> layPhieuChamTheoGiangVien(@PathVariable("maGiangVien") String maGiangVien) throws Exception {
+	@GetMapping("/lay/{maGiangVien}")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
+	public List<DiemSinhVienDto> layPhieuChamTheoGiangVien(@PathVariable("maGiangVien") String maGiangVien) throws Exception {
+		List<DiemSinhVienDto> rs = new ArrayList<>();
 		try {
-			
-			List<PhieuCham> phieuChamUpdate = phieuChamService.layDsPhieuCham(maGiangVien);
-			return phieuChamUpdate;
+			phieuChamService.layDsPhieuCham(maGiangVien).forEach(phieuCham -> {
+			DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+				phieuCham.getDsKetQua().forEach(sv -> {
+					diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+					diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+					diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+					diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+					diemSVDTO.setDiem(sv.getDiemTongKet());
+					rs.add(diemSVDTO);
+				});
+				diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+				diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+				diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+				diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+			});
+			return rs;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

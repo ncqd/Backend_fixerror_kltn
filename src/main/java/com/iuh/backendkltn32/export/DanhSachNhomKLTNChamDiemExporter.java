@@ -1,6 +1,7 @@
 package com.iuh.backendkltn32.export;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.iuh.backendkltn32.entity.Nhom;
+import com.iuh.backendkltn32.entity.SinhVien;
 
 public class DanhSachNhomKLTNChamDiemExporter {
 
@@ -48,7 +52,7 @@ public class DanhSachNhomKLTNChamDiemExporter {
         styleName.setAlignment(HorizontalAlignment.CENTER);
         
         
-        createCell(row, 0, "NGÀNH KỸ THUẬT PHẦN MỀM \n"
+        createCell(row, 1, "NGÀNH KỸ THUẬT PHẦN MỀM \n"
         		+ "Thời gian: 8g - ngày 08/12/2022 - địa điểm theo thông báo của khoa", styleName);
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 17));
         
@@ -106,6 +110,50 @@ public class DanhSachNhomKLTNChamDiemExporter {
         }
         cell.setCellStyle(style);
    }
+    
+//    private void writeDataLines() throws Exception {
+//		int rowCount = 6;
+//
+//		CellStyle style = workbook.createCellStyle();
+//		style.setWrapText(true);
+//		XSSFFont font = workbook.createFont();
+//
+//		font.setFontHeight(15);
+//		font.setFontHeightInPoints((short) 12);
+//		font.setFontName("Times New Roman");
+//
+//		style.setAlignment(HorizontalAlignment.CENTER);
+//		style.setVerticalAlignment(VerticalAlignment.CENTER);
+//		style.setBorderRight(BorderStyle.MEDIUM);
+//		style.setBorderBottom(BorderStyle.MEDIUM);
+//		style.setBorderTop(BorderStyle.MEDIUM);
+//		style.setBorderLeft(BorderStyle.MEDIUM);
+//
+//		style.setFont(font);
+//
+//		for (Nhom nhom : nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
+//			Row row = sheet.createRow(rowCount++);
+//			row.setHeight((short) 550);
+//			int columnCount = 0;
+//			createCell(row, columnCount++, nhom.getMaNhom(), style);
+//			List<String> mas = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+//			for (String ma : mas) {
+//				SinhVien sv = sinhVienService.layTheoMa(ma);
+//				createCell(row, columnCount++, sv.getMaSinhVien(), style);
+//				createCell(row, columnCount++, sv.getTenSinhVien(), style);
+//				createCell(row, columnCount++, sv.getEmail(), style);
+//			}
+//			if (mas.size() <= 1) {
+//				createCell(row, columnCount++, "", style);
+//				createCell(row, columnCount++, "", style);
+//				createCell(row, columnCount++, "", style);
+//			}
+//			
+//			createCell(row, columnCount++, nhom.getDeTai().getMaDeTai(), style);
+//			createCell(row, columnCount++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
+//			createCell(row, columnCount++, nhom.getDeTai().getTenDeTai(), style);
+//		}
+//	}
     
     public void export(HttpServletResponse response) throws IOException {
         writeHeaderLine();

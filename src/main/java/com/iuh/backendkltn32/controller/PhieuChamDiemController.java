@@ -280,5 +280,18 @@ public class PhieuChamDiemController {
 		}
 		return null;
 	}
+	
+	@GetMapping("/lay-phieu-cham/{maGiangVien}")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public List<PhieuCham> layPhieuChamTheoGiangVien(@PathVariable("maGiangVien") String maGiangVien) throws Exception {
+		try {
+			
+			List<PhieuCham> phieuChamUpdate = phieuChamService.layDsPhieuCham(maGiangVien);
+			return phieuChamUpdate;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

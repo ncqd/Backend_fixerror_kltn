@@ -45,6 +45,7 @@ import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TinNhan;
 import com.iuh.backendkltn32.export.DanhSachDeTaiExporter;
 import com.iuh.backendkltn32.export.DanhSachNhomExporter;
+import com.iuh.backendkltn32.export.KetQuaKLTNExporter;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
@@ -52,8 +53,10 @@ import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KeHoachService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.PhanCongService;
+import com.iuh.backendkltn32.service.PhieuChamMauService;
 import com.iuh.backendkltn32.service.PhieuChamService;
 import com.iuh.backendkltn32.service.SinhVienService;
+import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 import com.iuh.backendkltn32.service.TinNhanSerivce;
 
 @RestController
@@ -88,7 +91,10 @@ public class QuanLyBoMonController {
 	private DanhSachNhomExporter danhSachNhomExporter;
 	
 	@Autowired
-	private PhieuChamService phieuChamService;
+	private PhieuChamMauService phieuChamMauService;
+	
+	@Autowired
+	private TieuChiChamDiemService tieuChiChamDiemService;
 
 	@GetMapping("/thong-tin-ca-nhan/{maQuanLy}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
@@ -414,10 +420,10 @@ public class QuanLyBoMonController {
 		return null;
 	}
 
-	@PostMapping("/xuat-ds-nhom")
+	@GetMapping("/xuat-ds-nhom")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public void xuatDSNhom(HttpServletResponse response) throws Exception {
-		response.setContentType("application/vnd.ms-excel");
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
@@ -428,7 +434,7 @@ public class QuanLyBoMonController {
 		danhSachNhomExporter.export(response);
 	}
 	
-	@PostMapping("/xuat-ds-de-tai")
+	@GetMapping("/xuat-ds-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public void xuatDSDeTai(HttpServletResponse response) throws Exception {
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -442,5 +448,37 @@ public class QuanLyBoMonController {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		DanhSachDeTaiExporter danhSachDeTaiExporter = new DanhSachDeTaiExporter(deTaiService, hocKy.getMaHocKy());
 		danhSachDeTaiExporter.export(response);
+	}
+	
+	@GetMapping("/xuat-mailmerge")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public void xuatMailMerge(HttpServletResponse response) throws Exception {
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=danh-de-tai_" + currentDateTime + ".xlsx";
+		response.setHeader(headerKey, headerValue);
+		
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		DanhSachDeTaiExporter danhSachDeTaiExporter = new DanhSachDeTaiExporter(deTaiService, hocKy.getMaHocKy());
+		danhSachDeTaiExporter.export(response);
+	}
+	
+	@GetMapping("/xuat-ketquanhom-kltn")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public void xuatKetQuaNhomKLTN(HttpServletResponse response) throws Exception {
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=ketqua_" + currentDateTime + ".xlsx";
+		response.setHeader(headerKey, headerValue);
+		
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		KetQuaKLTNExporter ketQuaKLTNExporter = new KetQuaKLTNExporter(phieuChamMauService, tieuChiChamDiemService, hocKy);
+		ketQuaKLTNExporter.export(response);
 	}
 }

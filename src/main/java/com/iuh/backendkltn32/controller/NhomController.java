@@ -2,6 +2,7 @@ package com.iuh.backendkltn32.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.iuh.backendkltn32.dto.NhomPBResponeDto;
 import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
 import com.iuh.backendkltn32.dto.NhomSinhVienDto;
 import com.iuh.backendkltn32.dto.NhomVaiTro;
+import com.iuh.backendkltn32.dto.NhomVaiTroRequest;
 import com.iuh.backendkltn32.dto.SinhVienNhomVaiTroDto;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
@@ -45,353 +47,581 @@ import com.iuh.backendkltn32.service.TinNhanSerivce;
 @RequestMapping("/api/nhom")
 public class NhomController {
 
-    @Autowired
-    private JmsPublishProducer producer;
+	@Autowired
+	private JmsPublishProducer producer;
 
-    @Autowired
-    private JmsListenerConsumer listenerConsumer;
+	@Autowired
+	private JmsListenerConsumer listenerConsumer;
 
-    @Autowired
-    private NhomService nhomService;
+	@Autowired
+	private NhomService nhomService;
 
-    @Autowired
-    private SinhVienService sinhVienService;
+	@Autowired
+	private SinhVienService sinhVienService;
 
-    @Autowired
-    private HocKyService hocKyService;
+	@Autowired
+	private HocKyService hocKyService;
 
-    @Autowired
-    private KeHoachService keHoachService;
+	@Autowired
+	private KeHoachService keHoachService;
 
-    @Autowired
-    private PhanCongService phanCongService;
+	@Autowired
+	private PhanCongService phanCongService;
 
-    @Autowired
-    private TinNhanSerivce tinNhanSerivce;
+	@Autowired
+	private TinNhanSerivce tinNhanSerivce;
 
-    /*
-     * // case1: tao moi -> check: co nhom chua ???? // TH1: -> chua co //TH2: -> co
-     * roi -> XONG XONG XONG
-     */
-    @PostMapping("/dang-ky-nhom")
-    @PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-    public ResponseEntity<?> dangKyNhom(@RequestBody DangKyNhomRequest request) throws Exception {
-        HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-        List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
-                request.getVaiTro());
-        if (keHoachs.size() > 0) {
-            KeHoach keHoach = keHoachs.get(0);
-            if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-                throw new Exception("Chưa đến thời gian để đăng ký nhóm");
-            } else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-                throw new Exception("Thời gian đăng ký nhóm đã hết");
-            }
+	/*
+	 * // case1: tao moi -> check: co nhom chua ???? // TH1: -> chua co //TH2: -> co
+	 * roi -> XONG XONG XONG
+	 */
+	@PostMapping("/dang-ky-nhom")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
+	public ResponseEntity<?> dangKyNhom(@RequestBody DangKyNhomRequest request) throws Exception {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
+				request.getVaiTro());
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký nhóm");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký nhóm đã hết");
+			}
 
-            producer.sendMessageOnNhomChanel(request);
-            return listenerConsumer.listenerNhomChannel();
-        } else {
-            throw new Exception("Chưa có kế hoạch đăng ký nhóm");
-        }
-    }
+			producer.sendMessageOnNhomChanel(request);
+			return listenerConsumer.listenerNhomChannel();
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký nhóm");
+		}
+	}
 
-    @PostMapping("/lay-ds-nhom")
-    @PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-    public Set<NhomRoleGVRespone> layNhomTheoMaGv(@RequestBody LayDeTaiRquestDto request) throws Exception {
-        List<Nhom> nhoms = new ArrayList<>();
-        Set<NhomRoleGVRespone> respones = new HashSet<>();
-        if (request.getTrangThai() == null && request.getMaGiangVien() == null) {
-            nhoms = nhomService.layTatCaNhom(request.getMaHocKy(), request.getSoHocKy());
-            if (!nhoms.isEmpty() && nhoms != null) {
-                nhoms.stream().forEach(nhom -> {
-                    List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-                    List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
-                        try {
-                            return sinhVienService.layTheoMa(sv);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }).toList();
-                    NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
-                    respones.add(nhomRoleGVRespone);
-                });
+	@PostMapping("/lay-ds-nhom")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
+	public Set<NhomRoleGVRespone> layNhomTheoMaGv(@RequestBody LayDeTaiRquestDto request) throws Exception {
+		List<Nhom> nhoms = new ArrayList<>();
+		Set<NhomRoleGVRespone> respones = new HashSet<>();
+		if (request.getTrangThai() == null && request.getMaGiangVien() == null) {
+			nhoms = nhomService.layTatCaNhom(request.getMaHocKy(), request.getSoHocKy());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+						try {
+							return sinhVienService.layTheoMa(sv);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						return null;
+					}).toList();
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
+					respones.add(nhomRoleGVRespone);
+				});
 
-            }
-        }
+			}
+		}
 
-        if (request.getTrangThai() != null && request.getMaGiangVien() == null) {
-            nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(),
-                    request.getTrangThai());
+		if (request.getTrangThai() != null && request.getMaGiangVien() == null) {
+			nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(),
+					request.getTrangThai());
 
-            if (!nhoms.isEmpty() && nhoms != null) {
-                nhoms.stream().forEach(nhom -> {
-                    List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-                    List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
-                        try {
-                            return sinhVienService.layTheoMa(sv);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }).toList();
-                    NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
-                    respones.add(nhomRoleGVRespone);
-                });
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+						try {
+							return sinhVienService.layTheoMa(sv);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						return null;
+					}).toList();
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
+					respones.add(nhomRoleGVRespone);
+				});
 
-            }
-        }
+			}
+		}
 
-        if (request.getMaGiangVien() != null) {
-            nhoms = nhomService.layDSNhomTheMaGiangVien(request.getMaHocKy(), request.getSoHocKy(),
-                    request.getMaGiangVien());
-            if (!nhoms.isEmpty() && nhoms != null) {
-                nhoms.stream().forEach(nhom -> {
-                    List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-                    List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
-                        try {
-                            return sinhVienService.layTheoMa(sv);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }).toList();
-                    NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, nhom.getDeTai().getMaDeTai(),
-                            sinhViens, sinhViens2);
-                    respones.add(nhomRoleGVRespone);
-                });
+		if (request.getMaGiangVien() != null) {
+			nhoms = nhomService.layDSNhomTheMaGiangVien(request.getMaHocKy(), request.getSoHocKy(),
+					request.getMaGiangVien());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+						try {
+							return sinhVienService.layTheoMa(sv);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						return null;
+					}).toList();
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, nhom.getDeTai().getMaDeTai(),
+							sinhViens, sinhViens2);
+					respones.add(nhomRoleGVRespone);
+				});
 
-            }
+			}
 
-        }
-        return respones;
-    }
+		}
+		return respones;
+	}
 
-    @GetMapping("/lay-ds-nhom/{tinhTrang}")
-    @PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-    public Set<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang) throws Exception {
-        HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-        List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), tinhTrang);
-        Set<NhomRoleGVRespone> respones = new HashSet<>();
-        if (!nhoms.isEmpty() && nhoms != null) {
-            nhoms.stream().forEach(nhom -> {
-                List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
-                List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
-                    try {
-                        return sinhVienService.layTheoMa(sv);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }).toList();
-                NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
-                if (!respones.contains(nhomRoleGVRespone)) {
-                    respones.add(nhomRoleGVRespone);
-                }
-            });
+	@GetMapping("/lay-ds-nhom/{tinhTrang}")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public Set<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang) throws Exception {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), tinhTrang);
+		Set<NhomRoleGVRespone> respones = new HashSet<>();
+		if (!nhoms.isEmpty() && nhoms != null) {
+			nhoms.stream().forEach(nhom -> {
+				List<String> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+				List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
+					try {
+						return sinhVienService.layTheoMa(sv);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return null;
+				}).toList();
+				NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
+				if (!respones.contains(nhomRoleGVRespone)) {
+					respones.add(nhomRoleGVRespone);
+				}
+			});
 
-        }
-        return respones;
-    }
+		}
+		return respones;
+	}
 
-    @PostMapping("/lay-ds-nhom-phan-bien")
-    @PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-    public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws Exception {
-        List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
-        String valid = request.getVaiTro().equals("PB") ? "HD" : "PB";
-        Set<NhomPBResponeDto> respones = new HashSet<>();
-        if (!nhoms.isEmpty() && nhoms != null) {
-            nhoms.stream().forEach(nhom -> {
-                if (sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
-                        valid) != null && phanCongService.layPhanCongTheoMaNhomVaTen(nhom.getMaNhom(), request.getVaiTro().equals("PB") ? "phan bien"
-                        : "chu tich").size() == 0) {
-                    Map<String, String> sinhViens = new HashMap<>();
-                    sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
-                        try {
-                            sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
-                            .map(pc -> pc.getGiangVien().getTenGiangVien()).toList();
-                    List<String> ma = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
-                            .map(pc -> pc.getGiangVien().getMaGiangVien()).toList();
-                    List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3",
-                            ma.size() > 0 ? ma.get(0) : "");
-                    @SuppressWarnings("deprecation")
-                    NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(),
-                            nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens,
-                            nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs,
-                            nhom.getDeTai().getGiangVien().getMaGiangVien(),
-                            keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianBatDau() : null,
-                            keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianKetThuc() : null,
-                            keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianBatDau().getHours() - 5) + "" : null,
-                            keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianKetThuc().getHours() - 5) + "" : null,
-                            keHoachs.size() > 0 ? keHoachs.get(0).getChuThich() : "");
-                    if (!respones.contains(nhomRoleGVRespone)) {
-                        respones.add(nhomRoleGVRespone);
-                    }
-                }
-            });
-        }
-        return respones;
-    }
+	@PostMapping("/lay-ds-nhom-phan-bien")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws Exception {
+		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
+		String valid = request.getVaiTro().equals("PB") ? "HD" : "PB";
+		Set<NhomPBResponeDto> respones = new HashSet<>();
+		if (!nhoms.isEmpty() && nhoms != null) {
+			nhoms.stream().forEach(nhom -> {
+				if (sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(nhom.getMaNhom(),
+						valid) != null
+						&& phanCongService.layPhanCongTheoMaNhomVaTen(nhom.getMaNhom(),
+								request.getVaiTro().equals("PB") ? "phan bien" : "chu tich").size() == 0) {
+					Map<String, String> sinhViens = new HashMap<>();
+					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+						try {
+							sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+					List<String> tenGiangVienPBs = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
+							.map(pc -> pc.getGiangVien().getTenGiangVien()).toList();
+					List<String> ma = phanCongService.layPhanCongTheoMaNhom(nhom).stream()
+							.map(pc -> pc.getGiangVien().getMaGiangVien()).toList();
+					List<KeHoach> keHoachs = keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3",
+							ma.size() > 0 ? ma.get(0) : "");
+					@SuppressWarnings("deprecation")
+					NhomPBResponeDto nhomRoleGVRespone = new NhomPBResponeDto(nhom.getMaNhom(), nhom.getTenNhom(),
+							nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(), sinhViens,
+							nhom.getDeTai().getGiangVien().getTenGiangVien(), tenGiangVienPBs,
+							nhom.getDeTai().getGiangVien().getMaGiangVien(),
+							keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianBatDau() : null,
+							keHoachs.size() > 0 ? keHoachs.get(0).getThoiGianKetThuc() : null,
+							keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianBatDau().getHours() - 5) + "" : null,
+							keHoachs.size() > 0 ? (keHoachs.get(0).getThoiGianKetThuc().getHours() - 5) + "" : null,
+							keHoachs.size() > 0 ? keHoachs.get(0).getChuThich() : "");
+					if (!respones.contains(nhomRoleGVRespone)) {
+						respones.add(nhomRoleGVRespone);
+					}
+				}
+			});
+		}
+		return respones;
+	}
 
-    @GetMapping("/lay-nhom/{maNhom}")
-    @PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-    public NhomSinhVienDto layNhom(@PathVariable("maNhom") String maNhom) throws Exception {
-        Nhom nhom = nhomService.layTheoMa(maNhom);
-        List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(maNhom).stream().map(ma -> {
-            try {
-                return sinhVienService.layTheoMa(ma);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).toList();
+	@GetMapping("/lay-nhom/{maNhom}")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
+	public NhomSinhVienDto layNhom(@PathVariable("maNhom") String maNhom) throws Exception {
+		Nhom nhom = nhomService.layTheoMa(maNhom);
+		List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(maNhom).stream().map(ma -> {
+			try {
+				return sinhVienService.layTheoMa(ma);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}).toList();
 
-        NhomSinhVienDto respones = new NhomSinhVienDto(nhom, sinhViens, nhom.getTinhTrang(), nhom.getDeTai());
+		NhomSinhVienDto respones = new NhomSinhVienDto(nhom, sinhViens, nhom.getTinhTrang(), nhom.getDeTai());
 
-        return respones;
-    }
+		return respones;
+	}
 
-    @PostMapping("/dang-ky-co-san")
-    @PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-    public ResponseEntity<?> dangKyNhomCoSan(@RequestBody DangKyNhomRequest request) throws Exception {
-        List<String> sinhVienTrongNhom = sinhVienService.layTatCaSinhVienTheoNhom(request.getMaNhom());
-        if (sinhVienTrongNhom.size() >= 2) {
-            throw new Exception("Nhóm Đã Đủ Thành Viên");
-        }
-        SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
-        TinNhan tinNhan = new TinNhan(
-                "Có Sinh Viên Muốn đăng nhóm của bạn " + sinhVienXinGiaNhap.getMaSinhVien() + " "
-                        + sinhVienXinGiaNhap.getTenSinhVien(),
-                request.getDsMaSinhVien().get(0), sinhVienTrongNhom.get(0), 0,
-                new Timestamp(System.currentTimeMillis()));
-        tinNhanSerivce.luu(tinNhan);
-        return ResponseEntity.ok("Tin Nhan Da Gui Di Thanh Cong");
-    }
+	@PostMapping("/dang-ky-co-san")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
+	public ResponseEntity<?> dangKyNhomCoSan(@RequestBody DangKyNhomRequest request) throws Exception {
+		List<String> sinhVienTrongNhom = sinhVienService.layTatCaSinhVienTheoNhom(request.getMaNhom());
+		if (sinhVienTrongNhom.size() >= 2) {
+			throw new Exception("Nhóm Đã Đủ Thành Viên");
+		}
+		SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
+		TinNhan tinNhan = new TinNhan(
+				"Có Sinh Viên Muốn đăng nhóm của bạn " + sinhVienXinGiaNhap.getMaSinhVien() + " "
+						+ sinhVienXinGiaNhap.getTenSinhVien(),
+				request.getDsMaSinhVien().get(0), sinhVienTrongNhom.get(0), 0,
+				new Timestamp(System.currentTimeMillis()));
+		tinNhanSerivce.luu(tinNhan);
+		return ResponseEntity.ok("Tin Nhan Da Gui Di Thanh Cong");
+	}
 
-    @PostMapping("/roi-nhom")
-    @PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-    public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) throws Exception {
-        HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-        List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
-                request.getVaiTro());
-        if (keHoachs.size() > 0) {
-            KeHoach keHoach = keHoachs.get(0);
-            if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-                throw new Exception("Chưa đến thời gian để đăng ký nhóm");
-            } else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-                throw new Exception("Thời gian đăng ký nhóm đã hết");
-            }
+	@PostMapping("/roi-nhom")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
+	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) throws Exception {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
+				request.getVaiTro());
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new Exception("Chưa đến thời gian để đăng ký nhóm");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new Exception("Thời gian đăng ký nhóm đã hết");
+			}
 
-            try {
-                SinhVien sinhVien = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
-                if (sinhVien.getNhom() == null) {
-                    return ResponseEntity.status(500).body("Chua co nhom de roi");
-                }
-                if (request.getMaNhom() == null) {
-                    return ResponseEntity.status(500).body("Ma nhom bang null");
-                }
-                if (sinhVien.getNhom().getDeTai() != null || sinhVien.getNhom().getTinhTrang() == 1) {
-                    return ResponseEntity.status(500).body("Không thể rời nhóm");
-                }
-                sinhVien.setNhom(null);
-                sinhVienService.capNhat(sinhVien);
-                if (nhomService.laySoSinhVienTrongNhomTheoMa(request.getMaNhom()) == null) {
-                    nhomService.xoa(request.getMaNhom());
-                }
-                return ResponseEntity.ok(sinhVien);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(500).body(e.getMessage());
-            }
-        } else {
-            throw new Exception("Chưa có kế hoạch đăng ký nhóm");
-        }
+			try {
+				SinhVien sinhVien = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
+				if (sinhVien.getNhom() == null) {
+					return ResponseEntity.status(500).body("Chua co nhom de roi");
+				}
+				if (request.getMaNhom() == null) {
+					return ResponseEntity.status(500).body("Ma nhom bang null");
+				}
+				if (sinhVien.getNhom().getDeTai() != null || sinhVien.getNhom().getTinhTrang() == 1) {
+					return ResponseEntity.status(500).body("Không thể rời nhóm");
+				}
+				sinhVien.setNhom(null);
+				sinhVienService.capNhat(sinhVien);
+				if (nhomService.laySoSinhVienTrongNhomTheoMa(request.getMaNhom()) == null) {
+					nhomService.xoa(request.getMaNhom());
+				}
+				return ResponseEntity.ok(sinhVien);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(500).body(e.getMessage());
+			}
+		} else {
+			throw new Exception("Chưa có kế hoạch đăng ký nhóm");
+		}
 
-    }
+	}
 
-    @PostMapping("/lay-ds-nhom-theo-vai-tro")
-    @PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-    public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws Exception {
-        HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
-        Set<NhomVaiTro> respones = new HashSet<>();
+	@PostMapping("/lay-ds-nhom-theo-vai-tro")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws Exception {
+		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
+		Set<NhomVaiTro> respones = new HashSet<>();
+		if (request.getVaiTro().equals("HD")) {
+			List<Nhom> nhoms = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					request.getMaNguoiDung());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					if (!sinhVienService
+							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
+							.contains(nhom.getMaNhom())) {
+						List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
+						sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+							try {
+								SinhVien sv1 = sinhVienService.layTheoMa(sv);
+								sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
 
-        if (request.getVaiTro() == null) {
-            request.setVaiTro("HD");
-        }
-        if (request.getVaiTro().equals("HD")) {
-            List<Nhom> nhoms = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
-                    request.getMaNguoiDung());
-            if (!nhoms.isEmpty() && nhoms != null) {
-                nhoms.stream().forEach(nhom -> {
-                    if (!sinhVienService
-                            .timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
-                            .contains(nhom.getMaNhom())) {
-                        List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
-                        sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
-                            try {
-                                SinhVien sv1 = sinhVienService.layTheoMa(sv);
-                                sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						});
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), sinhViens));
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                        respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
-                                nhom.getDeTai().getTenDeTai(), sinhViens));
+					}
+				});
+			}
+		} else {
+			System.out.println(request.getVaiTro());
+			String viTriPhanCong = "";
+			switch (request.getVaiTro()) {
+			case "PB":
+				viTriPhanCong = "phan bien";
+				break;
+			case "CT":
+				viTriPhanCong = "chu tich";
+				break;
+			case "TK":
+				viTriPhanCong = "thu ky";
+				break;
+			case "TV3":
+				viTriPhanCong = "thanh vien 3";
+				break;
+			default:
+				viTriPhanCong = "phan bien";
+				break;
+			}
+			List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), viTriPhanCong,
+					request.getMaNguoiDung());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					if (!sinhVienService
+							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
+							.contains(nhom.getMaNhom())
+							|| sinhVienService
+									.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
+									.size() == 0) {
+						List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
+						sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+							try {
 
-                    }
-                });
-            }
-        } else {
-            System.out.println(request.getVaiTro());
-            String viTriPhanCong = "";
-            switch (request.getVaiTro()) {
-                case "PB":
-                    viTriPhanCong = "phan bien";
-                    break;
-                case "CT":
-                    viTriPhanCong = "chu tich";
-                    break;
-                case "TK":
-                    viTriPhanCong = "thu ky";
-                    break;
-                case "TV3":
-                    viTriPhanCong = "thanh vien 3";
-                    break;
-                default:
-                    viTriPhanCong = "phan bien";
-                    break;
-            }
-            List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), viTriPhanCong,
-                    request.getMaNguoiDung());
-            if (!nhoms.isEmpty() && nhoms != null) {
-                nhoms.stream().forEach(nhom -> {
-                    if (!sinhVienService
-                            .timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro())
-                            .contains(nhom.getMaNhom()) || sinhVienService
-                            .timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro()).size() == 0) {
-                        List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
-                        sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
-                            try {
+								SinhVien sv1 = sinhVienService.layTheoMa(sv);
+								sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						});
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), sinhViens));
+					}
+				});
 
-                                SinhVien sv1 = sinhVienService.layTheoMa(sv);
-                                sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                        respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
-                                nhom.getDeTai().getTenDeTai(), sinhViens));
-                    }
-                });
+			}
+		}
+		return respones;
+	}
 
-            }
-        }
-        return respones;
-    }
+	@PostMapping("/lay-ds-nhom-theo-vai-tro-cu-the")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public Set<NhomVaiTro> layNhomvaitroCuThe(@RequestBody NhomVaiTroRequest request) throws Exception {
+		HocKy hocKy = null;
+		if (request.getMaHocKy() == null) {
+			hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		} else {
+			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
+		}
+		Set<NhomVaiTro> respones = new HashSet<>();
+		String viTriCham = request.getDotCham() != null ? request.getDotCham() : "All";
+		if (viTriCham.equals("All")) {
+			System.out.println("All");
+			List<Nhom> nhomAs = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					request.getMaNguoiDung());
+			if (!nhomAs.isEmpty() && nhomAs != null) {
+				nhomAs.stream().forEach(nhom -> {
+					if (xuatSinhVienKhiCan(nhom, "HD").size() > 0) {
+						
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), xuatSinhVienKhiCan(nhom, "HD"), "Hướng Dẫn"));
+					}
+				});
+			}
+			for (String viTriCham2 : Arrays.asList("PB", "CT", "TK", "TV3")) {
+				String vaiTroCham = "";
+				switch (viTriCham2) {
+				case "CT":
+					vaiTroCham = "chu tich";
+					break;
+				case "TK":
+					vaiTroCham = "thu ky";
+					break;
+				case "TV3":
+					vaiTroCham = "thanh vien 3";
+					break;
+				case "PB":
+					vaiTroCham = "phan bien";
+					break;
+				}
+				List<Nhom> nhomBs = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), vaiTroCham,
+						request.getMaNguoiDung());
+				if (!nhomBs.isEmpty() && nhomBs != null) {
+					nhomBs.stream().forEach(nhom -> {
+						String vaiTroRes = "";
+						switch (viTriCham2) {
+						case "CT":
+							vaiTroRes = "Chủ Tịch";
+							break;
+						case "TK":
+							vaiTroRes = "Thư Ký";
+							break;
+						case "TV3":
+							vaiTroRes = "Thành Viên Thứ 3";
+							break;
+						case "PB":
+							vaiTroRes = "Phản Biện";
+							break;
+						}
+						if (xuatSinhVienKhiCan(nhom, viTriCham).size() > 0) {
+							respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+									nhom.getDeTai().getTenDeTai(), xuatSinhVienKhiCan(nhom, viTriCham2), vaiTroRes));
+						}
+					});
+				}
+			}
+
+			return respones;
+		}
+
+		if (viTriCham.equals("HD")) {
+			System.out.println("HUOng Dan");
+			List<Nhom> nhoms = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					request.getMaNguoiDung());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					if (xuatSinhVienKhiCan(nhom, viTriCham).size() > 0) {
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), xuatSinhVienKhiCan(nhom, request.getDotCham()),
+								"Hướng Dẫn"));
+					}
+				});
+			}
+		} else if (viTriCham.equals("PB")) {
+			System.out.println("Phan Bien");
+			List<Nhom> nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), "phan bien", request.getMaNguoiDung());
+			if (!nhoms.isEmpty() && nhoms != null) {
+				nhoms.stream().forEach(nhom -> {
+					if (xuatSinhVienKhiCan(nhom, viTriCham).size() > 0) {
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), xuatSinhVienKhiCan(nhom, request.getDotCham()),
+								"Phản Biện"));
+					}
+				});
+			}
+		} else {
+			System.out.println("Hoi Dong");
+			for (String vaiTro : request.getVaitro()) {
+				String viTriPhanCong = "";
+				switch (vaiTro) {
+				case "CT":
+					viTriPhanCong = "chu tich";
+					break;
+				case "TK":
+					viTriPhanCong = "thu ky";
+					break;
+				case "TV3":
+					viTriPhanCong = "thanh vien 3";
+					break;
+				}
+
+				if (request.getPpcham().size() == 1) {
+					if (request.getPpcham().get(0).equals("chamPoster")) {
+						List<Nhom> nhoms = nhomService.layNhomTheoPPChamPoster(hocKy.getMaHocKy(),
+								request.getMaNguoiDung(), viTriPhanCong);
+						if (!nhoms.isEmpty() && nhoms != null) {
+							nhoms.stream().forEach(nhom -> {
+								String vaiTroRes = "";
+								switch (vaiTro) {
+								case "CT":
+									vaiTroRes = "Chủ Tịch";
+									break;
+								case "TK":
+									vaiTroRes = "Thư Ký";
+									break;
+								case "TV3":
+									vaiTroRes = "Thành Viên Thứ 3";
+									break;
+								}
+								if (xuatSinhVienKhiCan(nhom, viTriCham).size() > 0) {
+									respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
+											nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
+											xuatSinhVienKhiCan(nhom, request.getDotCham()), vaiTroRes));
+								}
+							});
+						}
+					} else {
+						List<Nhom> nhoms = nhomService.layNhomTheoPPChamHD(hocKy.getMaHocKy(), request.getMaNguoiDung(),
+								viTriPhanCong);
+						if (!nhoms.isEmpty() && nhoms != null) {
+							nhoms.stream().forEach(nhom -> {
+								String vaiTroRes = "";
+								switch (vaiTro) {
+								case "CT":
+									vaiTroRes = "Chủ Tịch";
+									break;
+								case "TK":
+									vaiTroRes = "Thư Ký";
+									break;
+								case "TV3":
+									vaiTroRes = "Thành Viên Thứ 3";
+									break;
+								}
+								respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
+										nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
+										xuatSinhVienKhiCan(nhom, request.getDotCham()), vaiTroRes));
+							});
+						}
+					}
+				} else {
+					List<Nhom> nhomPoster = nhomService.layNhomTheoPPChamPoster(hocKy.getMaHocKy(),
+							request.getMaNguoiDung(), vaiTro);
+					if (!nhomPoster.isEmpty() && nhomPoster != null) {
+						nhomPoster.stream().forEach(nhom -> {
+							String vaiTroRes = "";
+							switch (vaiTro) {
+							case "CT":
+								vaiTroRes = "Chủ Tịch";
+								break;
+							case "TK":
+								vaiTroRes = "Thư Ký";
+								break;
+							case "TV3":
+								vaiTroRes = "Thành Viên Thứ 3";
+								break;
+							}
+							if (xuatSinhVienKhiCan(nhom, viTriCham).size() > 0) {
+
+								respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
+										nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
+										xuatSinhVienKhiCan(nhom, request.getDotCham()), vaiTroRes));
+							}
+						});
+					}
+					List<Nhom> nhomHD = nhomService.layNhomTheoPPChamHD(hocKy.getMaHocKy(), request.getMaNguoiDung(),
+							vaiTro);
+					if (!nhomHD.isEmpty() && nhomHD != null) {
+						nhomHD.stream().forEach(nhom -> {
+							String vaiTroRes = "";
+							switch (vaiTro) {
+							case "CT":
+								vaiTroRes = "Chủ Tịch";
+								break;
+							case "TK":
+								vaiTroRes = "Thư Ký";
+								break;
+							case "TV3":
+								vaiTroRes = "Thành Viên Thứ 3";
+							}
+							if (xuatSinhVienKhiCan(nhom, viTriCham).size() > 0) {
+								respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
+										nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
+										xuatSinhVienKhiCan(nhom, request.getDotCham()), vaiTroRes));
+							}
+						});
+					}
+				}
+			}
+		}
+		return respones;
+	}
+
+	private List<SinhVienNhomVaiTroDto> xuatSinhVienKhiCan(Nhom nhom, String dotCham) {
+		List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
+		if (!sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), dotCham)
+				.contains(nhom.getMaNhom())
+				|| sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), dotCham).size() == 0) {
+			sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
+				try {
+					SinhVien sv1 = sinhVienService.layTheoMa(sv);
+					sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
+		return sinhViens;
+	}
 
 }

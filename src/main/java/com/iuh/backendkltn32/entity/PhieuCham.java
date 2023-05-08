@@ -34,7 +34,7 @@ public class PhieuCham implements Serializable {
 	@Column(name = "diemPhieuCham", nullable = true)
 	private Double diemPhieuCham;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "phieuCham")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "phieuCham")
 	@Column( nullable = true)
 	private List<KetQua> dsKetQua;
 	

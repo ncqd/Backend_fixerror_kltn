@@ -48,4 +48,28 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ "where k.maHocKy = :maHocKy and p.magiangvien = :magiangvien  and vitriPhanCong = :viPhanCong ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoPhanCongHK(@Param("maHocKy") String hocKy, @Param("viPhanCong") String viPhanCong, @Param("magiangvien") String magiangvien);
 	
+	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s  "
+			+ "on n.maNhom = s.maNhom join lopHocPhan l "
+			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
+			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy join phancong p " 
+			+ "on n.maNhom = p.maNhom "
+			+ "where k.maHocKy = :maHocKy and p.magiangvien = :magiangvien ; ", nativeQuery = true)
+	List<Nhom> layNhomTheoHK(@Param("maHocKy") String hocKy, @Param("magiangvien") String magiangvien);
+	
+	@Query(value = "select n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
+			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
+			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "
+			+ "where k.maHocKy = :maHocKy and p.magiangvien = :magiangvien and a.tenPhieu = 'PB' and diemPhieuCham >= 8 "
+			+ "and p.vitriphancong = :viTriPhanCong ;  ", nativeQuery = true)
+	List<Nhom> layNhomTheoPPChamHD(@Param("maHocKy") String hocKy, @Param("magiangvien") String magiangvien, @Param("viTriPhanCong") String viTriPhanCong);
+	
+	@Query(value = "select n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
+			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
+			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "
+			+ "where k.maHocKy = :maHocKy and p.magiangvien = :magiangvien and a.tenPhieu = 'PB' and diemPhieuCham < 8 "
+			+ " and p.vitriphancong = :viTriPhanCong   ;  ", nativeQuery = true)
+	List<Nhom> layNhomTheoPPChamPoster(@Param("maHocKy") String hocKy, @Param("magiangvien") String magiangvien, @Param("viTriPhanCong") String viTriPhanCong);
+	
 }

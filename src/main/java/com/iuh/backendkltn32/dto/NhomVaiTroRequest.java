@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,12 +11,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LayKeHoachRequest {
+public class NhomVaiTroRequest {
 
 	private String maHocKy;
 	private String maNguoiDung;
-	private String dotChamDiem;
-	private String loaiChamHoiDong;
-	private String vaiTro;
-	
+	private String dotCham;
+	private List<String> ppcham;
+	private List<String> vaitro;
 }

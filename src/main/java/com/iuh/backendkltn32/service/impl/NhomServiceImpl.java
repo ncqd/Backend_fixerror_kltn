@@ -91,14 +91,27 @@ public class NhomServiceImpl implements NhomService{
 
 	@Override
 	public List<Nhom> layTatCaNhomTheoTinhTrang(String maHocKy, String soHocKy, Integer tinhTrang) {
-		// TODO Auto-generated method stub
 		return repository.layNhomTheoTinhTrang(maHocKy, soHocKy, tinhTrang);
 	}
 
 	@Override
 	public List<Nhom> layNhomTheoVaiTro(String maHocKy, String viTriPhaCong, String maGiangVien) {
-		// TODO Auto-generated method stub
 		return repository.layNhomTheoPhanCongHK(maHocKy, viTriPhaCong, maGiangVien);
+	}
+
+	@Override
+	public List<Nhom> layNhomTheoHK(String hocKy, String magiangvien) {
+		return repository.layNhomTheoHK(hocKy, magiangvien);
+	}
+
+	@Override
+	public List<Nhom> layNhomTheoPPChamHD(String hocKy, String magiangvien, String viTriPhanCong) {
+		return repository.layNhomTheoPPChamHD(hocKy, magiangvien, viTriPhanCong);
+	}
+
+	@Override
+	public List<Nhom> layNhomTheoPPChamPoster(String hocKy, String magiangvien, String viTriPhanCong) {
+		return repository.layNhomTheoPPChamPoster(hocKy, magiangvien, viTriPhanCong);
 	}
 
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iuh.backendkltn32.entity.DiemThanhPhan;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KetQua;
+import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.PhieuCham;
 import com.iuh.backendkltn32.entity.PhieuChamMau;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
@@ -98,7 +99,8 @@ public class PhieuChamDiemController {
 
 				DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAddSV1, tieuChiChamDiem,
 						phieuCham.getBangDiem().get(i).getDiemSV1() == null ? "0"
-								: "" + phieuCham.getBangDiem().get(i).getDiemSV1(),  phieuCham.getBangDiem().get(i).getYkien());
+								: "" + phieuCham.getBangDiem().get(i).getDiemSV1(),
+						phieuCham.getBangDiem().get(i).getYkien());
 				diemThanhPhanService.luu(diemThanhPhan);
 				dsDiemThanhPhans.add(diemThanhPhan);
 				diemTong += phieuCham.getBangDiem().get(i).getDiemSV1();
@@ -127,7 +129,7 @@ public class PhieuChamDiemController {
 
 			phieuChams.add(phieuChamAddSV1);
 			if (phieuCham.getSinhVien().size() >= 2) {
-				
+
 				phieuChamAddSV2 = phieuChamService.luu(new PhieuCham(Math.random() + "", phieuCham.getTenPhieu(), null,
 						null, null, deTaiService.layTheoMa(phieuCham.getMaDeTai()),
 						giangVienService.layTheoMa(phieuCham.getMaGiangVien())));
@@ -141,7 +143,8 @@ public class PhieuChamDiemController {
 
 					DiemThanhPhan diemThanhPhan = new DiemThanhPhan(phieuChamAddSV2, tieuChiChamDiem,
 							phieuCham.getBangDiem().get(i).getDiemSV2() == null ? "0"
-									: "" + phieuCham.getBangDiem().get(i).getDiemSV2(), phieuCham.getBangDiem().get(i).getYkien());
+									: "" + phieuCham.getBangDiem().get(i).getDiemSV2(),
+							phieuCham.getBangDiem().get(i).getYkien());
 					diemThanhPhanService.luu(diemThanhPhan);
 					dsDiemThanhPhans.add(diemThanhPhan);
 					diemTong += phieuCham.getBangDiem().get(i).getDiemSV2();
@@ -195,7 +198,8 @@ public class PhieuChamDiemController {
 					tieuChiChamDiem = tieuChiChamDiemService
 							.luu(new TieuChiChamDiem(tc.getTenChuanDauRa(), tc.getDiemToiDa()));
 				}
-				dsDiemThanhPhans.add(new DiemThanhPhan(phieuChamUpdate, tieuChiChamDiem, null, phieuCham.getBangDiem().get(0).getYkien()));
+				dsDiemThanhPhans.add(new DiemThanhPhan(phieuChamUpdate, tieuChiChamDiem, null,
+						phieuCham.getBangDiem().get(0).getYkien()));
 			}
 			phieuChamUpdate.setDsDiemThanhPhan(dsDiemThanhPhans);
 			phieuChamUpdate = phieuChamService.capNhat(phieuChamUpdate);
@@ -277,32 +281,196 @@ public class PhieuChamDiemController {
 		}
 		return null;
 	}
-	
+
 	@GetMapping("/lay/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
-	public List<DiemSinhVienDto> layPhieuChamTheoGiangVien(@PathVariable("maGiangVien") String maGiangVien) throws Exception {
+	public List<DiemSinhVienDto> layPhieuChamTheoGiangVien(@PathVariable("maGiangVien") String maGiangVien)
+			throws Exception {
 		List<DiemSinhVienDto> rs = new ArrayList<>();
 		try {
-			phieuChamService.layDsPhieuCham(maGiangVien).forEach(phieuCham -> {
-			DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+			phieuChamService.layDsPhieuCham(maGiangVien, hocKyService.layHocKyCuoiCungTrongDS().getMaHocKy())
+					.forEach(phieuCham -> {
+						DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+						phieuCham.getDsKetQua().forEach(sv -> {
+							diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+							diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+							diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+							diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+							diemSVDTO.setDiem(sv.getDiemTongKet());
+						});
+						diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+						diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+						diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+						diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+						rs.add(diemSVDTO);
+					});
+			return rs;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@PostMapping("/lay-cu-the")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
+	public List<DiemSinhVienDto> layPhieuChamCuThe(@RequestBody NhomVaiTroRequest request) throws Exception {
+		List<DiemSinhVienDto> rs = new ArrayList<>();
+		HocKy hocKy = null;
+		if (request.getMaHocKy() == null) {
+			hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		} else {
+			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
+		}
+		String viTriCham = request.getDotCham() != null ? request.getDotCham() : "All";
+		if (viTriCham.equals("All")) {
+			System.out.println("ALL");
+			phieuChamService.layDsPhieuCham(request.getMaNguoiDung(), hocKy.getMaHocKy()).forEach(phieuCham -> {
+				DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 				phieuCham.getDsKetQua().forEach(sv -> {
 					diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
 					diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
 					diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
 					diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
 					diemSVDTO.setDiem(sv.getDiemTongKet());
-					rs.add(diemSVDTO);
 				});
 				diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
 				diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
 				diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
 				diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+				rs.add(diemSVDTO);
 			});
 			return rs;
-		} catch (Exception e) {
-			e.printStackTrace();
+		} else if (viTriCham.equals("HD")) {
+			System.out.println("HUOng Dan");
+			phieuChamService
+					.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
+					.forEach(phieuCham -> {
+						DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+						phieuCham.getDsKetQua().forEach(sv -> {
+							diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+							diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+							diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+							diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+							diemSVDTO.setDiem(sv.getDiemTongKet());
+						});
+						diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+						diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+						diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+						diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+						rs.add(diemSVDTO);
+					});
+		} else if (viTriCham.equals("PB")) {
+			System.out.println("PB");
+			phieuChamService
+					.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
+					.forEach(phieuCham -> {
+						DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+						phieuCham.getDsKetQua().forEach(sv -> {
+							diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+							diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+							diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+							diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+							diemSVDTO.setDiem(sv.getDiemTongKet());
+						});
+						diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+						diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+						diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+						diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+						rs.add(diemSVDTO);
+					});
+		} else {
+			System.out.println("Hoi Dong ");
+			for (String vaiTro : request.getVaitro()) {
+				String viTriPhanCong = "";
+				switch (vaiTro) {
+				case "CT":
+					viTriPhanCong = "chu tich";
+					break;
+				case "TK":
+					viTriPhanCong = "thu ky";
+					break;
+				case "TV3":
+					viTriPhanCong = "thanh vien 3";
+					break;
+				}
+				if (request.getPpcham().size() == 1) {
+					if (request.getPpcham().get(0).equals("chamPoster")) {
+						phieuChamService
+								.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+								.forEach(phieuCham -> {
+									DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+									phieuCham.getDsKetQua().forEach(sv -> {
+										diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+										diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+										diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+										diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+										diemSVDTO.setDiem(sv.getDiemTongKet());
+									});
+									diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+									diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+									diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+									diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+									rs.add(diemSVDTO);
+								});
+					} else {
+						phieuChamService
+								.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+								.forEach(phieuCham -> {
+									DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+									phieuCham.getDsKetQua().forEach(sv -> {
+										diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+										diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+										diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+										diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+										diemSVDTO.setDiem(sv.getDiemTongKet());
+									});
+									diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+									diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+									diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+									diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+									rs.add(diemSVDTO);
+								});
+					}
+				} else {
+					phieuChamService
+							.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+							.forEach(phieuCham -> {
+								DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+								phieuCham.getDsKetQua().forEach(sv -> {
+									diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+									diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+									diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+									diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+									diemSVDTO.setDiem(sv.getDiemTongKet());
+								});
+								diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+								diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+								diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+								diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+								rs.add(diemSVDTO);
+							});
+					phieuChamService
+							.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+							.forEach(phieuCham -> {
+								DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
+								phieuCham.getDsKetQua().forEach(sv -> {
+									diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+									diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+									diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+									diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+									diemSVDTO.setDiem(sv.getDiemTongKet());
+								});
+								diemSVDTO.setGvhd(phieuCham.getDeTai().getGiangVien().getTenGiangVien());
+								diemSVDTO.setMaDeTai(phieuCham.getDeTai().getMaDeTai());
+								diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
+								diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
+								rs.add(diemSVDTO);
+							});
+				}
+			}
 		}
-		return null;
+		return rs;
+
 	}
 
 }

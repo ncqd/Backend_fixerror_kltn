@@ -17,7 +17,7 @@ public interface SinhVienService extends AbstractService<SinhVien>{
 	
 	List<SinhVien> layTatCaSinhVienTheoHocKy(String maHocKy, String soHocKy);
 	
-	List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(String maNhom,String tenPhieu);	
+	List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(String maNhom,String tenPhieu, String maGiangVien);	
 	
 	String timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(String maNhom,String tenPhieu);
 }

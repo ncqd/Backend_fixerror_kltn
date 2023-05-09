@@ -38,7 +38,9 @@ import com.iuh.backendkltn32.dto.PhanCongDto;
 import com.iuh.backendkltn32.dto.PhanCongDto2;
 import com.iuh.backendkltn32.export.DanhSachDeTaiExporter;
 import com.iuh.backendkltn32.export.DanhSachNhomExporter;
+import com.iuh.backendkltn32.export.DanhSachNhomKLTNChamDiemExporter;
 import com.iuh.backendkltn32.export.KetQuaKLTNExporter;
+import com.iuh.backendkltn32.export.MailMergeExporter;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 
 @RestController
@@ -77,6 +79,9 @@ public class QuanLyBoMonController {
 
     @Autowired
     private PhieuChamMauService phieuChamMauService;
+    
+    @Autowired
+    private PhieuChamService phieuChamService;
 
     @Autowired
     private TieuChiChamDiemService tieuChiChamDiemService;
@@ -495,11 +500,11 @@ public class QuanLyBoMonController {
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=danh-de-tai_" + currentDateTime + ".xlsx";
+        String headerValue = "attachment; filename=danh-mail-merge_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
         HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-        DanhSachDeTaiExporter danhSachDeTaiExporter = new DanhSachDeTaiExporter(deTaiService, hocKy.getMaHocKy());
+        MailMergeExporter danhSachDeTaiExporter = new MailMergeExporter(nhomService, sinhVienService, phanCongService, phieuChamService, hocKy);
         danhSachDeTaiExporter.export(response);
     }
 
@@ -515,7 +520,26 @@ public class QuanLyBoMonController {
         response.setHeader(headerKey, headerValue);
 
         HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-        KetQuaKLTNExporter ketQuaKLTNExporter = new KetQuaKLTNExporter(phieuChamMauService, tieuChiChamDiemService, hocKy);
+        KetQuaKLTNExporter ketQuaKLTNExporter = new KetQuaKLTNExporter(phieuChamMauService, tieuChiChamDiemService, hocKy, 
+        		phieuChamService, nhomService, sinhVienService);
         ketQuaKLTNExporter.export(response);
     }
+    
+    @GetMapping("/xuat-nhom-ra-pb")
+    @PreAuthorize("hasAuthority('ROLE_QUANLY')")
+    public void xuatDSNhomRaPB(HttpServletResponse response) throws Exception {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=ketqua_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+        DanhSachNhomKLTNChamDiemExporter ketQuaKLTNExporter = new DanhSachNhomKLTNChamDiemExporter(nhomService, sinhVienService, 
+        		phanCongService, hocKy);
+        ketQuaKLTNExporter.export(response);
+    }
+    
 }

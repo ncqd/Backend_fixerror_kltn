@@ -15,4 +15,5 @@ public interface PhanCongRepository extends JpaRepository<PhanCong, Integer>{
 	
 	@Query(nativeQuery = true, value = "select * from phancong where manhom = :maNhom and viTriPhanCong = :tenPhanCong")
 	List<PhanCong> timTheoTenVaMaNhom(@Param("maNhom") String maNhom, @Param("tenPhanCong") String tenPhanCong);
+	
 }

@@ -92,4 +92,10 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 		return repository.layPhieuTheoPPChamHD(maGiangVien, maHocky, viTriPhanCong);
 	}
 
+	@Override
+	public List<PhieuCham> layPhieuTheoMaSinhVienTenVaiTro(String maSinhVien, String tenPhieu) {
+		// TODO Auto-generated method stub
+		return repository.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, tenPhieu);
+	}
+
 }

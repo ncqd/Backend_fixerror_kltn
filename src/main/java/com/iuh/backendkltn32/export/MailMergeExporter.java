@@ -3,6 +3,7 @@ package com.iuh.backendkltn32.export;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -25,16 +26,36 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.entity.Nhom;
+import com.iuh.backendkltn32.entity.PhanCong;
+import com.iuh.backendkltn32.entity.PhieuCham;
+import com.iuh.backendkltn32.entity.SinhVien;
+import com.iuh.backendkltn32.service.NhomService;
+import com.iuh.backendkltn32.service.PhanCongService;
+import com.iuh.backendkltn32.service.PhieuChamService;
+import com.iuh.backendkltn32.service.SinhVienService;
+
 public class MailMergeExporter {
 	
 	private XSSFWorkbook workbook;
     private XSSFSheet sheet;
+    private NhomService nhomService;
+	private SinhVienService sinhVienService;
+	private PhanCongService phanCongService;
+	private PhieuChamService phieuChamService;
+
+	private HocKy hocKy;
     
-    
-    
-    public MailMergeExporter() {
-		super();
+    public MailMergeExporter(NhomService nhomService, SinhVienService sinhVienService,
+			PhanCongService phanCongService, PhieuChamService phieuChamService, HocKy hocKy) {
 		this.workbook = new XSSFWorkbook();
+		this.nhomService = nhomService;
+		this.sinhVienService = sinhVienService;
+		this.hocKy = hocKy;
+		this.phanCongService = phanCongService;
+		this.phieuChamService = phieuChamService;
+		
 	}
 
 	private void writeHeaderLine() throws IOException {
@@ -48,9 +69,10 @@ public class MailMergeExporter {
 
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderRight(BorderStyle.MEDIUM);
+        style.setBorderBottom(BorderStyle.MEDIUM);
+        style.setBorderTop(BorderStyle.MEDIUM);
+        style.setBorderLeft(BorderStyle.MEDIUM);
        
         font.setBold(true);
         font.setFontHeight(12);
@@ -74,10 +96,10 @@ public class MailMergeExporter {
         createCell(row, 13, "KQ-PB1_SV2", style);
         createCell(row, 14, "KQ_PB2_sv2", style);
         createCell(row, 15, "Hình thức báo cáo", style);
-        createCell(row, 16, "Hội đồng", style);
-        createCell(row, 17, "TV_HD1", style);
-        createCell(row, 18, "TV_HD2", style);
-        createCell(row, 19, "TV_HD3", style);
+//        createCell(row, 16, "Hội đồng", style);
+        createCell(row, 16, "TV_HD1", style);
+        createCell(row, 17, "TV_HD2", style);
+        createCell(row, 18, "TV_HD3", style);
          
     }
     
@@ -100,9 +122,124 @@ public class MailMergeExporter {
         cell.setCellStyle(style);
    }
     
-    public void export(HttpServletResponse response) throws IOException {
+	private void writeDataLines() throws Exception {
+		int rowCount = 1;
+
+		CellStyle style = workbook.createCellStyle();
+		style.setWrapText(true);
+		XSSFFont font = workbook.createFont();
+
+		font.setFontHeight(15);
+		font.setFontHeightInPoints((short) 12);
+		font.setFontName("Times New Roman");
+
+		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setVerticalAlignment(VerticalAlignment.CENTER);
+		style.setBorderRight(BorderStyle.MEDIUM);
+		style.setBorderBottom(BorderStyle.MEDIUM);
+		style.setBorderTop(BorderStyle.MEDIUM);
+		style.setBorderLeft(BorderStyle.MEDIUM);
+
+		style.setFont(font);
+		
+		for (Nhom nhom : nhomService.layNhomRaDuocPBHD(hocKy.getMaHocKy())) {
+			if (nhomService.layNhomRaDuocPBPoster(hocKy.getMaHocKy()).contains(nhom)) {
+				break;
+			}
+			Row row = sheet.createRow(rowCount++);
+			row.setHeight((short) 550);
+			int columnCount = 0;
+			createCell(row, columnCount++, nhom.getMaNhom(), style);
+			List<String> mas = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+			for (String ma : mas) {
+				SinhVien sv = sinhVienService.layTheoMa(ma);
+				createCell(row, columnCount++, sv.getMaSinhVien(), style);
+				createCell(row, columnCount++, sv.getTenSinhVien(), style);
+				createCell(row, columnCount++, sv.getEmail(), style);
+			}
+			if (mas.size() <= 1) {
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+			}
+
+			createCell(row, columnCount++, nhom.getDeTai().getMaDeTai(), style);
+			createCell(row, columnCount++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
+			
+			for (String ma : mas) {
+				createCell(row, columnCount++,phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(ma, "HD").get(0).getDiemPhieuCham(), style);
+				for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(ma, "PB")) {
+					createCell(row, columnCount++,pc.getDiemPhieuCham(), style);
+				}
+			}
+			if (mas.size() <= 1) {
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+			}
+			
+			createCell(row, columnCount++, "YES", style);
+			createCell(row, columnCount++, "Hội Đồng", style);
+			for (PhanCong phanCong : phanCongService.layPhanCongTheoMaNhom(nhom)) {
+				if (phanCong.getViTriPhanCong().equals("chu tich") ||
+						phanCong.getViTriPhanCong().equals("thu ky") || 
+						phanCong.getViTriPhanCong().equals("thanh vien 3") ) {
+					createCell(row, columnCount++, phanCong.getGiangVien().getTenGiangVien() + "\n" + phanCong.getGiangVien().getEmail(), style);
+				}
+			}
+		}
+		
+		
+		for (Nhom nhom : nhomService.layNhomRaDuocPBPoster(hocKy.getMaHocKy())) {
+			Row row = sheet.createRow(rowCount++);
+			row.setHeight((short) 550);
+			int columnCount = 0;
+			createCell(row, columnCount++, nhom.getMaNhom(), style);
+			List<String> mas = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
+			for (String ma : mas) {
+				SinhVien sv = sinhVienService.layTheoMa(ma);
+				createCell(row, columnCount++, sv.getMaSinhVien(), style);
+				createCell(row, columnCount++, sv.getTenSinhVien(), style);
+				createCell(row, columnCount++, sv.getEmail(), style);
+			}
+			if (mas.size() <= 1) {
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+			}
+
+			createCell(row, columnCount++, nhom.getDeTai().getMaDeTai(), style);
+			createCell(row, columnCount++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
+			
+			for (String ma : mas) {
+				createCell(row, columnCount++,phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(ma, "HD").get(0).getDiemPhieuCham(), style);
+				for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(ma, "PB")) {
+					createCell(row, columnCount++,pc.getDiemPhieuCham(), style);
+				}
+			}
+			if (mas.size() <= 1) {
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+				createCell(row, columnCount++, "", style);
+			}
+			
+			createCell(row, columnCount++, "YES", style);
+			createCell(row, columnCount++, "       ", style);
+			createCell(row, columnCount++, "Poster", style);
+			for (PhanCong phanCong : phanCongService.layPhanCongTheoMaNhom(nhom)) {
+				if (phanCong.getViTriPhanCong().equals("chu tich") ||
+						phanCong.getViTriPhanCong().equals("thu ky") || 
+						phanCong.getViTriPhanCong().equals("thanh vien 3") ) {
+					createCell(row, columnCount++, phanCong.getGiangVien().getTenGiangVien() + "\n" + phanCong.getGiangVien().getEmail(), style);
+				}
+			}
+		}
+		
+	}
+    
+    public void export(HttpServletResponse response) throws Exception {
         writeHeaderLine();
-//        writeDataLines();
+        writeDataLines();
          
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);

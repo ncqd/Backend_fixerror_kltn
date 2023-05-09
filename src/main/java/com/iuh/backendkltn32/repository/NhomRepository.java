@@ -72,4 +72,18 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ " and p.vitriphancong = :viTriPhanCong   ;  ", nativeQuery = true)
 	List<Nhom> layNhomTheoPPChamPoster(@Param("maHocKy") String hocKy, @Param("magiangvien") String magiangvien, @Param("viTriPhanCong") String viTriPhanCong);
 	
+	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
+			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
+			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "
+			+ "where k.maHocKy = :maHocKy and a.tenPhieu = 'PB' and diemPhieuCham >=5 and  diemPhieuCham < 8", nativeQuery = true)
+	List<Nhom> layNhomRaDuocPBPoster(@Param("maHocKy") String hocKy);
+	
+	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
+			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
+			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "
+			+ "where k.maHocKy = :maHocKy and a.tenPhieu = 'PB' and diemPhieuCham >= 8  ", nativeQuery = true)
+	List<Nhom> layNhomRaDuocPBHD(@Param("maHocKy") String hocKy);
+	
 }

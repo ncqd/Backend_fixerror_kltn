@@ -114,4 +114,15 @@ public class NhomServiceImpl implements NhomService{
 		return repository.layNhomTheoPPChamPoster(hocKy, magiangvien, viTriPhanCong);
 	}
 
+	@Override
+	public List<Nhom> layNhomRaDuocPBHD(String hocKy) {
+		return repository.layNhomRaDuocPBHD(hocKy);
+	}
+
+	@Override
+	public List<Nhom> layNhomRaDuocPBPoster(String hocKy) {
+		// TODO Auto-generated method stub
+		return repository.layNhomRaDuocPBPoster(hocKy);
+	}
+
 }

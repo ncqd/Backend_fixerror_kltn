@@ -109,9 +109,9 @@ public class SinhVienServiceImpl implements  SinhVienService {
 	}
 
 	@Override
-	public List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(String maNhom, String tenPhieu) {
+	public List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(String maNhom, String tenPhieu, String maGiangVien) {
 		// TODO Auto-generated method stub
-		return sinhVienRepository.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(maNhom, tenPhieu);
+		return sinhVienRepository.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(maNhom, tenPhieu, maGiangVien);
 	}
 
 	@Override

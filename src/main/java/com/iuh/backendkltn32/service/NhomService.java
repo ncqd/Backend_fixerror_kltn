@@ -25,4 +25,8 @@ public interface NhomService extends AbstractService<Nhom>{
 	List<Nhom> layNhomTheoPPChamHD(String hocKy, String magiangvien, String viTriPhanCong);
 	
 	List<Nhom> layNhomTheoPPChamPoster(String hocKy,  String magiangvien, String viTriPhanCong);
+	
+	List<Nhom> layNhomRaDuocPBHD(String hocKy);
+	
+	List<Nhom> layNhomRaDuocPBPoster(String hocKy);
 }

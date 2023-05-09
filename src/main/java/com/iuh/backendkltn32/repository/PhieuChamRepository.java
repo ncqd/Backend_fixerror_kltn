@@ -41,5 +41,11 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String>{
 	List<PhieuCham> layPhieuTheoVaiTro(@Param("maGiangVien") String maGiangVien, @Param("mahocky") String mahocky, 
 			@Param("tenPhieu") String tenPhieu);
 	
+	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu,  "
+			+ "a.maDeTai, a.maGiangVien from phieucham a   "
+			+ "join ketqua k on a.maPhieu = k.maPhieu "
+			+ "where maSinhVien = :maSinhVien and tenPhieu = :tenPhieu  ; " ,nativeQuery = true)
+	List<PhieuCham> layPhieuTheoMaSinhVienTenVaiTro(@Param("maSinhVien") String maSinhVien, @Param("tenPhieu") String tenPhieu);
+	
 	
 }

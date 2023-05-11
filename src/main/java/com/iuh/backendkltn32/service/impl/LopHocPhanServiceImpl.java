@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +69,11 @@ public class LopHocPhanServiceImpl implements LopHocPhanService {
 		repository.save(lopHocPhanKhongTonTai);
 
 		return lopHocPhanKhongTonTai;
+	}
+
+	@Override
+	public List<LopHocPhan> getAll() {
+		return repository.findAll();
 	}
 
 }

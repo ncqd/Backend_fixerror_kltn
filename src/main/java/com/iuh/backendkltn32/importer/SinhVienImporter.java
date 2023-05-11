@@ -43,7 +43,7 @@ public class SinhVienImporter {
 	@Autowired
 	private LopDanhNghiaService lopDanhNghiaService;
 
-	public static boolean isValidExcelFile(MultipartFile file) {
+	public static boolean isValidExcelFile(MultipartFile file, LopHocPhan lopHocPhan) {
 		return Objects.equals(file.getContentType(),
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 	}
@@ -53,7 +53,6 @@ public class SinhVienImporter {
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 			XSSFSheet sheet = workbook.getSheetAt(0);
-			DataFormatter dataFormatter = new DataFormatter();
 
 			String maHP = xuLyDuLieuNoiChiDinh(sheet, "B6").substring(14, 25);
 			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
@@ -102,7 +101,6 @@ public class SinhVienImporter {
 				SinhVien sinhVien = new SinhVien();
 				sinhVien.setLopHocPhan(lopHocPhan);
 				sinhVien.setAnhDaiDien("");
-				sinhVien.setEmail("a@gmail.com");
 				sinhVien.setNamNhapHoc(2023);
 				sinhVien.setNoiSinh("Ho Chi Minh");
 				String tenSinhVien = "";
@@ -134,9 +132,12 @@ public class SinhVienImporter {
 						sinhVien.setTenSinhVien(tenSinhVien + " " + nextCell.getStringCellValue());
 						break;
 					case 4:
-						sinhVien.setGioiTinh(nextCell.getStringCellValue().equals("Nam") ? 1 : 0);
+						sinhVien.setEmail(nextCell.getStringCellValue());
 						break;
 					case 5:
+						sinhVien.setGioiTinh(nextCell.getStringCellValue().equals("Nam") ? 1 : 0);
+						break;
+					case 6:
 						Integer ngay = Integer.parseInt(nextCell.getStringCellValue().substring(0, 2));
 						Integer thang = Integer.parseInt(nextCell.getStringCellValue().substring(3, 5));
 						Integer nam = Integer.parseInt(nextCell.getStringCellValue().substring(6));
@@ -148,12 +149,12 @@ public class SinhVienImporter {
 //						System.out.println(date);
 						sinhVien.setNgaySinh(date);
 						break;
-					case 6:
+					case 7:
 						sinhVien.setDienThoai(nextCell.getStringCellValue());
 						break;
-					case 7:
-						break;
 					case 8:
+						break;
+					case 9:
 						LopDanhNghia lopDanhNghia = lopDanhNghiaService.layTheoMa(
 								nextCell.getStringCellValue() == null ? "DHKTPM15ATT" : nextCell.getStringCellValue());
 						if (lopDanhNghia == null) {
@@ -164,6 +165,7 @@ public class SinhVienImporter {
 						sinhVien.setLopDanhNghia(lopDanhNghia);
 						break;
 					}
+					
 
 					columnIndex++;
 					

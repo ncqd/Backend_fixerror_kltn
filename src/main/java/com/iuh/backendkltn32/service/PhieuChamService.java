@@ -16,5 +16,8 @@ public interface PhieuChamService extends AbstractService<PhieuCham> {
 	List<PhieuCham> layDsPhieuChamHoiDongVaiTro(String maGiangVien, String maHocky, String viTriPhanCong);
 	
 	List<PhieuCham> layPhieuTheoMaSinhVienTenVaiTro(String maSinhVien, String tenPhieu);
+	
+	List<String> layMaPhieuPhieuTheoMaSinhVienTenVaiTro( String maHocKy,
+			String tenPhieu, String maNhom);
 
 }

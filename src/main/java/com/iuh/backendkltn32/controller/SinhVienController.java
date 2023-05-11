@@ -17,7 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
+import com.iuh.backendkltn32.dto.LopHocPhanDto;
 import com.iuh.backendkltn32.dto.SinhVienDto;
+import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.LopDanhNghia;
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.Nhom;
@@ -25,6 +27,7 @@ import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.importer.DeTaiImporter;
 import com.iuh.backendkltn32.importer.SinhVienImporter;
+import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.LopDanhNghiaService;
 import com.iuh.backendkltn32.service.LopHocPhanService;
 import com.iuh.backendkltn32.service.NhomService;
@@ -56,6 +59,9 @@ public class SinhVienController {
 	
 	@Autowired
 	private LopHocPhanService lopHocPhanService;
+	
+	@Autowired
+	private HocKyService hocKyService;
 	
 	@GetMapping("/thong-tin-ca-nhan/{maSinhVien}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
@@ -121,7 +127,6 @@ public class SinhVienController {
 	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
 		if (DeTaiImporter.isValidExcelFile(file)) {
 			try {
-				
 				List<SinhVien> sinhViens = sinhVienImporter.addDataFDromExcel(file.getInputStream());
 				BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 				sinhVienService.luuDanhSach(sinhViens).stream().forEach(sv-> {
@@ -154,5 +159,23 @@ public class SinhVienController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@PostMapping("/lay-sinh-vien-lop")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public List<SinhVien> sinhViens(@RequestBody LopHocPhanDto lopHocPhanDto) throws Exception {
+		if (lopHocPhanDto.getMaHocKy() == null) {
+			if (lopHocPhanDto.getMaLopHocPhan() == null) {
+				
+				return sinhVienService.layTatCaSinhVien();
+			}
+			return sinhVienService.layTatCaSinhVienTheoLopHocPhan(lopHocPhanService.layTheoMa(lopHocPhanDto.getMaLopHocPhan()));
+		} else {
+			if (lopHocPhanDto.getMaLopHocPhan() == null) {
+				HocKy hocKy = hocKyService.layTheoMa(lopHocPhanDto.getMaHocKy());
+				return sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
+			}
+			return sinhVienService.layTatCaSinhVienTheoLopHocPhan(lopHocPhanService.layTheoMa(lopHocPhanDto.getMaLopHocPhan()));
+		}
 	}
 }

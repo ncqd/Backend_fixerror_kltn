@@ -5,5 +5,7 @@ import com.iuh.backendkltn32.entity.HocPhanKhoaLuanTotNghiep;
 public interface HocPhanKhoaLuanTotNghiepService extends AbstractService<HocPhanKhoaLuanTotNghiep>{
 	
 	HocPhanKhoaLuanTotNghiep layHocPhanCuoiTrongDS();
+	
+	HocPhanKhoaLuanTotNghiep layHocPhanTheoMaHocKy(String maHocKy);
 
 }

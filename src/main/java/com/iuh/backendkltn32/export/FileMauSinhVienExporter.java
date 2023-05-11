@@ -1,10 +1,10 @@
 package com.iuh.backendkltn32.export;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.Timestamp;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -26,31 +26,25 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.PhieuCham;
 import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.PhieuChamService;
 import com.iuh.backendkltn32.service.SinhVienService;
 
-public class SinhVienExcelExporoter {
+public class FileMauSinhVienExporter {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
-	private SinhVienService sinhVienService;
-	private PhieuChamService phieuChamService;
-	private LopHocPhan lopHocPhan;
 
-	public SinhVienExcelExporoter(SinhVienService sinhVienService, PhieuChamService phieuChamService,
-			LopHocPhan lopHocPhan) {
+	public FileMauSinhVienExporter() {
 		workbook = new XSSFWorkbook();
-		this.sinhVienService = sinhVienService;
-		this.phieuChamService = phieuChamService;
-		this.lopHocPhan = lopHocPhan;
 	}
 
 	private void writeHeaderLine() throws Exception {
-		sheet = workbook.createSheet(lopHocPhan.getMaLopHocPhan() + " - " + lopHocPhan.getTenLopHocPhan());
+		sheet = workbook.createSheet("File_Mau");
 
 		Row row = sheet.createRow(0);
 		CellStyle style = workbook.createCellStyle();
@@ -91,7 +85,7 @@ public class SinhVienExcelExporoter {
 		drawing.createPicture(anchor, pictureIdx);
 		style.setAlignment(HorizontalAlignment.CENTER);
 		style.setVerticalAlignment(VerticalAlignment.CENTER);
-		
+
 		font.setBold(true);
 		font.setFontHeight(16);
 		style.setFont(font);
@@ -101,7 +95,7 @@ public class SinhVienExcelExporoter {
 				"BỘ CÔNG THƯƠNG \n TRƯỜNG ĐẠI HỌC CÔNG NGHIỆP TP.HCM \n -------------------------------------- ",
 				style);
 		sheet.addMergedRegion(new CellRangeAddress(0, 3, 2, 6));
-		
+
 		fontHeader.setBold(true);
 		fontHeader.setFontHeightInPoints((short) 16);
 		fontHeader.setFontName("Times New Roman");
@@ -110,9 +104,8 @@ public class SinhVienExcelExporoter {
 		styleHeader.setVerticalAlignment(VerticalAlignment.CENTER);
 
 		row = sheet.createRow(4);
-		createCell(row, 0, "DANH SÁCH SINH VIÊN LỚP HỌC PHẦN ", styleHeader);
+		createCell(row, 0, "DANH SÁCH SINH VIÊN MẪU ", styleHeader);
 		sheet.addMergedRegion(new CellRangeAddress(4, 4, 0, 12));
-
 
 		fontTable.setBold(true);
 		fontTable.setFontHeightInPoints((short) 11);
@@ -120,28 +113,27 @@ public class SinhVienExcelExporoter {
 		styleTable.setFont(fontTable);
 		styleTable.setAlignment(HorizontalAlignment.CENTER);
 		styleTable.setVerticalAlignment(VerticalAlignment.CENTER);
-		
+
 		fontContent.setBold(true);
 		fontContent.setFontHeightInPoints((short) 11);
 		fontContent.setFontName("Times New Roman");
 		styleContent.setFont(fontContent);
-		
+
 		row = sheet.createRow(5);
-		createCell(row, 1, "Ngành: Kỹ thuật phần mềm", styleContent);
+		createCell(row, 1, "Lớp học: 422000379401 - DH14TT HL", styleContent);
 		sheet.addMergedRegion(new CellRangeAddress(5, 5, 1, 4));
 		createCell(row, 7, "Đợt: HK1 (2022-2023)", styleContent);
-		
+
 		row = sheet.createRow(6);
-		createCell(row, 1, "Môn học phần: " + lopHocPhan.getHocPhanKhoaLuanTotNghiep().getMaHocPhan() + " - " +
-				lopHocPhan.getHocPhanKhoaLuanTotNghiep().getTenHocPhan(), styleContent);
+		createCell(row, 1, "Môn học phần: 4220003794 - Khóa luận tốt nghiệp", styleContent);
 		sheet.addMergedRegion(new CellRangeAddress(6, 6, 1, 4));
 		createCell(row, 7, "Năm học: 2022-2023", styleContent);
-		
+
 		row = sheet.createRow(7);
-		createCell(row, 1, "Lớp học: "+ lopHocPhan.getMaLopHocPhan() +" - " + lopHocPhan.getTenLopHocPhan(), styleContent);
+		createCell(row, 1, "Ngành: Kỹ thuật phần mềm ", styleContent);
 		sheet.addMergedRegion(new CellRangeAddress(7, 7, 1, 4));
 		createCell(row, 7, "Bậc đào tạo: Đại học", styleContent);
-		
+
 		row = sheet.createRow(8);
 		createCell(row, 1, "Chuyên ngành: Kỹ thuật phần mềm - 7480103", styleContent);
 		sheet.addMergedRegion(new CellRangeAddress(8, 8, 1, 4));
@@ -158,9 +150,6 @@ public class SinhVienExcelExporoter {
 		createCell(row, 7, "Số Điện Thoại", styleTable);
 		createCell(row, 8, "Nhóm", styleTable);
 		createCell(row, 9, "Mã Lớp", styleTable);
-		createCell(row, 10, "Điểm", styleTable);
-		createCell(row, 11, "Ký Tên", styleTable);
-		createCell(row, 12, "Ghi Chú", styleTable);
 
 	}
 
@@ -185,66 +174,37 @@ public class SinhVienExcelExporoter {
 
 	private void writeDataLines() {
 		int rowCount = 10;
-		
+
 		CellStyle styleContent = workbook.createCellStyle();
 		XSSFFont fontContent = workbook.createFont();
-		
+
 		fontContent.setFontHeightInPoints((short) 11);
 		fontContent.setFontName("Times New Roman");
 		styleContent.setFont(fontContent);
 		styleContent.setAlignment(HorizontalAlignment.CENTER);
 		styleContent.setVerticalAlignment(VerticalAlignment.CENTER);
-		
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-		int stt = 1;
-		for (SinhVien sinhVien : sinhVienService.layTatCaSinhVienTheoLopHocPhan(lopHocPhan)) {
-			Row row = sheet.createRow(rowCount++);
-			int columnCount = 0;
-			List<String> hoTenSinhVien = Arrays.asList(sinhVien.getTenSinhVien().split("\\s"));
-			String ten = hoTenSinhVien.get(hoTenSinhVien.size() - 1);
-			StringBuffer hoDem = new StringBuffer();
-			hoTenSinhVien.subList(0, hoTenSinhVien.size() - 1).forEach(ho -> {
-				hoDem.append(ho);
-			});
-			createCell(row, columnCount++, stt++, styleContent);
-			createCell(row, columnCount++, sinhVien.getMaSinhVien(), styleContent);
-			createCell(row, columnCount++, hoDem, styleContent);
-			createCell(row, columnCount++, ten, styleContent);
-			createCell(row, columnCount++, sinhVien.getEmail(), styleContent);
-			createCell(row, columnCount++, sinhVien.getGioiTinh() == 1 ? "Nam" : "Nữ", styleContent);
-			createCell(row, columnCount++, format.format(sinhVien.getNgaySinh()), styleContent);
-			createCell(row, columnCount++, sinhVien.getDienThoai(), styleContent);
-			createCell(row, columnCount++, sinhVien.getNhom() == null ? "" : sinhVien.getNhom().getMaNhom(), styleContent);
-			createCell(row, columnCount++, sinhVien.getLopDanhNghia().getMaLopDanhNghia().toString(), styleContent);
-			if (phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(sinhVien.getMaSinhVien(), "CT").size() > 0) {
-				Double diemHD = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(sinhVien.getMaSinhVien(), "HD").get(0)
-						.getDiemPhieuCham();
-				Double diemPB = (double) 0;
-				Double diemHoiDong = (double) 0;
-				for (PhieuCham p : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(sinhVien.getMaSinhVien(), "PB")) {
-					diemPB += p.getDiemPhieuCham();
-				}
-				diemPB = (diemHD + diemPB) / 3;
-				diemHoiDong += phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(sinhVien.getMaSinhVien(), "HD").get(0)
-						.getDiemPhieuCham();
-				diemHoiDong += phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(sinhVien.getMaSinhVien(), "HD").get(0)
-						.getDiemPhieuCham();
-				diemHoiDong += phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(sinhVien.getMaSinhVien(), "HD").get(0)
-						.getDiemPhieuCham();
-				diemHoiDong = diemHoiDong / 3;
-				diemHoiDong = (diemPB + diemHD) / 2;
-				createCell(row, columnCount++, diemHoiDong, styleContent);
-			} else {
-				createCell(row, columnCount++, " ", styleContent);
-			}
-			createCell(row, columnCount++, " ", styleContent);
-			createCell(row, columnCount++, " ", styleContent);
 
-		}
-		Row row = sheet.createRow(rowCount+2);
-		createCell(row, 1, "Sĩ số: " + (stt-1), styleContent);
+		Row row = sheet.createRow(rowCount++);
+		int columnCount = 0;
+
+		createCell(row, columnCount++, 1, styleContent);
+		createCell(row, columnCount++, "18062691", styleContent);
+		createCell(row, columnCount++, "Nguyễn Tuấn", styleContent);
+		createCell(row, columnCount++, "Anh", styleContent);
+		createCell(row, columnCount++, "nam@gmail.com", styleContent);
+		createCell(row, columnCount++, "Nam", styleContent);
+		createCell(row, columnCount++, "02/07/1998", styleContent);
+		createCell(row, columnCount++, "0963199805", styleContent);
+		createCell(row, columnCount++, "", styleContent);
+		createCell(row, columnCount++, "DHKTPM13ATT", styleContent);
+
+		row = sheet.createRow(rowCount + 2);
+
+		createCell(row, 1, "Sĩ số: " +"1", styleContent);
 		java.sql.Timestamp today = new java.sql.Timestamp(System.currentTimeMillis());
-		createCell(row, 4, "  , ngày " + today.getDate() +" tháng " + (today.getMonth() + 1) + " năm " + (today.getYear() + 1900), styleContent);
+		createCell(row, 4,
+				"  , ngày " + today.getDate() + " tháng " + (today.getMonth() + 1) + " năm " + (today.getYear() + 1900),
+				styleContent);
 	}
 
 	public void export(HttpServletResponse response) throws Exception {

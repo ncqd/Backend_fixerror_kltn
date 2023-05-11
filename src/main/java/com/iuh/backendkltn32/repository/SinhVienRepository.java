@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.SinhVien;
 
 public interface SinhVienRepository extends JpaRepository<SinhVien, String> {
@@ -34,4 +35,6 @@ public interface SinhVienRepository extends JpaRepository<SinhVien, String> {
 			+ "on s.maSinhVien = k.maSinhVien join phieucham p  "
 			+ "on k.maPhieu = p.maPhieu where maNhom = :maNhom and tenPhieu like :tenPhieu1 and diemPhieuCham >= 5 ", nativeQuery = true)
 	String timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemLon(@Param("maNhom") String maNhom,@Param("tenPhieu1") String tenPhieu);
+	
+	List<SinhVien> findByLopHocPhan(LopHocPhan lopHocPhan);
 }

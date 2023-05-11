@@ -1,38 +1,27 @@
 package com.iuh.backendkltn32.export;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.math3.analysis.function.Sinh;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.SinhVienService;
 
-@Component
 public class DanhSachNhomExporter {
 
 	private XSSFWorkbook workbook;
@@ -44,10 +33,9 @@ public class DanhSachNhomExporter {
 
 	private HocKy hocKy;
 
-	@Autowired
-	public DanhSachNhomExporter(HocKyService hocKyService, NhomService nhomService, SinhVienService sinhVienService) {
+	public DanhSachNhomExporter(HocKy hocKy, NhomService nhomService, SinhVienService sinhVienService) {
 		this.workbook = new XSSFWorkbook();
-		this.hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		this.hocKy = hocKy;
 		this.nhomService = nhomService;
 		this.sinhVienService = sinhVienService;
 	}

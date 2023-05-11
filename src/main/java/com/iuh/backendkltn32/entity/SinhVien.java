@@ -76,9 +76,6 @@ public class SinhVien implements Serializable {
 	@JoinColumn(name = "maNhom", nullable = true)
 	private Nhom nhom;
 
-	@Column(name = "laTruongNhom", nullable = true)
-	private Integer laTruongNhom;
-
 	@Override
 	public String toString() {
 		return "SinhVien [maSinhVien=" + maSinhVien + ", tenSinhVien=" + tenSinhVien + ", noiSinh=" + noiSinh

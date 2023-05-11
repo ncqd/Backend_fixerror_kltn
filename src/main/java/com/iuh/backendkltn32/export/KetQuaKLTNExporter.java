@@ -58,8 +58,8 @@ public class KetQuaKLTNExporter {
 	}
 
 	private void writeHeaderLine() throws Exception {
-		sheet = workbook.createSheet("DS_Nhom_KLTN");
-		sheet.setDefaultRowHeight((short) 500);
+		sheet = workbook.createSheet("KetQua_Nhom_KLTN");
+		sheet.setDefaultRowHeight((short) 600);
 
 		Row row = sheet.createRow(0);
 
@@ -76,7 +76,7 @@ public class KetQuaKLTNExporter {
 		XSSFFont fontContent = workbook.createFont();
 
 		fontName.setBold(true);
-		fontName.setFontHeightInPoints((short) 18);
+		fontName.setFontHeightInPoints((short) 16);
 
 		styleSheetName.setFont(fontName);
 		styleSheetName.setAlignment(HorizontalAlignment.CENTER);
@@ -307,24 +307,20 @@ public class KetQuaKLTNExporter {
 		style.setFont(font);
 
 		for (Nhom nhom : nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
-			Row row = sheet.createRow(rowCount++);
-			row.setHeight((short) 550);
-			int columnCount = 0;
-			if (rowCount % 2 == 0) {
-				int rowAfter = rowCount - 1;
-				createCell(row, columnCount, nhom.getMaNhom(), style);
-				sheet.addMergedRegion(new CellRangeAddress(rowAfter, rowCount, columnCount, columnCount));
-				Row rowNext = sheet.createRow(rowCount);
-				rowCount++;
-				writeContentCell(nhom, columnCount, style, row, rowNext);
+			if (phieuChamService.layMaPhieuPhieuTheoMaSinhVienTenVaiTro(hocKy.getMaHocKy(), "CT", nhom.getMaNhom())
+					.size() > 0) {
+				Row row = sheet.createRow(rowCount++);
+				row.setHeight((short) 550);
+				int columnCount = 0;
+				if (rowCount % 2 == 0) {
+					int rowAfter = rowCount - 1;
+					createCell(row, columnCount, nhom.getMaNhom(), style);
+					sheet.addMergedRegion(new CellRangeAddress(rowAfter, rowCount, columnCount, columnCount));
+					Row rowNext = sheet.createRow(rowCount);
+					rowCount++;
+					writeContentCell(nhom, columnCount, style, row, rowNext);
+				}
 			}
-//			else {
-//				row = sheet.createRow(rowCount++);
-//				createCell(row, columnCount, "", style);
-//				writeContentCell(nhom, columnCount, style, row);
-//				System.out.println(rowCount);
-//			}
-
 		}
 	}
 
@@ -365,7 +361,7 @@ public class KetQuaKLTNExporter {
 				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
 			}
 			createCellTieuDe(row, nextColum++, phieuChamHoiDong2.getDiemPhieuCham(), style);
-			
+
 			createCellTieuDe(row, nextColum++, "", style);
 			createCellTieuDe(row, nextColum++, "", style);
 			createCellTieuDe(row, nextColum++, "", style);
@@ -394,7 +390,7 @@ public class KetQuaKLTNExporter {
 			createCellTieuDe(row, nextColum++, Math.floor(kq * 10) / 10, style);
 
 			if (mas.size() > 1) {
-				int nextColum2 = columnCount + 1;
+				int nextColum2 = columnCount + 2;
 				SinhVien sv2 = sinhVienService.layTheoMa(mas.get(1));
 				createCell(rowNext, nextColum2++, mas.get(1), style);
 				createCell(rowNext, nextColum2++, sv2.getTenSinhVien(), style);
@@ -404,12 +400,10 @@ public class KetQuaKLTNExporter {
 				createCell(rowNext, nextColum2++, nhom.getDeTai().getTenDeTai(), style);
 			} else {
 				int nextColum2 = columnCount + 1;
-				createCell(rowNext, nextColum2++, "", style);
-				createCell(rowNext, nextColum2++, "", style);
-				createCell(rowNext, nextColum2++, "", style);
-				createCell(rowNext, nextColum2++, "", style);
-				createCell(rowNext, nextColum2++, "", style);
-				createCell(rowNext, nextColum2++, "", style);
+				for (int i = 0; i < 47; i++) {
+					createCell(rowNext, nextColum2++, "", style);
+
+				}
 			}
 		}
 

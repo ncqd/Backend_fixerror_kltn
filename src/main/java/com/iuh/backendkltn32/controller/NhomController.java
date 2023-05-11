@@ -407,7 +407,9 @@ public class NhomController {
 			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		}
 		Set<NhomVaiTro> respones = new HashSet<>();
-		String viTriCham = request.getDotCham() != null ? request.getDotCham() : "All";
+		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty() 
+				&& !request.getDotCham().isBlank() && !request.getDotCham().equals("") ? request.getDotCham() : "All";
+		System.out.println(viTriCham);
 		if (viTriCham.equals("All")) {
 			System.out.println("All");
 			List<Nhom> nhomAs = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
@@ -480,9 +482,10 @@ public class NhomController {
 					}
 				});
 			}
-		} else {
+		} else if (viTriCham.equals("Hoi Dong")) {
 			System.out.println("Hoi Dong");
-			for (String vaiTro : request.getVaitro()) {
+			List<String> vaiTroTemp = request.getVaitro() != null ? request.getVaitro() : Arrays.asList("CT", "TK", "TV3");
+			for (String vaiTro : vaiTroTemp) {
 				String viTriPhanCong = "";
 				switch (vaiTro) {
 				case "CT":

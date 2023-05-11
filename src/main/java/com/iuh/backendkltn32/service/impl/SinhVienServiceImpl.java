@@ -4,6 +4,7 @@ package com.iuh.backendkltn32.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.repository.SinhVienRepository;
 import com.iuh.backendkltn32.service.SinhVienService;
@@ -110,7 +111,6 @@ public class SinhVienServiceImpl implements  SinhVienService {
 
 	@Override
 	public List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(String maNhom, String tenPhieu, String maGiangVien) {
-		// TODO Auto-generated method stub
 		return sinhVienRepository.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(maNhom, tenPhieu, maGiangVien);
 	}
 
@@ -118,6 +118,11 @@ public class SinhVienServiceImpl implements  SinhVienService {
 	public String timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(String maNhom, String tenPhieu) {
 		System.out.println(maNhom + " " + tenPhieu);
 		return sinhVienRepository.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemLon(maNhom, tenPhieu);
+	}
+
+	@Override
+	public List<SinhVien> layTatCaSinhVienTheoLopHocPhan(LopHocPhan lopHocPhan) {
+		return sinhVienRepository.findByLopHocPhan(lopHocPhan);
 	}
 
 	

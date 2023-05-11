@@ -76,6 +76,8 @@ public class HocKyController {
 
 		hocKy = hocKyService.luu(hocKy);
 		
+		hocPhanKhoaLuanTotNghiepService.luu(new HocPhanKhoaLuanTotNghiep("42000000" +maHK , "Học Phần Khóa Luận Tốt Nghiệp", "5", true, hocKy));
+		
 		keHoachService.luu(new KeHoach("Lịch thêm đề tài", "lịch dùng để cho giảng viên thêm, xóa, sửa đề tài của họ",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 
 				"ROLE_GIANGVIEN", null, new LoaiKeHoach(5)));

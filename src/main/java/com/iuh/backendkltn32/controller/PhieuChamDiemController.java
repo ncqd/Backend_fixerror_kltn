@@ -321,7 +321,8 @@ public class PhieuChamDiemController {
 		} else {
 			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		}
-		String viTriCham = request.getDotCham() != null ? request.getDotCham() : "All";
+		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty() 
+				&& !request.getDotCham().isBlank() && !request.getDotCham().equals("") ?  request.getDotCham() : "All";
 		if (viTriCham.equals("All")) {
 			System.out.println("ALL");
 			phieuChamService.layDsPhieuCham(request.getMaNguoiDung(), hocKy.getMaHocKy()).forEach(phieuCham -> {

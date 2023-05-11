@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.query.Param;
 
+import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
 
@@ -20,4 +21,6 @@ public interface SinhVienService extends AbstractService<SinhVien>{
 	List<String> timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(String maNhom,String tenPhieu, String maGiangVien);	
 	
 	String timMaSinhVienChuaCoPhieuChamDiemTheoNhuCauCoDiemTheoNhuCau(String maNhom,String tenPhieu);
+	
+	List<SinhVien> layTatCaSinhVienTheoLopHocPhan(LopHocPhan lopHocPhan);
 }

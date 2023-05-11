@@ -82,20 +82,22 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 
 	@Override
 	public List<PhieuCham> layDsPhieuChamPosterVaiTro(String maGiangVien, String maHocky, String viTriPhanCong) {
-		// TODO Auto-generated method stub
 		return repository.layPhieuTheoPPChamPOSTER(maGiangVien, maHocky, viTriPhanCong);
 	}
 
 	@Override
 	public List<PhieuCham> layDsPhieuChamHoiDongVaiTro(String maGiangVien, String maHocky, String viTriPhanCong) {
-		// TODO Auto-generated method stub
 		return repository.layPhieuTheoPPChamHD(maGiangVien, maHocky, viTriPhanCong);
 	}
 
 	@Override
 	public List<PhieuCham> layPhieuTheoMaSinhVienTenVaiTro(String maSinhVien, String tenPhieu) {
-		// TODO Auto-generated method stub
 		return repository.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, tenPhieu);
+	}
+
+	@Override
+	public List<String> layMaPhieuPhieuTheoMaSinhVienTenVaiTro(String maHocKy, String tenPhieu, String maNhom) {
+		return repository.layMaPhieuPhieuTheoMaSinhVienTenVaiTro(maHocKy, tenPhieu, maNhom);
 	}
 
 }

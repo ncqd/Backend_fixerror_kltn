@@ -71,4 +71,10 @@ public class HocPhanKhoaLuanTotNghiepServiceImpl implements HocPhanKhoaLuanTotNg
 		return repository.layHocPhanCuoiTrongDS();
 	}
 
+	@Override
+	public HocPhanKhoaLuanTotNghiep layHocPhanTheoMaHocKy(String maHocKy) {
+		// TODO Auto-generated method stub
+		return repository.layHocPhanTheoMaHK(maHocKy);
+	}
+
 }

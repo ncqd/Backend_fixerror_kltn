@@ -64,16 +64,18 @@ public class DanhSachNhomKLTNChamDiemExporter {
 		styleName.setFont(fontName);
 		styleName.setAlignment(HorizontalAlignment.CENTER);
 		Row row = sheet.createRow(1);
+		Long soHocKyTruoc = Long.parseLong(hocKy.getMaHocKy().substring(0, hocKy.getMaHocKy().length() - 1)) - 1;
+		Long soHocKyNay = Long.parseLong(hocKy.getMaHocKy().substring(0, hocKy.getMaHocKy().length() - 1));
 		createCell(row, 0,
 				"DANH SÁCH THÀNH VIÊN CHẤM BÁO CÁO HỘI ĐỒNG & POSTER  \n"
-						+ "KHÓA LUẬN TỐT NGHIỆP - HỌC KỲ I - 2022-2023   \n " + "NGÀNH KỸ THUẬT PHẦN MỀM  \n "
-						+ "Thời gian: 8g - ngày 08/12/2022 - địa điểm theo thông báo của khoa",
+						+ "KHÓA LUẬN TỐT NGHIỆP - HỌC KỲ I - 20"+soHocKyTruoc+"-20" +soHocKyNay+"   \n " + "NGÀNH KỸ THUẬT PHẦN MỀM  \n "
+						+ "Thời gian: 8g - ngày 01/6/20"+soHocKyNay+" - địa điểm theo thông báo của khoa",
 				styleName);
 		sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 17));
 
 		row = sheet.createRow(2);
 		createCell(row, 0, "Lưu ý: \n"
-				+ "(1) Thời gian nộp quyển báo cáo (bản cứng & mềm): khoảng sau 1 tuần ngày 8/12/2022 - Ngày giờ địa điểm sẽ thông báo trên group KLTN \n"
+				+ "(1) Thời gian nộp quyển báo cáo (bản cứng & mềm): khoảng sau 1 tuần ngày 01/6/2023 - Ngày giờ địa điểm sẽ thông báo trên group KLTN \n"
 				+ "(2) Bản cứng: In bìa xanh theo mẫu của khoa + đĩa CD chứa bản mềm, hướng dẫn và sản phẩm, và có đầy đủ chữ ký của GVHD, 2 thành viên trong hội đồng báo cáo --> trong buổi báo cáo các bạn in rời các tờ giấy nhận xét và nhờ các GV nhận xét và ký tên.",
 				style);
 		sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 17));

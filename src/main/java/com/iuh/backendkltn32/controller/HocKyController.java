@@ -44,13 +44,7 @@ public class HocKyController {
 	@GetMapping("/lay-hoc-ky-moi-nhat")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public HocKy layHocKyCuoiCung(){
-		HocKy hocKy = hocKyService.layTatCaHocKy().stream().map(hk -> {
-			if (System.currentTimeMillis() > hk.getThoiGianBatDau().getTime() && System.currentTimeMillis() < hk.getThoiGianKetThuc().getTime()) {
-				
-				return hk;
-			}
-			return null;
-		}).toList().get(0);
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		
 		return hocKy;
 	}
@@ -62,11 +56,13 @@ public class HocKyController {
 		String maHK = "";
 		if (hocKyCuoiCung == null) {
 			maHK = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)).substring(2);
+			System.out.println(maHK + "this is ma HK Thoi Gian Thuc ");
 		}
 		else {
 			
-			maHK = hocKyCuoiCung.getMaHocKy().substring(2).equals("2") ?  (Long.parseLong(hocKyCuoiCung.getMaHocKy().substring(0, 2)) + 1) + "" :
+			maHK = hocKyCuoiCung.getSoHocKy().equals("2") ?  (Long.parseLong(hocKyCuoiCung.getMaHocKy().substring(0, 2)) + 1) + "" :
 				Long.parseLong(hocKyCuoiCung.getMaHocKy().substring(0, 2)) + "";
+			System.out.println(maHK + "this is ma HK ");
 		}
 		
 		String soHocKy = hocKy.getThoiGianBatDau().getMonth()+1 >= 8 && hocKy.getThoiGianBatDau().getMonth()+1 < 12 ? "1" : "2";
@@ -76,7 +72,7 @@ public class HocKyController {
 
 		hocKy = hocKyService.luu(hocKy);
 		
-		hocPhanKhoaLuanTotNghiepService.luu(new HocPhanKhoaLuanTotNghiep("42000000" +maHK , "Học Phần Khóa Luận Tốt Nghiệp", "5", true, hocKy));
+		hocPhanKhoaLuanTotNghiepService.luu(new HocPhanKhoaLuanTotNghiep("42000000" +maHK+soHocKy , "Học Phần Khóa Luận Tốt Nghiệp", "5", true, hocKy));
 		
 		keHoachService.luu(new KeHoach("Lịch thêm đề tài", "lịch dùng để cho giảng viên thêm, xóa, sửa đề tài của họ",
 				null, hocKy, hocKy.getThoiGianBatDau(), hocKy.getThoiGianKetThuc(), 1, 

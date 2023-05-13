@@ -45,7 +45,7 @@ public class FileMauGiangVienExporter {
 		XSSFFont fontContent = workbook.createFont();
 
 		InputStream inputStream = new FileInputStream(
-				"D:\\test\\backend-kltn-32\\src\\main\\resources\\file\\logo-iuh-xoa-phong.png");
+				"src\\main\\resources\\file\\logo-iuh-xoa-phong.png");
 		byte[] logoIuh = IOUtils.toByteArray(inputStream);
 
 		int pictureIdx = workbook.addPicture(logoIuh, Workbook.PICTURE_TYPE_PNG);

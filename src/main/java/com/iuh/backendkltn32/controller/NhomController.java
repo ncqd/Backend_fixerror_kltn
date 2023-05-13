@@ -114,7 +114,7 @@ public class NhomController {
 						}
 						return null;
 					}).toList();
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, null, sinhViens, sinhViens2);
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, nhom.getDeTai() ==null ? null : nhom.getDeTai().getMaDeTai(), sinhViens, sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
@@ -439,8 +439,8 @@ public class NhomController {
 					vaiTroCham = "phan bien";
 					break;
 				}
-				List<Nhom> nhomBs = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), vaiTroCham,
-						request.getMaNguoiDung());
+				Set<Nhom> nhomBs = new HashSet<>(nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), vaiTroCham,
+						request.getMaNguoiDung()));
 				if (!nhomBs.isEmpty() && nhomBs != null) {
 					nhomBs.stream().forEach(nhom -> {
 						String maGV = request.getMaNguoiDung();

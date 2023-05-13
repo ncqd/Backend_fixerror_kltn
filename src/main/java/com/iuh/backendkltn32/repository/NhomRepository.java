@@ -10,7 +10,7 @@ import com.iuh.backendkltn32.entity.Nhom;
 
 public interface NhomRepository extends JpaRepository<Nhom, String> {
 
-	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy "
@@ -23,7 +23,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 	@Query(value = "select  * from nhom where maNhom like %:maNhomTemp% order by maNhom desc limit 1", nativeQuery = true)
 	Nhom layNhomTheoThoiGianThuc(@Param("maNhomTemp") String maNhom);
 
-	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s  "
+	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s  "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l  "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h  "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k  " 
@@ -33,14 +33,14 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 	List<Nhom> layNhomTheoMaGiangVien(@Param("maHocKy") String maHocKy, @Param("soHocKy") String soHocKy,
 			@Param("maGiangVien") String maGiangVien);
 	
-	@Query(value = "select distinct n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+	@Query(value = "select distinct n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy "
 			+ "where k.maHocKy = :maHocKy and k.soHocKy = :soHocKy and n.tinhTrang = :tinhTrang   ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoTinhTrang(@Param("maHocKy") String hocKy, @Param("soHocKy") String soHocKy, @Param("tinhTrang") Integer tinhTrang);
 	
-	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s  "
+	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s  "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy join phancong p " 
@@ -48,7 +48,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ "where k.maHocKy = :maHocKy and p.magiangvien = :magiangvien  and vitriPhanCong = :viPhanCong ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoPhanCongHK(@Param("maHocKy") String hocKy, @Param("viPhanCong") String viPhanCong, @Param("magiangvien") String magiangvien);
 	
-	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s  "
+	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s  "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy join phancong p " 
@@ -56,7 +56,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ "where k.maHocKy = :maHocKy and p.magiangvien = :magiangvien ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoHK(@Param("maHocKy") String hocKy, @Param("magiangvien") String magiangvien);
 	
-	@Query(value = "select n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+	@Query(value = "select n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
 			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "
@@ -64,7 +64,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ "and p.vitriphancong = :viTriPhanCong ;  ", nativeQuery = true)
 	List<Nhom> layNhomTheoPPChamHD(@Param("maHocKy") String hocKy, @Param("magiangvien") String magiangvien, @Param("viTriPhanCong") String viTriPhanCong);
 	
-	@Query(value = "select n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+	@Query(value = "select n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
 			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "
@@ -72,14 +72,14 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ " and p.vitriphancong = :viTriPhanCong   ;  ", nativeQuery = true)
 	List<Nhom> layNhomTheoPPChamPoster(@Param("maHocKy") String hocKy, @Param("magiangvien") String magiangvien, @Param("viTriPhanCong") String viTriPhanCong);
 	
-	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
 			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "
 			+ "where k.maHocKy = :maHocKy and a.tenPhieu = 'PB' and diemPhieuCham >=5 and  diemPhieuCham < 8", nativeQuery = true)
 	List<Nhom> layNhomRaDuocPBPoster(@Param("maHocKy") String hocKy);
 	
-	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai, matKhauNhom from nhom n join sinhvien s "
+	@Query(value = "select distinct n.maNhom, tenNhom, n.maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k on k.maHocKy = h.maHocKy join phancong p on n.maNhom = p.maNhom "
 			+ "join phieucham a on p.maGiangVien = a.maGiangVien  "

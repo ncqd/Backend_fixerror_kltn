@@ -93,7 +93,7 @@ public class JmsListenerConsumer implements MessageListener {
 			List<String> dsMaSv = (List<String>) mapMessage.getObject("dsMaSinhVien");
 			System.out.println("Listener - maNhom - " + mapMessage);
 			DangKyNhomRequest request = new DangKyNhomRequest(dsMaSv, mapMessage.getString("maNhom"), 
-					mapMessage.getString("maDeTai"),  null);
+					mapMessage.getString("maDeTai"),  null,mapMessage.getString("password"));
 			System.out.println("Listener - dang ky nhom - " + request);
 			try {
 				if (request.getMaNhom() == null) {

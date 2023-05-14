@@ -20,7 +20,7 @@ public class SinhVienServiceImpl implements  SinhVienService {
 	private SinhVienRepository sinhVienRepository;
 
 	@Override
-	public SinhVien layTheoMa(String ma) throws Exception {
+	public SinhVien layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

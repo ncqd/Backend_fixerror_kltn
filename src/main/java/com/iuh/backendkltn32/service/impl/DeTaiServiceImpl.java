@@ -16,7 +16,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	private DeTaiRepository repository;
 
 	@Override
-	public DeTai layTheoMa(String ma) throws Exception {
+	public DeTai layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

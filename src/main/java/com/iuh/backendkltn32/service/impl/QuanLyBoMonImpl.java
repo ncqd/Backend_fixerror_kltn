@@ -15,7 +15,7 @@ public class QuanLyBoMonImpl implements QuanLyBoMonService{
 	private QuanLyBoMonRepository quanLyBoMonRepository;
 
 	@Override
-	public QuanLyBoMon layTheoMa(String ma) throws Exception {
+	public QuanLyBoMon layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

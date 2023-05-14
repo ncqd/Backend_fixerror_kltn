@@ -17,7 +17,7 @@ public class NhomServiceImpl implements NhomService{
 	
 
 	@Override
-	public Nhom layTheoMa(String ma) throws Exception {
+	public Nhom layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

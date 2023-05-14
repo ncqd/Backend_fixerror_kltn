@@ -18,7 +18,7 @@ public class PhanCongServiceImpl implements PhanCongService {
 	private PhanCongRepository repository;
 
 	@Override
-	public PhanCong layTheoMa(String ma) throws Exception {
+	public PhanCong layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

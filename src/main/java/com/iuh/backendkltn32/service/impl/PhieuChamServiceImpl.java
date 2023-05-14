@@ -18,7 +18,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	private PhieuChamRepository repository;
 
 	@Override
-	public PhieuCham layTheoMa(String ma) throws Exception {
+	public PhieuCham layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

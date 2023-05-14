@@ -16,7 +16,7 @@ public class TinNhanServiceImpl implements TinNhanSerivce {
 	private TinNhanRepository repository;
 
 	@Override
-	public TinNhan layTheoMa(String ma) throws Exception {
+	public TinNhan layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

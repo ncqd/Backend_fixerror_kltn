@@ -78,6 +78,9 @@ public class JmsListenerConsumer implements MessageListener {
 				throw new Exception("Khong the dang ky de tai " + deTai.getTenDeTai() + " da day");
 			}
 			Nhom nhomDangKy = nhomService.layTheoMa(mapMessage.getString("maNhom"));
+			if (nhomDangKy.getTinhTrang() == 0) {
+				throw new RuntimeException("Nhóm Chưa được duyệt");
+			}
 			nhomDangKy.setDeTai(deTai);
 			return ResponseEntity.ok(nhomService.capNhat(nhomDangKy));
 		}

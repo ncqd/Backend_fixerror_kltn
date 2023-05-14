@@ -344,7 +344,7 @@ public class PhieuChamDiemController {
 		} else if (viTriCham.equals("HD")) {
 			System.out.println("HUOng Dan");
 			phieuChamService
-					.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
+					.layDsPhieuChamVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
 					.forEach(phieuCham -> {
 						DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 						phieuCham.getDsKetQua().forEach(sv -> {
@@ -415,7 +415,7 @@ public class PhieuChamDiemController {
 								});
 					} else {
 						phieuChamService
-								.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+								.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
 								.forEach(phieuCham -> {
 									DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 									phieuCham.getDsKetQua().forEach(sv -> {
@@ -451,7 +451,7 @@ public class PhieuChamDiemController {
 								rs.add(diemSVDTO);
 							});
 					phieuChamService
-							.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+							.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
 							.forEach(phieuCham -> {
 								DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 								phieuCham.getDsKetQua().forEach(sv -> {

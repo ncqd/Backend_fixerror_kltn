@@ -57,8 +57,12 @@ public class DangNhapController {
 	
 
 	@PostMapping("/dang-nhap")
-	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws Exception {
+	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws RuntimeException {
+
 		String tenTaiKhoan = loginRequest.getTenTaiKhoan();
+		if (tenTaiKhoan.equals("")){
+			throw new RuntimeException("Ma Khong Rong");
+		}
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(tenTaiKhoan, loginRequest.getPassword()));
 
@@ -93,7 +97,7 @@ public class DangNhapController {
 				 quanLyBoMon)));
 			}
 		}
-		return ResponseEntity.status(401).body("ko co");
+		return ResponseEntity.status(403).body("ko co");
 //		throw new Exception("Dont have user");
 	}
 

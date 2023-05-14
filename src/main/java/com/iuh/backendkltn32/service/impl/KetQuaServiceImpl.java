@@ -18,7 +18,7 @@ public class KetQuaServiceImpl implements KetQuaService {
 
 
 	@Override
-	public KetQua layTheoMa(String ma) throws Exception {
+	public KetQua layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

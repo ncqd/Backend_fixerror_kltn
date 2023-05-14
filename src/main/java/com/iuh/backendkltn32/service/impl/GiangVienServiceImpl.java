@@ -23,7 +23,7 @@ public class GiangVienServiceImpl implements GiangVienService {
 	private GiangVienRepository repository;
 
 	@Override
-	public GiangVien layTheoMa(String ma) throws Exception {
+	public GiangVien layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

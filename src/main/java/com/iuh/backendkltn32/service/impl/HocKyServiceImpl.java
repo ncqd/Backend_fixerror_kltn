@@ -16,7 +16,7 @@ public class HocKyServiceImpl implements HocKyService{
 	private HocKyRepository repository;
 
 	@Override
-	public HocKy layTheoMa(String ma) throws Exception {
+	public HocKy layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

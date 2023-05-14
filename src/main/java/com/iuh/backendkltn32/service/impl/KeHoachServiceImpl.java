@@ -23,7 +23,7 @@ public class KeHoachServiceImpl implements KeHoachService {
 	private HocKyRepository hocKyRepository;
 
 	@Override
-	public KeHoach layTheoMa(String ma) throws Exception {
+	public KeHoach layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

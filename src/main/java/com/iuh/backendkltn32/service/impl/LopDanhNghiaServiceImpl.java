@@ -14,7 +14,7 @@ public class LopDanhNghiaServiceImpl implements LopDanhNghiaService{
 	private LopDanhNghiaRepository repository;
 
 	@Override
-	public LopDanhNghia layTheoMa(String ma) throws Exception {
+	public LopDanhNghia layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

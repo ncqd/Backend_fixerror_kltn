@@ -17,7 +17,7 @@ public class PhongServiceImpl implements PhongService{
 	private PhongRepository repository;
 
 	@Override
-	public Phong layTheoMa(String ma) throws Exception {
+	public Phong layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

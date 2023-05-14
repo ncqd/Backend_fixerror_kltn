@@ -15,7 +15,7 @@ public class DiemThanhPhanServiceImpl implements com.iuh.backendkltn32.service.D
 	private DiemThanhPhanRepository repository;
 
 	@Override
-	public DiemThanhPhan layTheoMa(String ma) throws Exception {
+	public DiemThanhPhan layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

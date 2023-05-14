@@ -14,7 +14,7 @@ public class HocPhanKhoaLuanTotNghiepServiceImpl implements HocPhanKhoaLuanTotNg
 	private HocPhanKhoaLuanTotNghiepRepository repository;
 
 	@Override
-	public HocPhanKhoaLuanTotNghiep layTheoMa(String ma) throws Exception {
+	public HocPhanKhoaLuanTotNghiep layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

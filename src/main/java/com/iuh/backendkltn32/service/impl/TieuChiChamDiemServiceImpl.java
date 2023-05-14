@@ -16,7 +16,7 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 	private TieuChiChamDiemRepository repository;
 
 	@Override
-	public TieuChiChamDiem layTheoMa(String ma) throws Exception {
+	public TieuChiChamDiem layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}

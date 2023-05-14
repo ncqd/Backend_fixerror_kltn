@@ -15,14 +15,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.iuh.backendkltn32.dto.KetQuaHocTapDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.LopHocPhanDto;
 import com.iuh.backendkltn32.dto.SinhVienDto;
+import com.iuh.backendkltn32.entity.DiemThanhPhan;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.LopDanhNghia;
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.Nhom;
+import com.iuh.backendkltn32.entity.PhieuCham;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.importer.DeTaiImporter;
@@ -31,6 +34,7 @@ import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.LopDanhNghiaService;
 import com.iuh.backendkltn32.service.LopHocPhanService;
 import com.iuh.backendkltn32.service.NhomService;
+import com.iuh.backendkltn32.service.PhieuChamService;
 import com.iuh.backendkltn32.service.SinhVienService;
 import com.iuh.backendkltn32.service.TaiKhoanService;
 import com.iuh.backendkltn32.service.VaiTroService;
@@ -62,6 +66,9 @@ public class SinhVienController {
 	
 	@Autowired
 	private HocKyService hocKyService;
+	
+	@Autowired
+	private PhieuChamService phieuChamService;
 	
 	@GetMapping("/thong-tin-ca-nhan/{maSinhVien}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
@@ -178,4 +185,56 @@ public class SinhVienController {
 			return sinhVienService.layTatCaSinhVienTheoLopHocPhan(lopHocPhanService.layTheoMa(lopHocPhanDto.getMaLopHocPhan()));
 		}
 	}
+	
+	@GetMapping("/lay-ket-qua/{maSinhVien}")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_QUANLY') ")
+	public KetQuaHocTapDto layDiemCuoiCung(@PathVariable("maSinhVien") String maSinhVien) throws Exception {
+		PhieuCham phieuChamHD1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "HD").get(0);
+		SinhVien sv = sinhVienService.layTheoMa(maSinhVien);
+		if (phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").size() <= 0) {
+			return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", null, null);
+		}
+
+		PhieuCham phieuChamHoiDong1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").get(0);
+		PhieuCham phieuChamHoiDong2SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "TK").get(0);
+
+		Double diemPB = (double) 0;
+		diemPB += phieuChamHD1SV1.getDiemPhieuCham();
+
+		for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "PB")) {
+			diemPB += pc.getDiemPhieuCham();
+		}
+		diemPB = diemPB / 3;
+
+		Double diemHD = (phieuChamHoiDong1SV1.getDiemPhieuCham() + phieuChamHoiDong2SV1.getDiemPhieuCham()) / 2;
+
+		Double kq = (double) (Math.round(((diemHD + diemPB) / 2) * 10)) / 10;
+		
+		Double diemThang4 = (double) 0;
+		
+		if (kq >= 9 && kq <= 10) {
+			diemThang4 =  4.0;
+		} else if (kq >= 8.5 && kq <= 8.9) {
+			diemThang4 =  3.8;
+		} else if (kq >= 8.0 && kq <= 8.4) {
+			diemThang4 =  3.5;
+		} else if (kq >= 7.0 && kq <= 7.9) {
+			diemThang4 =  3.0;
+		} else if (kq >= 6.0 && kq <= 8.9) {
+			diemThang4 =  2.5;
+		} else if (kq >= 5.5 && kq <= 5.9) {
+			diemThang4 =  2.0;
+		} else if (kq >= 5.0 && kq <= 5.4) {
+			diemThang4 =  1.5;
+		} else if (kq >= 4.0 && kq <= 4.9) {
+			diemThang4 =  1.0;
+		}  else {
+			diemThang4 =  0.0;
+		}
+		
+		
+		return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", kq, diemThang4);
+	}
+	
+	
 }

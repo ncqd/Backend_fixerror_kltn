@@ -19,7 +19,7 @@ public class PhieuChamMauServiceImpl implements PhieuChamMauService{
 	private PhieuChamMauRepository repository;
 
 	@Override
-	public PhieuChamMau layTheoMa(String ma) throws Exception {
+	public PhieuChamMau layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -30,13 +30,13 @@ public class PhieuChamMauServiceImpl implements PhieuChamMauService{
 	}
 
 	@Override
-	public PhieuChamMau luu(PhieuChamMau obj) throws Exception {
+	public PhieuChamMau luu(PhieuChamMau obj) throws RuntimeException {
 
 		return repository.save(obj);
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		PhieuChamMau phieuChamKhongTonTai = layTheoMa(ma);
 
 		if (phieuChamKhongTonTai == null) {
@@ -48,7 +48,7 @@ public class PhieuChamMauServiceImpl implements PhieuChamMauService{
 	}
 
 	@Override
-	public PhieuChamMau capNhat(PhieuChamMau obj) throws Exception {
+	public PhieuChamMau capNhat(PhieuChamMau obj) throws RuntimeException {
 		PhieuChamMau phieuChamKhongTonTai = layTheoMa(obj.getMaPhieuMau()+"");
 
 		if (phieuChamKhongTonTai == null) {

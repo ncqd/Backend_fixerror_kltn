@@ -49,4 +49,31 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
 			+ "where d.maHocKy = :maHocKy and p.tenPhieu = :tenPhieu and n.maNhom = :maNhom  ; ", nativeQuery = true)
 	List<String> layMaPhieuPhieuTheoMaSinhVienTenVaiTro(@Param("maHocKy") String maHocKy,
 			@Param("tenPhieu") String tenPhieu, @Param("maNhom") String maNhom);
+	
+	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a "
+			+ "join detai d on a.madetai = d.madetai " + "join ketqua k on a.maPhieu = k.maPhieu "
+			+ " where maHocKy = :mahocky ; ", nativeQuery = true)
+	List<PhieuCham> layDsPhieuTheoNamHocKyQL( @Param("mahocky") String mahocky);
+
+	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
+			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai  "
+			+ "join ketqua k on a.maPhieu = k.maPhieu "
+			+ "where diemPhieuCham >= 8 and tenPhieu = 'PB' "
+			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
+	List<PhieuCham> layPhieuTheoPPChamHDQL( @Param("mahocky") String mahocky,
+			@Param("viTriPhanCong") String viTriPhanCong);
+
+	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
+			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai "
+			+ "join ketqua k on a.maPhieu = k.maPhieu "
+			+ "where diemPhieuCham < 8 and tenPhieu = 'PB' "
+			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
+	List<PhieuCham> layPhieuTheoPPChamPOSTERQL(@Param("mahocky") String mahocky,
+			@Param("viTriPhanCong") String viTriPhanCong);
+
+	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a   \n"
+			+ "join detai d on a.madetai = d.madetai  " + "join ketqua k on a.maPhieu = k.maPhieu  "
+			+ "where tenPhieu = :tenPhieu and maHocKy = :mahocky ; ", nativeQuery = true)
+	List<PhieuCham> layPhieuTheoVaiTroQL(@Param("mahocky") String mahocky,
+			@Param("tenPhieu") String tenPhieu);
 }

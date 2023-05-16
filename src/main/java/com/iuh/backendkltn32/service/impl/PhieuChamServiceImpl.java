@@ -18,7 +18,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	private PhieuChamRepository repository;
 
 	@Override
-	public PhieuCham layTheoMa(String ma) throws Exception {
+	public PhieuCham layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -29,7 +29,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public PhieuCham luu(PhieuCham obj) throws Exception {
+	public PhieuCham luu(PhieuCham obj) throws RuntimeException {
 		PhieuCham phieuChamDaTonTai = layTheoMa(obj.getMaPhieu());
 
 		System.out.println("PhieuCham service - luu: " + phieuChamDaTonTai);
@@ -42,7 +42,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		PhieuCham phieuChamKhongTonTai = layTheoMa(ma);
 
 		if (phieuChamKhongTonTai == null) {
@@ -54,7 +54,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public PhieuCham capNhat(PhieuCham obj) throws Exception {
+	public PhieuCham capNhat(PhieuCham obj) throws RuntimeException {
 		PhieuCham phieuChamKhongTonTai = layTheoMa(obj.getMaPhieu());
 
 		if (phieuChamKhongTonTai == null) {
@@ -98,6 +98,26 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	@Override
 	public List<String> layMaPhieuPhieuTheoMaSinhVienTenVaiTro(String maHocKy, String tenPhieu, String maNhom) {
 		return repository.layMaPhieuPhieuTheoMaSinhVienTenVaiTro(maHocKy, tenPhieu, maNhom);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamQL(String maHocky) {
+		return repository.layDsPhieuTheoNamHocKyQL(maHocky);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamVaiTroQL(String maHocky, String tenPhieu) {
+		return repository.layPhieuTheoVaiTroQL(maHocky, tenPhieu);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamPosterVaiTroQL(String maHocky, String viTriPhanCong) {
+		return repository.layPhieuTheoPPChamPOSTERQL(maHocky, viTriPhanCong);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamHoiDongVaiTroQL(String maHocky, String viTriPhanCong) {
+		return repository.layPhieuTheoPPChamHDQL(maHocky, viTriPhanCong);
 	}
 
 }

@@ -16,7 +16,7 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 	private TieuChiChamDiemRepository repository;
 
 	@Override
-	public TieuChiChamDiem layTheoMa(String ma) throws Exception {
+	public TieuChiChamDiem layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -27,12 +27,12 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 	}
 
 	@Override
-	public TieuChiChamDiem luu(TieuChiChamDiem obj) throws Exception {
+	public TieuChiChamDiem luu(TieuChiChamDiem obj) throws RuntimeException {
 		return repository.save(obj);
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		TieuChiChamDiem tieuChiChamDiemKhongTonTai = layTheoMa(ma);
 
 		if (tieuChiChamDiemKhongTonTai == null) {
@@ -44,7 +44,7 @@ public class TieuChiChamDiemServiceImpl implements TieuChiChamDiemService{
 	}
 
 	@Override
-	public TieuChiChamDiem capNhat(TieuChiChamDiem obj) throws Exception {
+	public TieuChiChamDiem capNhat(TieuChiChamDiem obj) throws RuntimeException {
 		TieuChiChamDiem tieuChiChamDiemKhongTonTai = layTheoMa(obj.getMaChuanDauRa()+"");
 
 		if (tieuChiChamDiemKhongTonTai == null) {

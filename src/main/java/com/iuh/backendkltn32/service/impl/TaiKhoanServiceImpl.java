@@ -29,7 +29,7 @@ public class TaiKhoanServiceImpl implements TaiKhoanService{
 	}
 
 	@Override
-	public TaiKhoan luu(TaiKhoan obj) throws Exception  {
+	public TaiKhoan luu(TaiKhoan obj) throws RuntimeException  {
 		
 		TaiKhoan taiKhoanDaTonTai = layTheoMa(obj.getTenTaiKhoan());
 		
@@ -44,7 +44,7 @@ public class TaiKhoanServiceImpl implements TaiKhoanService{
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception  {
+	public String xoa(String ma) throws RuntimeException  {
 		
 		TaiKhoan taiKhoanChuaTonTai = layTheoMa(ma);
 
@@ -57,7 +57,7 @@ public class TaiKhoanServiceImpl implements TaiKhoanService{
 	}
 
 	@Override
-	public TaiKhoan capNhat(TaiKhoan obj) throws Exception  {
+	public TaiKhoan capNhat(TaiKhoan obj) throws RuntimeException  {
 		TaiKhoan taiKhoanChuaTonTai = layTheoMa(obj.getTenTaiKhoan());
 
 		if (taiKhoanChuaTonTai == null) {

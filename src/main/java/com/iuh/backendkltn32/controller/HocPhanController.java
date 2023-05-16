@@ -30,7 +30,7 @@ public class HocPhanController {
 		try {
 			HocPhanKhoaLuanTotNghiep hocPhanKhoaLuanTotNghiep = hpService.layTheoMa(maHocPhan);
 			return hocPhanKhoaLuanTotNghiep;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			
 			e.printStackTrace();
 			return null;
@@ -46,7 +46,7 @@ public class HocPhanController {
 		try {
 			LopHocPhan lopHocPhan = lhpService.layTheoMa(maLopHocPhan);
 			return lopHocPhan;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 			
 			return null;

@@ -40,7 +40,7 @@ public class LopHocPhanControlller {
 	private PhongService phongService;
 
 	@PostMapping("/them")
-	public LopHocPhan taoLopHocPhan(@RequestBody LopHocPhanDto lopHocPhanDto) throws Exception {
+	public LopHocPhan taoLopHocPhan(@RequestBody LopHocPhanDto lopHocPhanDto) throws RuntimeException {
 
 		HocKy hocKy = hocKyService.layTheoMa(lopHocPhanDto.getMaHocKy());
 		LopHocPhan lopHocPhan = new LopHocPhan("4232000" + hocKy.getMaHocKy(), lopHocPhanDto.getTenLopHocPhan(),
@@ -50,7 +50,7 @@ public class LopHocPhanControlller {
 	}
 
 	@PostMapping("/sua")
-	public LopHocPhan suaLopHocPhan(@RequestBody LopHocPhanDto lopHocPhanDto) throws Exception {
+	public LopHocPhan suaLopHocPhan(@RequestBody LopHocPhanDto lopHocPhanDto) throws RuntimeException {
 
 		HocKy hocKy = hocKyService.layTheoMa(lopHocPhanDto.getMaHocKy());
 		LopHocPhan lopHocPhan = new LopHocPhan(lopHocPhanDto.getMaLopHocPhan(), lopHocPhanDto.getTenLopHocPhan(),
@@ -61,7 +61,7 @@ public class LopHocPhanControlller {
 	}
 
 	@PostMapping("/xoa")
-	public String xoaLopHocPhan(@RequestBody LopHocPhanDto lopHocPhanDto) throws Exception {
+	public String xoaLopHocPhan(@RequestBody LopHocPhanDto lopHocPhanDto) throws RuntimeException {
 
 		return lopHocPhanService.xoa(lopHocPhanDto.getMaLopHocPhan());
 	}

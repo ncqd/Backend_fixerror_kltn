@@ -1,7 +1,6 @@
 package com.iuh.backendkltn32.export;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class MailMergeExporter {
 		
 	}
 
-	private void writeHeaderLine() throws IOException {
+	private void writeHeaderLine() throws Exception {
         sheet = workbook.createSheet("MailMerge_PhieuChamHD");
          
         Row row = sheet.createRow(0);
@@ -122,7 +121,7 @@ public class MailMergeExporter {
         cell.setCellStyle(style);
    }
     
-	private void writeDataLines() throws Exception {
+	private void writeDataLines() throws RuntimeException {
 		int rowCount = 1;
 
 		CellStyle style = workbook.createCellStyle();

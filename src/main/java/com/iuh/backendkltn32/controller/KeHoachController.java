@@ -128,7 +128,7 @@ public class KeHoachController {
 	@PostMapping("/them-ke-hoach-phan-bien/{maNhom}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public List<KeHoach> themKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto, @PathVariable("maNhom") String maNhom)
-			throws Exception {
+			throws RuntimeException {
 		HocKy hocKy = hocKyService.layTheoMa(lapKeHoachDto.getMaHocKy());
 		List<String> maSinhVien = sinhVienService.layTatCaSinhVienTheoNhom(maNhom);
 		return maSinhVien.stream().map(sv -> {
@@ -142,7 +142,7 @@ public class KeHoachController {
 								hocKy, lapKeHoachDto.getThoiGianBatDau(), lapKeHoachDto.getThoiGianKetThuc(),
 								lapKeHoachDto.getTinhTrang(), lapKeHoachDto.getVaiTro(), sv,
 								new LoaiKeHoach(lapKeHoachDto.getMaLoaiLich())));
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -152,7 +152,7 @@ public class KeHoachController {
 
 	@PutMapping("/cap-nhat-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
+	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws RuntimeException {
 		HocKy hocKy = hocKyService.layTheoMa(lapKeHoachDto.getMaHocKy());
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
@@ -166,14 +166,14 @@ public class KeHoachController {
 
 	@DeleteMapping("/xoa-ke-hoach/{maKeHoach}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public String xoaKeHoach(@PathVariable String maKeHoach) throws Exception {
+	public String xoaKeHoach(@PathVariable String maKeHoach) throws RuntimeException {
 		return keHoachService.xoa(maKeHoach);
 	}
 
 	@PostMapping("/lay-ke-hoach-theo-maloai/{maNhom}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public List<LapKeHoachDto> layKeHoachTheoMaLoaiVaMaNhom(@RequestBody LapKeHoachDto lapKeHoachDto,
-			@PathVariable("maNhom") String maNhom) throws Exception {
+			@PathVariable("maNhom") String maNhom) throws RuntimeException {
 		HocKy hocKy = hocKyService.layTheoMa(lapKeHoachDto.getMaHocKy());
 		List<String> maSinhVien = sinhVienService.layTatCaSinhVienTheoNhom(maNhom);
 		List<LapKeHoachDto> ds = new ArrayList<>();
@@ -312,7 +312,7 @@ public class KeHoachController {
 
 	@PostMapping("/tao-kehoach-giangvien-pb")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public List<KeHoach> taoKeHoachGiangVienPb(@RequestBody KeHoachGvDto keHoachGvDto) throws Exception {
+	public List<KeHoach> taoKeHoachGiangVienPb(@RequestBody KeHoachGvDto keHoachGvDto) throws RuntimeException {
 		List<KeHoach> result = new ArrayList<>();
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		for (String ma : keHoachGvDto.getDsMaGiangVienPB()) {
@@ -363,7 +363,7 @@ public class KeHoachController {
 
 	@PostMapping("/lay-lich-hocky-pb")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public List<KeHoachDto> layLichTheoHKPB(@RequestBody LayKeHoachHocKyDto keHoachHocKyDto) throws Exception {
+	public List<KeHoachDto> layLichTheoHKPB(@RequestBody LayKeHoachHocKyDto keHoachHocKyDto) throws RuntimeException {
 		List<KeHoachDto> result = new ArrayList<>();
 		String tenLich = "";
 		switch (keHoachHocKyDto.getLich()) {
@@ -414,7 +414,7 @@ public class KeHoachController {
 							}
 							result.add(new KeHoachDto(kh.getId()+"", kh.getTenKeHoach(),tiet, format.format(kh.getThoiGianBatDau()),
 									phongService.layTheoMa(kh.getPhong()).getTenPhong(), gv));
-						} catch (Exception e) {
+						} catch (RuntimeException e) {
 							e.printStackTrace();
 						}
 					}
@@ -453,7 +453,7 @@ public class KeHoachController {
 	
 	@PostMapping("/tao-kehoach-giangvien-hd")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public List<KeHoach> taoKeHoachGiangVienhhd(@RequestBody KeHoachGvDto keHoachGvDto) throws Exception {
+	public List<KeHoach> taoKeHoachGiangVienhhd(@RequestBody KeHoachGvDto keHoachGvDto) throws RuntimeException {
 		List<KeHoach> result = new ArrayList<>();
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		for (String ma : keHoachGvDto.getDsMaGiangVienPB()) {

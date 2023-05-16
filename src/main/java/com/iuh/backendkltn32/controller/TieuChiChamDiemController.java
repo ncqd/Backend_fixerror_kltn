@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.entity.TaiKhoan;
+
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
-import com.iuh.backendkltn32.importer.DeTaiImporter;
 import com.iuh.backendkltn32.importer.TieuChiChamDiemImporter;
 import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 
@@ -41,7 +38,7 @@ public class TieuChiChamDiemController {
 		try {
 				
 			return tieuChiChamDiemService.luu(tieuChiChamDiem);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -54,7 +51,7 @@ public class TieuChiChamDiemController {
 		try {
 				
 			return tieuChiChamDiemService.capNhat(tieuChiChamDiem);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -67,7 +64,7 @@ public class TieuChiChamDiemController {
 		try {
 				
 			return tieuChiChamDiemService.xoa(ma);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -78,7 +75,7 @@ public class TieuChiChamDiemController {
 	public List<TieuChiChamDiem> layTieuChiChamDiemTheoMaPhieu(@PathVariable("maPhieuCham") String ma) {
 		try {
 			return tieuChiChamDiemService.laydsTieuChiChamDiemTheoPhieuCham(ma);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -89,7 +86,7 @@ public class TieuChiChamDiemController {
 	public List<TieuChiChamDiem> layHetTieuChamDiem() {
 		try {
 			return tieuChiChamDiemService.layHet();
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -97,7 +94,7 @@ public class TieuChiChamDiemController {
 	
 	@PostMapping("/them-tieu-chi-excel")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
+	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws RuntimeException {
 		if (tieuChiChamDiemImporter.isValidExcelFile(file)) {
 			try {
 				
@@ -106,8 +103,7 @@ public class TieuChiChamDiemController {
 				
 				return ResponseEntity.ok(tieuChiChamDiems);
 			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(500).body("Have Error");
+				throw new RuntimeException(e.getMessage());
 			}
 		}
 		return null;

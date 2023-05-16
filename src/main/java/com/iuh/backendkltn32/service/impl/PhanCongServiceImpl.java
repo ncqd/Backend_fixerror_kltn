@@ -18,7 +18,7 @@ public class PhanCongServiceImpl implements PhanCongService {
 	private PhanCongRepository repository;
 
 	@Override
-	public PhanCong layTheoMa(String ma) throws Exception {
+	public PhanCong layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -29,12 +29,12 @@ public class PhanCongServiceImpl implements PhanCongService {
 	}
 
 	@Override
-	public PhanCong luu(PhanCong obj) throws Exception {
+	public PhanCong luu(PhanCong obj) throws RuntimeException {
 		return repository.save(obj);
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		PhanCong phieuChamKhongTonTai = layTheoMa(ma);
 
 		if (phieuChamKhongTonTai == null) {
@@ -46,7 +46,7 @@ public class PhanCongServiceImpl implements PhanCongService {
 	}
 
 	@Override
-	public PhanCong capNhat(PhanCong obj) throws Exception {
+	public PhanCong capNhat(PhanCong obj) throws RuntimeException {
 		PhanCong phieuChamKhongTonTai = layTheoMa(obj.getMaPhanCong()+"");
 
 		if (phieuChamKhongTonTai == null) {

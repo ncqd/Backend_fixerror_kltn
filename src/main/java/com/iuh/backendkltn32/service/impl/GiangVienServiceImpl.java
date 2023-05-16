@@ -23,7 +23,7 @@ public class GiangVienServiceImpl implements GiangVienService {
 	private GiangVienRepository repository;
 
 	@Override
-	public GiangVien layTheoMa(String ma) throws Exception {
+	public GiangVien layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -34,7 +34,7 @@ public class GiangVienServiceImpl implements GiangVienService {
 	}
 
 	@Override
-	public GiangVien luu(GiangVien obj) throws Exception {
+	public GiangVien luu(GiangVien obj) throws RuntimeException {
 		GiangVien giangVienDaTonTai = layTheoMa(obj.getMaGiangVien());
 
 		System.out.println("Giangvien service - luu: " + giangVienDaTonTai);
@@ -48,7 +48,7 @@ public class GiangVienServiceImpl implements GiangVienService {
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		GiangVien giangVienKhongTonTai = layTheoMa(ma);
 
 		if (giangVienKhongTonTai == null) {
@@ -60,7 +60,7 @@ public class GiangVienServiceImpl implements GiangVienService {
 	}
 
 	@Override
-	public GiangVien capNhat(GiangVien obj) throws Exception {
+	public GiangVien capNhat(GiangVien obj) throws RuntimeException {
 		GiangVien giangVienCanCapNhat = layTheoMa(obj.getMaGiangVien());
 
 		if (giangVienCanCapNhat == null) {

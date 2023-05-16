@@ -1,6 +1,5 @@
 package com.iuh.backendkltn32.export;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -57,7 +56,7 @@ public class KetQuaKLTNExporter {
 		this.sinhVienService = sinhVienService;
 	}
 
-	private void writeHeaderLine() throws Exception {
+	private void writeHeaderLine() throws RuntimeException {
 		sheet = workbook.createSheet("KetQua_Nhom_KLTN");
 		sheet.setDefaultRowHeight((short) 600);
 
@@ -260,7 +259,7 @@ public class KetQuaKLTNExporter {
 	}
 
 	private List<TieuChiChamDiem> phatSinhTieuChiTuaDe(Row row, String vaiTro, CellStyle styleContent, boolean stt)
-			throws Exception {
+			throws RuntimeException {
 		List<TieuChiChamDiem> tieuChiChamDiems = new ArrayList<>();
 		List<String> maTieuChiChamDiems = new ArrayList<>();
 
@@ -278,7 +277,7 @@ public class KetQuaKLTNExporter {
 	}
 
 	private void phatSinhDiemTieuChi(Row row, List<TieuChiChamDiem> tieuChiChamDiems, CellStyle styleContent)
-			throws Exception {
+			throws RuntimeException {
 
 		for (TieuChiChamDiem tc : tieuChiChamDiems) {
 			createCellTieuDe(row, count++, tc.getDiemToiDa(), styleContent);
@@ -286,7 +285,7 @@ public class KetQuaKLTNExporter {
 		createCellTieuDe(row, count++, "10", styleContent);
 	}
 
-	private void writeDataLines() throws Exception {
+	private void writeDataLines() throws RuntimeException {
 		int rowCount = 5;
 
 		CellStyle style = workbook.createCellStyle();
@@ -324,7 +323,7 @@ public class KetQuaKLTNExporter {
 		}
 	}
 
-	private void writeContentCell(Nhom nhom, int columnCount, CellStyle style, Row row, Row rowNext) throws Exception {
+	private void writeContentCell(Nhom nhom, int columnCount, CellStyle style, Row row, Row rowNext) throws RuntimeException {
 		List<String> mas = sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom());
 		int nextColum = columnCount + 1;
 		SinhVien sv = sinhVienService.layTheoMa(mas.get(0));

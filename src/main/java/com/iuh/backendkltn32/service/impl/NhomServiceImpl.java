@@ -17,7 +17,7 @@ public class NhomServiceImpl implements NhomService{
 	
 
 	@Override
-	public Nhom layTheoMa(String ma) throws Exception {
+	public Nhom layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -28,7 +28,7 @@ public class NhomServiceImpl implements NhomService{
 	}
 
 	@Override
-	public Nhom luu(Nhom obj) throws Exception {
+	public Nhom luu(Nhom obj) throws RuntimeException {
 		Nhom nhomDaTonTai = layTheoMa(obj.getMaNhom());
 
 		System.out.println("Nhom service - luu: " + nhomDaTonTai);
@@ -42,7 +42,7 @@ public class NhomServiceImpl implements NhomService{
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		Nhom nhomKhongTonTai = layTheoMa(ma);
 
 		if (nhomKhongTonTai == null) {
@@ -54,7 +54,7 @@ public class NhomServiceImpl implements NhomService{
 	}
 
 	@Override
-	public Nhom capNhat(Nhom obj) throws Exception {
+	public Nhom capNhat(Nhom obj) throws RuntimeException {
 		Nhom nhomKhongTonTai = layTheoMa(obj.getMaNhom());
 
 		if (nhomKhongTonTai == null) {

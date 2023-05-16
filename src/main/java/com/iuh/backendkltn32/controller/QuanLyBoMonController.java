@@ -1,8 +1,5 @@
 package com.iuh.backendkltn32.controller;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,17 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 
 import com.iuh.backendkltn32.entity.*;
 import com.iuh.backendkltn32.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,8 +30,6 @@ import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.LopHocPhanDto;
-import com.iuh.backendkltn32.dto.NhomPBResponeDto;
-import com.iuh.backendkltn32.dto.NhomVaiTroRequest;
 import com.iuh.backendkltn32.dto.PhanCongDto;
 import com.iuh.backendkltn32.dto.PhanCongDto2;
 import com.iuh.backendkltn32.export.DanhSachDeTaiExporter;
@@ -98,12 +89,11 @@ public class QuanLyBoMonController {
 	public GiangVien hienThiThongTinCaNhan(@PathVariable String maQuanLy, @RequestBody LoginRequest loginRequest) {
 		try {
 			if (!loginRequest.getTenTaiKhoan().equals(maQuanLy)) {
-				throw new Exception("Khong Dung Ma Giang Vien");
+				throw new RuntimeException("Khong Dung Ma Giang Vien");
 			}
-			GiangVien giangVien = giangVienService.layTheoMa(maQuanLy);
 
-			return giangVien;
-		} catch (Exception e) {
+			return giangVienService.layTheoMa(maQuanLy);
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -111,7 +101,7 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/xuat-ds-sinhvien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void exportToExcel(@RequestBody LopHocPhanDto lopHocPhanDto, HttpServletResponse response) throws Exception {
+	public void exportToExcel(@RequestBody LopHocPhanDto lopHocPhanDto, HttpServletResponse response) throws RuntimeException {
 		response.setContentType("application/octet-stream");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
@@ -124,7 +114,11 @@ public class QuanLyBoMonController {
 		SinhVienExcelExporoter excelExporter = new SinhVienExcelExporoter(sinhVienService, phieuChamService,
 				lopHocPhan);
 
-		excelExporter.export(response);
+		try {
+			excelExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 	@PostMapping("/duyet-de-tai")
@@ -148,7 +142,7 @@ public class QuanLyBoMonController {
 
 			tinNhanSerivce.luu(tinNhan);
 			return deTai;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -164,7 +158,7 @@ public class QuanLyBoMonController {
 			nhom.setTinhTrang(duyetNhomRequest.getTrangThai());
 			nhomService.capNhat(nhom);
 			return nhom;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -173,7 +167,7 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/them-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public LapKeHoachDto themKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
+	public LapKeHoachDto themKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws RuntimeException {
 		HocKy hocKy = hocKyService.layTheoMa(lapKeHoachDto.getMaHocKy());
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
@@ -187,7 +181,7 @@ public class QuanLyBoMonController {
 
 	@PutMapping("/cap-nhat-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws Exception {
+	public LapKeHoachDto capNhatKeHoach(@RequestBody LapKeHoachDto lapKeHoachDto) throws RuntimeException {
 		HocKy hocKy = hocKyService.layTheoMa(lapKeHoachDto.getMaHocKy());
 		KeHoach keHoach = new KeHoach(lapKeHoachDto.getId(), lapKeHoachDto.getTenKeHoach(), lapKeHoachDto.getChuThich(),
 				lapKeHoachDto.getDsNgayThucHienKhoaLuan() != null ? lapKeHoachDto.getDsNgayThucHienKhoaLuan().toString()
@@ -201,29 +195,28 @@ public class QuanLyBoMonController {
 
 	@DeleteMapping("/xoa-ke-hoach/{maKeHoach}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public String xoaKeHoach(@PathVariable String maKeHoach) throws Exception {
+	public String xoaKeHoach(@PathVariable String maKeHoach) throws RuntimeException {
 		return keHoachService.xoa(maKeHoach);
 	}
 
 	@GetMapping("/lay-ke-hoach/{maKeHoach}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public LapKeHoachDto layKeHoachTheoMa(@PathVariable String maKeHoach) throws Exception {
+	public LapKeHoachDto layKeHoachTheoMa(@PathVariable String maKeHoach) throws RuntimeException {
 		KeHoach kh = keHoachService.layTheoMa(maKeHoach);
 
 		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
 				: new String[0];
-		LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
+		return new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
 				new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
 				kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
-		return lapKeHoachDto;
 	}
 
 	@GetMapping("/lay-ke-hoach-theo-hocky/{maHocKy}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<LapKeHoachDto> layKeHoachTheoHk(@PathVariable String maHocKy) throws Exception {
+	public List<LapKeHoachDto> layKeHoachTheoHk(@PathVariable String maHocKy) throws RuntimeException {
 		List<LapKeHoachDto> ds = new ArrayList<>();
-		keHoachService.layKeHoachTheoMaHocKy(maHocKy).stream().forEach(kh -> {
+		keHoachService.layKeHoachTheoMaHocKy(maHocKy).forEach(kh -> {
 
 			String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null
 					? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
@@ -239,14 +232,14 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/them-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
+	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws RuntimeException {
 		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
 		List<PhanCong> phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 			GiangVien giangVien;
 			try {
 				if (nhom != null) {
 					if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
-						throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+						throw new RuntimeException("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
 					}
 				}
 
@@ -256,7 +249,7 @@ public class QuanLyBoMonController {
 						giangVien);
 				phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
 				return phanCongService.luu(phanCong);
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
 			return null;
@@ -267,7 +260,7 @@ public class QuanLyBoMonController {
 		tgbd.setHours(gioBatDau);
 		Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
 		tgkt.setHours(gioKetThuc);
-		sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom() == null ? "123" : nhom.getMaNhom()).stream()
+		sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom() == null ? "123" : Objects.requireNonNull(nhom).getMaNhom())
 				.forEach(sv -> {
 					try {
 
@@ -275,7 +268,7 @@ public class QuanLyBoMonController {
 								hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1, "ROLE_SINHVIEN", sv,
 								new LoaiKeHoach(3));
 						keHoachService.luu(keHoach);
-					} catch (Exception e) {
+					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}
 				});
@@ -284,7 +277,7 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/them-ds-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto2> phanCongDtos) throws Exception {
+	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto2> phanCongDtos) throws RuntimeException {
 		List<PhanCong> phanCongs = new ArrayList<>();
 		for (PhanCongDto2 phanCongDto : phanCongDtos) {
 			Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
@@ -305,7 +298,7 @@ public class QuanLyBoMonController {
 								nhom, giangVien);
 						phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
 						phanCongs.add(phanCongService.luu(phanCong));
-					} catch (Exception e) {
+					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}
 				}
@@ -348,7 +341,7 @@ public class QuanLyBoMonController {
 					PhanCong phanCongTV3 = new PhanCong("thanh vien 3", phanCongDto.getChamCong(), nhom, giangVientv3);
 					phanCongTV3.setMaPhanCong(phanCongDto.getMaPhanCong());
 					phanCongs.add(phanCongService.luu(phanCongTV3));
-				} catch (Exception e) {
+				} catch (RuntimeException e) {
 					e.printStackTrace();
 				}
 			}
@@ -356,42 +349,48 @@ public class QuanLyBoMonController {
 			Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
 			Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
 			switch (phanCongDto.getTiet()) {
-			case "1-2":
-				tgbd.setHours(6);
-				tgbd.setMinutes(30);
-				tgkt.setHours(8);
-				tgkt.setMinutes(10);
-				break;
-			case "3-4":
-				tgbd.setHours(8);
-				tgbd.setMinutes(10);
-				tgkt.setHours(10);
-				break;
-			case "5-6":
-				tgbd.setHours(10);
-				tgkt.setHours(11);
-				tgbd.setMinutes(40);
-				break;
-			case "7-8":
-				tgbd.setHours(12);
-				tgbd.setMinutes(30);
-				tgkt.setHours(2);
-				tgbd.setMinutes(10);
-				break;
-			case "9-10":
-				tgbd.setHours(14);
-				tgbd.setMinutes(10);
-				tgkt.setHours(3);
-				tgbd.setMinutes(50);
-				break;
-			case "11-12":
-				tgbd.setHours(16);
-				tgkt.setHours(17);
-				tgbd.setMinutes(40);
-				break;
+				case "1-2" : {
+					tgbd.setHours(6);
+					tgbd.setMinutes(30);
+					tgkt.setHours(8);
+					tgkt.setMinutes(10);
+					break;
+				}
+				case "3-4": {
+					tgbd.setHours(8);
+					tgbd.setMinutes(10);
+					tgkt.setHours(10);
+					break;
+				}
+				case "5-6" : {
+					tgbd.setHours(10);
+					tgkt.setHours(11);
+					tgbd.setMinutes(40);
+					break;
+				}
+				case "7-8" : {
+					tgbd.setHours(12);
+					tgbd.setMinutes(30);
+					tgkt.setHours(2);
+					tgbd.setMinutes(10);
+					break;
+				}
+				case "9-10" :{
+					tgbd.setHours(14);
+					tgbd.setMinutes(10);
+					tgkt.setHours(3);
+					tgbd.setMinutes(50);
+					break;
+				}
+				case "11-12" : {
+					tgbd.setHours(16);
+					tgkt.setHours(17);
+					tgbd.setMinutes(40);
+					break;
+				}
 			}
-			sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom() == null ? "123" : nhom.getMaNhom())
-					.stream().forEach(sv -> {
+			sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom() == null ?
+				"123" : Objects.requireNonNull(nhom).getMaNhom()).forEach(sv -> {
 						try {
 							Phong phong = phongService.layPhongTheoTenPhong(phanCongDto.getPhong());
 							if (phanCongDto.getViTriPhanCong().equals("PB")) {
@@ -406,7 +405,7 @@ public class QuanLyBoMonController {
 								keHoachService.luu(keHoach);
 							}
 
-						} catch (Exception e) {
+						} catch (RuntimeException e) {
 							e.printStackTrace();
 						}
 					});
@@ -417,13 +416,13 @@ public class QuanLyBoMonController {
 
 	@PutMapping("/cap-nhat-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> capNhatPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws Exception {
+	public ResponseEntity<?> capNhatPhanCongGiangVien(@RequestBody PhanCongDto phanCongDto) throws RuntimeException {
 		Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom());
 		List<PhanCong> phanCongs = phanCongDto.getDsMaGiangVienPB().stream().map(ma -> {
 			GiangVien giangVien;
 			try {
 				if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
-					throw new Exception("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+					throw new RuntimeException("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
 				}
 				giangVien = giangVienService.layTheoMa(ma);
 
@@ -431,7 +430,7 @@ public class QuanLyBoMonController {
 						giangVien);
 				phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
 				return phanCongService.capNhat(phanCong);
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -443,14 +442,14 @@ public class QuanLyBoMonController {
 
 	@DeleteMapping("/xoa-phan-cong/{maPhanCong}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> xoaPhanCong(@PathVariable("maPhanCong") String maPhanCong) throws Exception {
+	public ResponseEntity<?> xoaPhanCong(@PathVariable("maPhanCong") String maPhanCong) throws RuntimeException {
 
 		return ResponseEntity.ok(phanCongService.xoa(maPhanCong));
 	}
 
 	@GetMapping("/lay-ds-giang-vien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> xoaPhanCong() throws Exception {
+	public ResponseEntity<?> xoaPhanCong() throws RuntimeException {
 
 		return ResponseEntity.ok(giangVienService.layDanhSach());
 	}
@@ -467,7 +466,7 @@ public class QuanLyBoMonController {
 
 			return ResponseEntity
 					.ok(sinhVienService.layTatCaSinhVienTheoHocKy(request.getMaHocKy(), request.getSoHocKy()));
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -475,9 +474,9 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/xuat-ds-nhom")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuatDSNhom(@RequestBody DuyetRequest request, HttpServletResponse response) throws Exception {
+	public void xuatDSNhom(@RequestBody DuyetRequest request, HttpServletResponse response) throws RuntimeException {
 		if (request.getMaHocKy() == null) {
-			throw new Exception("Please give me ma Hoc Ky");
+			throw new RuntimeException("Please give me ma Hoc Ky");
 		}
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
@@ -488,14 +487,18 @@ public class QuanLyBoMonController {
 		String headerValue = "attachment; filename=danh-nhom-sinh-vien_" + currentDateTime + ".xlsx";
 		response.setHeader(headerKey, headerValue);
 		DanhSachNhomExporter danhSachNhomExporter = new DanhSachNhomExporter(hocKy, nhomService, sinhVienService);
-		danhSachNhomExporter.export(response);
+		try {
+			danhSachNhomExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 	@PostMapping("/xuat-ds-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuatDSDeTai(@RequestBody DuyetRequest request, HttpServletResponse response) throws Exception {
+	public void xuatDSDeTai(@RequestBody DuyetRequest request, HttpServletResponse response) throws RuntimeException {
 		if (request.getMaHocKy() == null) {
-			throw new Exception("Please give me ma Hoc Ky");
+			throw new RuntimeException("Please give me ma Hoc Ky");
 		}
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
@@ -507,14 +510,18 @@ public class QuanLyBoMonController {
 
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		DanhSachDeTaiExporter danhSachDeTaiExporter = new DanhSachDeTaiExporter(deTaiService, hocKy.getMaHocKy());
-		danhSachDeTaiExporter.export(response);
+		try {
+			danhSachDeTaiExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 	@PostMapping("/xuat-mailmerge")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuatMailMerge(@RequestBody DuyetRequest request, HttpServletResponse response) throws Exception {
+	public void xuatMailMerge(@RequestBody DuyetRequest request, HttpServletResponse response) throws RuntimeException {
 		if (request.getMaHocKy() == null) {
-			throw new Exception("Please give me ma Hoc Ky");
+			throw new RuntimeException("Please give me ma Hoc Ky");
 		}
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
@@ -527,14 +534,18 @@ public class QuanLyBoMonController {
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		MailMergeExporter danhSachDeTaiExporter = new MailMergeExporter(nhomService, sinhVienService, phanCongService,
 				phieuChamService, hocKy);
-		danhSachDeTaiExporter.export(response);
+		try {
+			danhSachDeTaiExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 	@PostMapping("/xuat-ketquanhom-kltn")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuatKetQuaNhomKLTN(@RequestBody DuyetRequest request, HttpServletResponse response) throws Exception {
+	public void xuatKetQuaNhomKLTN(@RequestBody DuyetRequest request, HttpServletResponse response) throws RuntimeException {
 		if (request.getMaHocKy() == null) {
-			throw new Exception("Please give me ma Hoc Ky");
+			throw new RuntimeException("Please give me ma Hoc Ky");
 		}
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
@@ -547,14 +558,18 @@ public class QuanLyBoMonController {
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		KetQuaKLTNExporter ketQuaKLTNExporter = new KetQuaKLTNExporter(phieuChamMauService, tieuChiChamDiemService,
 				hocKy, phieuChamService, nhomService, sinhVienService);
-		ketQuaKLTNExporter.export(response);
+		try {
+			ketQuaKLTNExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 	@PostMapping("/xuat-nhom-ra-pb")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuatDSNhomRaPB(@RequestBody DuyetRequest request, HttpServletResponse response) throws Exception {
+	public void xuatDSNhomRaPB(@RequestBody DuyetRequest request, HttpServletResponse response) throws RuntimeException {
 		if (request.getMaHocKy() == null) {
-			throw new Exception("Please give me ma Hoc Ky");
+			throw new RuntimeException("Please give me ma Hoc Ky");
 		}
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
@@ -568,12 +583,16 @@ public class QuanLyBoMonController {
 		System.out.println(hocKy.getMaHocKy());
 		DanhSachNhomKLTNChamDiemExporter ketQuaKLTNExporter = new DanhSachNhomKLTNChamDiemExporter(nhomService,
 				sinhVienService, phanCongService, hocKy);
-		ketQuaKLTNExporter.export(response);
+		try {
+			ketQuaKLTNExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 	@GetMapping("/xuat-file-mau-sv")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuaFileMaiSinhVien(HttpServletResponse response) throws Exception {
+	public void xuaFileMaiSinhVien(HttpServletResponse response) throws RuntimeException {
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -583,12 +602,16 @@ public class QuanLyBoMonController {
 		response.setHeader(headerKey, headerValue);
 
 		FileMauSinhVienExporter sinhVienExporter = new FileMauSinhVienExporter();
-		sinhVienExporter.export(response);
+		try {
+			sinhVienExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 	
 	@GetMapping("/xuat-file-mau-gv")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuaFileMauGaingVien(HttpServletResponse response) throws Exception {
+	public void xuaFileMauGaingVien(HttpServletResponse response) throws RuntimeException {
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -598,6 +621,10 @@ public class QuanLyBoMonController {
 		response.setHeader(headerKey, headerValue);
 
 		FileMauGiangVienExporter giangVienExporter = new FileMauGiangVienExporter();
-		giangVienExporter.export(response);
+		try {
+			giangVienExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 }

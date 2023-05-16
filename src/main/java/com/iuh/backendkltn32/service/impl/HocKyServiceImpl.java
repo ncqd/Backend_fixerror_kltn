@@ -16,7 +16,7 @@ public class HocKyServiceImpl implements HocKyService{
 	private HocKyRepository repository;
 
 	@Override
-	public HocKy layTheoMa(String ma) throws Exception {
+	public HocKy layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -27,7 +27,7 @@ public class HocKyServiceImpl implements HocKyService{
 	}
 
 	@Override
-	public HocKy luu(HocKy obj) throws Exception {
+	public HocKy luu(HocKy obj) throws RuntimeException {
 		HocKy hocKyDaTonTai = layTheoMa(obj.getMaHocKy());
 
 		System.out.println("HocKy service - luu: " + hocKyDaTonTai);
@@ -41,7 +41,7 @@ public class HocKyServiceImpl implements HocKyService{
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		HocKy hocKyKhongTonTai = layTheoMa(ma);
 
 		if (hocKyKhongTonTai == null) {
@@ -53,7 +53,7 @@ public class HocKyServiceImpl implements HocKyService{
 	}
 
 	@Override
-	public HocKy capNhat(HocKy obj) throws Exception {
+	public HocKy capNhat(HocKy obj) throws RuntimeException {
 		HocKy hocKyKhongTonTai = layTheoMa(obj.getMaHocKy());
 
 		if (hocKyKhongTonTai == null) {

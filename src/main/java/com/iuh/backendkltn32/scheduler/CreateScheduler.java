@@ -25,7 +25,7 @@ public class CreateScheduler {
 	
 	@SuppressWarnings({ "unused" })
 	@Scheduled(cron = "* * * 1 6 *")
-	public void createHocKy1VaHocPhanKhoaLuan() throws Exception {
+	public void createHocKy1VaHocPhanKhoaLuan() throws RuntimeException {
 		Date date = new Date();
 
 		HocKy hocKy = new HocKy();
@@ -65,7 +65,7 @@ public class CreateScheduler {
 	
 	@SuppressWarnings({ "unused"})
 	@Scheduled(cron = "* * * 1 11 *")
-	public void createHocKy2VaHocPhanKhoaLuan() throws Exception {
+	public void createHocKy2VaHocPhanKhoaLuan() throws RuntimeException {
 		Date date = new Date();
 
 		HocKy hocKy = new HocKy();

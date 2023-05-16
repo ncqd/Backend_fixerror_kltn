@@ -14,7 +14,7 @@ public class KhoaServiceImpl implements KhoaService{
 	private KhoaRepository repository;
 
 	@Override
-	public Khoa layTheoMa(String ma) throws Exception {
+	public Khoa layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -25,7 +25,7 @@ public class KhoaServiceImpl implements KhoaService{
 	}
 
 	@Override
-	public Khoa luu(Khoa obj) throws Exception {
+	public Khoa luu(Khoa obj) throws RuntimeException {
 		Khoa khoaDaTonTai = layTheoMa(obj.getMaKhoa());
 
 		System.out.println("Khoa service - luu: " + khoaDaTonTai);
@@ -39,7 +39,7 @@ public class KhoaServiceImpl implements KhoaService{
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		Khoa khoaKhongTonTai = layTheoMa(ma);
 
 		if (khoaKhongTonTai == null) {
@@ -51,7 +51,7 @@ public class KhoaServiceImpl implements KhoaService{
 	}
 
 	@Override
-	public Khoa capNhat(Khoa obj) throws Exception {
+	public Khoa capNhat(Khoa obj) throws RuntimeException {
 		Khoa khoaKhongTonTai = layTheoMa(obj.getMaKhoa());
 
 		if (khoaKhongTonTai == null) {

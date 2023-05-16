@@ -14,7 +14,7 @@ public class VaiTroServiceImpl implements VaiTroService{
 	private VaiTroRepository repository;
 
 	@Override
-	public VaiTro layTheoMa(Long ma) throws Exception {
+	public VaiTro layTheoMa(Long ma) throws RuntimeException {
 		
 		if (ma == null || ma == 0) {
 			throw new RuntimeException("Tên tài khoản rỗng không được phép rỗng");
@@ -28,24 +28,24 @@ public class VaiTroServiceImpl implements VaiTroService{
 	}
 
 	@Override
-	public VaiTro layTheoMa(String ma) throws Exception {
+	public VaiTro layTheoMa(String ma) throws RuntimeException {
 		return null;
 	}
 
 	@Override
-	public VaiTro luu(VaiTro obj) throws Exception {
+	public VaiTro luu(VaiTro obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public VaiTro capNhat(VaiTro obj) throws Exception {
+	public VaiTro capNhat(VaiTro obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}

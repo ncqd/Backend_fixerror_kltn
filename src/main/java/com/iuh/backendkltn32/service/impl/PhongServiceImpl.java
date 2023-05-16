@@ -17,7 +17,7 @@ public class PhongServiceImpl implements PhongService{
 	private PhongRepository repository;
 
 	@Override
-	public Phong layTheoMa(String ma) throws Exception {
+	public Phong layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -28,19 +28,19 @@ public class PhongServiceImpl implements PhongService{
 	}
 
 	@Override
-	public Phong luu(Phong obj) throws Exception {
+	public Phong luu(Phong obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Phong capNhat(Phong obj) throws Exception {
+	public Phong capNhat(Phong obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}

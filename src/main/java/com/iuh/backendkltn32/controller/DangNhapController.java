@@ -57,7 +57,7 @@ public class DangNhapController {
 	
 
 	@PostMapping("/dang-nhap")
-	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws Exception {
+	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws RuntimeException {
 		String tenTaiKhoan = loginRequest.getTenTaiKhoan();
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(tenTaiKhoan, loginRequest.getPassword()));
@@ -94,7 +94,7 @@ public class DangNhapController {
 			}
 		}
 		return ResponseEntity.status(401).body("ko co");
-//		throw new Exception("Dont have user");
+//		throw new RuntimeException("Dont have user");
 	}
 
 //	@PostMapping("/test")
@@ -119,14 +119,14 @@ public class DangNhapController {
 //	}
 	
 	@PostMapping("/doi-mat-khau")
-	public ResponseEntity<?> doiMatKhau(@RequestBody DoiMatKhauRequest doiMatKhauRequest) throws Exception {
+	public ResponseEntity<?> doiMatKhau(@RequestBody DoiMatKhauRequest doiMatKhauRequest) throws RuntimeException {
 		
 		TaiKhoan taiKhoan = taiKhoanService.layTheoMa(doiMatKhauRequest.getTenTaiKhoan());
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		System.out.println("mat khau cu " + taiKhoan.getPassword());
 		System.out.println("mat khau cu UI " + passwordEncoder.encode(doiMatKhauRequest.getMatKhauCu()));
 		if (!(passwordEncoder.matches(doiMatKhauRequest.getMatKhauCu(), taiKhoan.getPassword()))) {
-			throw new Exception("Mat Khau sai");
+			throw new RuntimeException("Mat Khau sai");
 		}
 		taiKhoan.setPassword(passwordEncoder.encode(doiMatKhauRequest.getMatKhauMoi()));
 		taiKhoanService.capNhat(taiKhoan);

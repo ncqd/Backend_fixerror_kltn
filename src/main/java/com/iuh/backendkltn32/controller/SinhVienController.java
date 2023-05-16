@@ -20,7 +20,6 @@ import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.LopHocPhanDto;
 import com.iuh.backendkltn32.dto.SinhVienDto;
-import com.iuh.backendkltn32.entity.DiemThanhPhan;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.LopDanhNghia;
 import com.iuh.backendkltn32.entity.LopHocPhan;
@@ -75,12 +74,11 @@ public class SinhVienController {
 	public SinhVien hienThiThongTinCaNhan(@PathVariable String maSinhVien, @RequestBody LoginRequest loginRequest) {
 		try {
 			if (!loginRequest.getTenTaiKhoan().equals(maSinhVien)) {
-				throw new Exception("Khong Dung Ma Sinh Vien");
+				throw new RuntimeException("Khong Dung Ma Sinh Vien");
 			}
-			SinhVien sinhVien = sinhVienService.layTheoMa(maSinhVien);
 
-			return sinhVien;
-		} catch (Exception e) {
+			return sinhVienService.layTheoMa(maSinhVien);
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -95,7 +93,7 @@ public class SinhVienController {
 			List<Nhom> nhoms = nhomService.layTatCaNhom(request.getMaHocKy() , request.getSoHocKy());
 
 			return ResponseEntity.ok(nhoms);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 			return ResponseEntity.ok("Have Error");
 		}
@@ -122,7 +120,7 @@ public class SinhVienController {
 
 			taiKhoanService.luu(taiKhoan);
 			return ketQuaLuuSinhVien;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -131,25 +129,24 @@ public class SinhVienController {
 	
 	@PostMapping("/them-sinh-vien-excel")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
+	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws RuntimeException {
 		if (DeTaiImporter.isValidExcelFile(file)) {
 			try {
 				List<SinhVien> sinhViens = sinhVienImporter.addDataFDromExcel(file.getInputStream());
 				BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-				sinhVienService.luuDanhSach(sinhViens).stream().forEach(sv-> {
+				for (SinhVien sv : sinhVienService.luuDanhSach(sinhViens)) {
 					try {
 						TaiKhoan taiKhoan = new TaiKhoan(sv.getMaSinhVien(), encoder.encode("1111"),
-								vaiTroService.layTheoMa(3L));
+						vaiTroService.layTheoMa(3L));
 						taiKhoanService.luu(taiKhoan);
-					} catch (Exception e) {
+					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}
-				});
-				
+				}
+
 				return ResponseEntity.ok(sinhViens);
 			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(500).body("Have Error");
+				throw new RuntimeException(e.getMessage());
 			}
 		}
 		return null;
@@ -159,10 +156,9 @@ public class SinhVienController {
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
 	public SinhVien hienThiThongTinCaNhan(@PathVariable("maSinhVien") String maSinhVien) {
 		try {
-			SinhVien sinhVien = sinhVienService.layTheoMa(maSinhVien);
 
-			return sinhVien;
-		} catch (Exception e) {
+			return sinhVienService.layTheoMa(maSinhVien);
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -170,7 +166,7 @@ public class SinhVienController {
 	
 	@PostMapping("/lay-sinh-vien-lop")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<SinhVien> sinhViens(@RequestBody LopHocPhanDto lopHocPhanDto) throws Exception {
+	public List<SinhVien> sinhViens(@RequestBody LopHocPhanDto lopHocPhanDto) throws RuntimeException {
 		if (lopHocPhanDto.getMaHocKy() == null) {
 			if (lopHocPhanDto.getMaLopHocPhan() == null) {
 				
@@ -188,7 +184,7 @@ public class SinhVienController {
 	
 	@GetMapping("/lay-ket-qua/{maSinhVien}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_QUANLY') ")
-	public KetQuaHocTapDto layDiemCuoiCung(@PathVariable("maSinhVien") String maSinhVien) throws Exception {
+	public KetQuaHocTapDto layDiemCuoiCung(@PathVariable("maSinhVien") String maSinhVien) throws RuntimeException {
 		PhieuCham phieuChamHD1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "HD").get(0);
 		SinhVien sv = sinhVienService.layTheoMa(maSinhVien);
 		if (phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").size() <= 0) {

@@ -16,7 +16,7 @@ public class LopHocPhanServiceImpl implements LopHocPhanService {
 	private LopHocPhanRepository repository;
 
 	@Override
-	public LopHocPhan layTheoMa(String ma) throws Exception {
+	public LopHocPhan layTheoMa(String ma) throws RuntimeException {
 		if (ma == null || ma.equals("")) {
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
@@ -27,7 +27,7 @@ public class LopHocPhanServiceImpl implements LopHocPhanService {
 	}
 
 	@Override
-	public LopHocPhan luu(LopHocPhan obj) throws Exception {
+	public LopHocPhan luu(LopHocPhan obj) throws RuntimeException {
 		LopHocPhan lopHocPhanDaTonTai = layTheoMa(obj.getMaLopHocPhan());
 
 		System.out.println("LopHocPhan service - luu: " + lopHocPhanDaTonTai);
@@ -41,7 +41,7 @@ public class LopHocPhanServiceImpl implements LopHocPhanService {
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		LopHocPhan lopHocPhanKhongTonTai = layTheoMa(ma);
 
 		if (lopHocPhanKhongTonTai == null) {
@@ -53,7 +53,7 @@ public class LopHocPhanServiceImpl implements LopHocPhanService {
 	}
 
 	@Override
-	public LopHocPhan capNhat(LopHocPhan obj) throws Exception {
+	public LopHocPhan capNhat(LopHocPhan obj) throws RuntimeException {
 		LopHocPhan lopHocPhanKhongTonTai = layTheoMa(obj.getMaLopHocPhan());
 
 		if (lopHocPhanKhongTonTai == null) {

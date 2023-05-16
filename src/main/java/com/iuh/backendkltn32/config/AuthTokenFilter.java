@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.config;
 
+
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
@@ -26,7 +27,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+			throws ServletException, IOException, RuntimeException {
 
 		try {
 			String jwt = pasreJwt(request);

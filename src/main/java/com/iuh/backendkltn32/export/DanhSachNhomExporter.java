@@ -1,6 +1,5 @@
 package com.iuh.backendkltn32.export;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +39,7 @@ public class DanhSachNhomExporter {
 		this.sinhVienService = sinhVienService;
 	}
 
-	private void writeHeaderLine() throws IOException {
+	private void writeHeaderLine() throws Exception {
 		sheet = workbook.createSheet("DS_Nhom_KLTN");
 		Long maHocKyTruoc = Long.parseLong(hocKy.getMaHocKy().substring(0,2)) - 1;
 		Long maHocKyHT = Long.parseLong(hocKy.getMaHocKy().substring(0,2)) ;
@@ -90,7 +89,7 @@ public class DanhSachNhomExporter {
 		createCell(row, 9, "Tên Đề Tài", style);
 	}
 
-	private void writeDataLines() throws Exception {
+	private void writeDataLines() throws RuntimeException {
 		int rowCount = 6;
 
 		CellStyle style = workbook.createCellStyle();

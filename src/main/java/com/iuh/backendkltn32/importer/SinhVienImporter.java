@@ -21,7 +21,6 @@ import com.iuh.backendkltn32.service.HocPhanKhoaLuanTotNghiepService;
 import com.iuh.backendkltn32.service.LopDanhNghiaService;
 import com.iuh.backendkltn32.service.LopHocPhanService;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,7 +47,7 @@ public class SinhVienImporter {
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 	}
 
-	public List<SinhVien> addDataFDromExcel(InputStream inputStream) throws Exception {
+	public List<SinhVien> addDataFDromExcel(InputStream inputStream) throws RuntimeException {
 		List<SinhVien> sinhViens = new ArrayList<>();
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
@@ -176,7 +175,7 @@ public class SinhVienImporter {
 			workbook.close();
 		}
 
-		catch (IOException e) {
+		catch (Exception e) {
 			e.getStackTrace();
 		}
 //		System.out.println(sinhViens.size());

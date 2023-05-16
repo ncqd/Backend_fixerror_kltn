@@ -265,8 +265,7 @@ public class DeTaiController {
 				producer.sendMessageOnDeTaiChanel(request);
 				return listenerConsumer.listenerDeTaiChannel();
 			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(500).body("Have Error");
+				throw new RuntimeException(e.getMessage());
 			}
 
 		} else {

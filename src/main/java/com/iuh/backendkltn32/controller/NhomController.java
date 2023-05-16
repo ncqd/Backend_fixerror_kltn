@@ -95,9 +95,9 @@ public class NhomController {
 			} catch (Exception e) {
 				throw new RuntimeException(e.getMessage());
 			}
-		} else {
-			throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
 		}
+			throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
+
 	}
 
 	@PostMapping("/lay-ds-nhom")
@@ -270,9 +270,9 @@ public class NhomController {
 			throw new RuntimeException("Nhóm Đã Đủ Thành Viên");
 		}
 		SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
-		TinNhan tinNhan = new TinNhan(
-				"Có Sinh Viên Muốn đăng nhóm của bạn " + sinhVienXinGiaNhap.getMaSinhVien() + " "
-						+ sinhVienXinGiaNhap.getTenSinhVien(),
+		TinNhan tinNhan = new TinNhan("Có Sinh Viên Muốn xin gia nhập nhóm của bạn",
+				"Có Sinh Viên Muốn xin gia nhập nhóm của bạn | " + sinhVienXinGiaNhap.getMaSinhVien() + " | "
+						+ sinhVienXinGiaNhap.getTenSinhVien()+ " | " + request.getPassword(),
 				request.getDsMaSinhVien().get(0), sinhVienTrongNhom.get(0), 0,
 				new Timestamp(System.currentTimeMillis()));
 		tinNhanSerivce.luu(tinNhan);

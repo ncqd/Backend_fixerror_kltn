@@ -142,7 +142,8 @@ public class JmsListenerConsumer implements MessageListener {
 					}
 					sinhVien2.setNhom(nhomJoin);
 					sinhVienService.capNhat(sinhVien2);
-					tinNhanSerivce.luu(new TinNhan("Bạn Đã Được Gia Nhập Nhóm " + nhomJoin.getMaNhom(),
+					tinNhanSerivce.luu(new TinNhan("Bạn Đã Được Gia Nhập Nhóm",
+							"Bạn Đã Được Gia Nhập Nhóm | " + nhomJoin.getMaNhom(),
 							request.getDsMaSinhVien().get(0), request.getDsMaSinhVien().get(1), 0, new Timestamp(System.currentTimeMillis())));
 					return ResponseEntity.ok(nhomJoin);
 

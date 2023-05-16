@@ -66,7 +66,8 @@ public class KeHoachController {
 			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
 					new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
-					kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
+					kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
+					kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
 			dsKeHoach.add(lapKeHoachDto);
 		});
 		if (request.getMaNguoiDung() != null) {
@@ -79,7 +80,7 @@ public class KeHoachController {
 								kh.getChuThich(), Arrays.asList(ngayThucHienKL), kh.getHocKy(),
 								new Timestamp(kh.getThoiGianBatDau().getTime()),
 								new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
-								kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
+								kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(), phongService.layTheoMa(kh.getPhong()).getTenPhong());
 						dsKeHoach.add(lapKeHoachDto);
 					});
 		}
@@ -188,7 +189,8 @@ public class KeHoachController {
 								kh.getChuThich(), Arrays.asList(ngayThucHienKL), kh.getHocKy(),
 								new Timestamp(kh.getThoiGianBatDau().getTime()),
 								new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
-								kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
+								kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
+								kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
 						ds.add(lapKeHoachDtoa);
 					});
 		}

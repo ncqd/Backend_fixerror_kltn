@@ -25,7 +25,7 @@ public class HocPhanKhoaLuanTotNghiepServiceImpl implements HocPhanKhoaLuanTotNg
 	}
 
 	@Override
-	public HocPhanKhoaLuanTotNghiep luu(HocPhanKhoaLuanTotNghiep obj) throws Exception {
+	public HocPhanKhoaLuanTotNghiep luu(HocPhanKhoaLuanTotNghiep obj) throws RuntimeException {
 		HocPhanKhoaLuanTotNghiep hocPhanKhoaLuanTotNghiepDaTonTai = layTheoMa(obj.getMaHocPhan());
 
 		System.out.println("HocPhanKhoaLuanTotNghiep service - luu: " + hocPhanKhoaLuanTotNghiepDaTonTai);
@@ -38,7 +38,7 @@ public class HocPhanKhoaLuanTotNghiepServiceImpl implements HocPhanKhoaLuanTotNg
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		HocPhanKhoaLuanTotNghiep hocPhanKhoaLuanTotNghiepKhongTonTai = layTheoMa(ma);
 
 		if (hocPhanKhoaLuanTotNghiepKhongTonTai == null) {
@@ -50,7 +50,7 @@ public class HocPhanKhoaLuanTotNghiepServiceImpl implements HocPhanKhoaLuanTotNg
 	}
 
 	@Override
-	public HocPhanKhoaLuanTotNghiep capNhat(HocPhanKhoaLuanTotNghiep obj) throws Exception {
+	public HocPhanKhoaLuanTotNghiep capNhat(HocPhanKhoaLuanTotNghiep obj) throws RuntimeException {
 		HocPhanKhoaLuanTotNghiep hocPhanKhoaLuanTotNghiepKhongTonTai = layTheoMa(obj.getMaHocPhan());
 
 		if (hocPhanKhoaLuanTotNghiepKhongTonTai == null) {

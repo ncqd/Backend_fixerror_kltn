@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.Khoa;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ public class GiangVienImporter {
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 	}
 
-	public List<GiangVien> addDataFDromExcel(InputStream inputStream) throws Exception {
+	public List<GiangVien> addDataFDromExcel(InputStream inputStream) throws RuntimeException {
 		List<GiangVien> giangViens = new ArrayList<>();
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
@@ -121,7 +120,7 @@ public class GiangVienImporter {
 			workbook.close();
 		}
 
-		catch (IOException e) {
+		catch (Exception e) {
 			e.getStackTrace();
 		}
 //		System.out.println(sinhViens.size());

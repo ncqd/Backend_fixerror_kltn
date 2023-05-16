@@ -27,12 +27,12 @@ public class TinNhanServiceImpl implements TinNhanSerivce {
 	}
 
 	@Override
-	public TinNhan luu(TinNhan obj) throws Exception {
+	public TinNhan luu(TinNhan obj) throws RuntimeException {
 		return repository.save(obj);
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		TinNhan khKhongTonTai = layTheoMa(ma);
 
 		if (khKhongTonTai == null) {
@@ -44,7 +44,7 @@ public class TinNhanServiceImpl implements TinNhanSerivce {
 	}
 
 	@Override
-	public TinNhan capNhat(TinNhan obj) throws Exception {
+	public TinNhan capNhat(TinNhan obj) throws RuntimeException {
 		TinNhan khKhongTonTai = layTheoMa(obj.getId().toString());
 
 		if (khKhongTonTai == null) {

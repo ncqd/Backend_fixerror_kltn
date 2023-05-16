@@ -77,28 +77,32 @@ public class NhomController {
 	 */
 	@PostMapping("/dang-ky-nhom")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> dangKyNhom(@RequestBody DangKyNhomRequest request) throws Exception {
+	public ResponseEntity<?> dangKyNhom(@RequestBody DangKyNhomRequest request) throws RuntimeException {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
 				request.getVaiTro());
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-				throw new Exception("Chưa đến thời gian để đăng ký nhóm");
+				throw new RuntimeException("Chưa đến thời gian để đăng ký nhóm");
 			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-				throw new Exception("Thời gian đăng ký nhóm đã hết");
+				throw new RuntimeException("Thời gian đăng ký nhóm đã hết");
 			}
 
 			producer.sendMessageOnNhomChanel(request);
-			return listenerConsumer.listenerNhomChannel();
+			try {
+				return listenerConsumer.listenerNhomChannel();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
 		} else {
-			throw new Exception("Chưa có kế hoạch đăng ký nhóm");
+			throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
 		}
 	}
 
 	@PostMapping("/lay-ds-nhom")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public Set<NhomRoleGVRespone> layNhomTheoMaGv(@RequestBody LayDeTaiRquestDto request) throws Exception {
+	public Set<NhomRoleGVRespone> layNhomTheoMaGv(@RequestBody LayDeTaiRquestDto request) throws RuntimeException {
 		List<Nhom> nhoms = new ArrayList<>();
 		Set<NhomRoleGVRespone> respones = new HashSet<>();
 		if (request.getTrangThai() == null && request.getMaGiangVien() == null) {
@@ -109,7 +113,7 @@ public class NhomController {
 					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
 						try {
 							return sinhVienService.layTheoMa(sv);
-						} catch (Exception e) {
+						} catch (RuntimeException e) {
 							e.printStackTrace();
 						}
 						return null;
@@ -131,7 +135,7 @@ public class NhomController {
 					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
 						try {
 							return sinhVienService.layTheoMa(sv);
-						} catch (Exception e) {
+						} catch (RuntimeException e) {
 							e.printStackTrace();
 						}
 						return null;
@@ -152,7 +156,7 @@ public class NhomController {
 					List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
 						try {
 							return sinhVienService.layTheoMa(sv);
-						} catch (Exception e) {
+						} catch (RuntimeException e) {
 							e.printStackTrace();
 						}
 						return null;
@@ -170,7 +174,7 @@ public class NhomController {
 
 	@GetMapping("/lay-ds-nhom/{tinhTrang}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public Set<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang) throws Exception {
+	public Set<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang) throws RuntimeException {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), tinhTrang);
 		Set<NhomRoleGVRespone> respones = new HashSet<>();
@@ -180,7 +184,7 @@ public class NhomController {
 				List<SinhVien> sinhViens2 = sinhViens.stream().map(sv -> {
 					try {
 						return sinhVienService.layTheoMa(sv);
-					} catch (Exception e) {
+					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}
 					return null;
@@ -197,7 +201,7 @@ public class NhomController {
 
 	@PostMapping("/lay-ds-nhom-phan-bien")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws Exception {
+	public Set<NhomPBResponeDto> layNhomPB(@RequestBody LayDsNhomPBDto request) throws RuntimeException {
 		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(request.getMaHocKy(), request.getSoHocKy(), 1);
 		String valid = request.getVaiTro().equals("PB") ? "HD" : "PB";
 		Set<NhomPBResponeDto> respones = new HashSet<>();
@@ -211,7 +215,7 @@ public class NhomController {
 					sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 						try {
 							sinhViens.put(sv, sinhVienService.layTheoMa(sv).getTenSinhVien());
-						} catch (Exception e) {
+						} catch (RuntimeException e) {
 							e.printStackTrace();
 						}
 					});
@@ -242,12 +246,12 @@ public class NhomController {
 
 	@GetMapping("/lay-nhom/{maNhom}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public NhomSinhVienDto layNhom(@PathVariable("maNhom") String maNhom) throws Exception {
+	public NhomSinhVienDto layNhom(@PathVariable("maNhom") String maNhom) throws RuntimeException {
 		Nhom nhom = nhomService.layTheoMa(maNhom);
 		List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoNhom(maNhom).stream().map(ma -> {
 			try {
 				return sinhVienService.layTheoMa(ma);
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
 			return null;
@@ -260,10 +264,10 @@ public class NhomController {
 
 	@PostMapping("/dang-ky-co-san")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> dangKyNhomCoSan(@RequestBody DangKyNhomRequest request) throws Exception {
+	public ResponseEntity<?> dangKyNhomCoSan(@RequestBody DangKyNhomRequest request) throws RuntimeException {
 		List<String> sinhVienTrongNhom = sinhVienService.layTatCaSinhVienTheoNhom(request.getMaNhom());
 		if (sinhVienTrongNhom.size() >= 2) {
-			throw new Exception("Nhóm Đã Đủ Thành Viên");
+			throw new RuntimeException("Nhóm Đã Đủ Thành Viên");
 		}
 		SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
 		TinNhan tinNhan = new TinNhan(
@@ -277,16 +281,16 @@ public class NhomController {
 
 	@PostMapping("/roi-nhom")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
-	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) throws Exception {
+	public ResponseEntity<?> roiKhoiNhomDaDK(@RequestBody DangKyNhomRequest request) throws RuntimeException {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
 				request.getVaiTro());
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-				throw new Exception("Chưa đến thời gian để đăng ký nhóm");
+				throw new RuntimeException("Chưa đến thời gian để đăng ký nhóm");
 			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-				throw new Exception("Thời gian đăng ký nhóm đã hết");
+				throw new RuntimeException("Thời gian đăng ký nhóm đã hết");
 			}
 
 			try {
@@ -306,19 +310,19 @@ public class NhomController {
 					nhomService.xoa(request.getMaNhom());
 				}
 				return ResponseEntity.ok(sinhVien);
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 				return ResponseEntity.status(500).body(e.getMessage());
 			}
 		} else {
-			throw new Exception("Chưa có kế hoạch đăng ký nhóm");
+			throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
 		}
 
 	}
 
 	@PostMapping("/lay-ds-nhom-theo-vai-tro")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws Exception {
+	public Set<NhomVaiTro> layNhomvaitro(@RequestBody LayKeHoachRequest request) throws RuntimeException {
 		HocKy hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		Set<NhomVaiTro> respones = new HashSet<>();
 		if (request.getVaiTro().equals("HD")) {
@@ -336,7 +340,7 @@ public class NhomController {
 								SinhVien sv1 = sinhVienService.layTheoMa(sv);
 								sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
 
-							} catch (Exception e) {
+							} catch (RuntimeException e) {
 								e.printStackTrace();
 							}
 						});
@@ -383,7 +387,7 @@ public class NhomController {
 
 								SinhVien sv1 = sinhVienService.layTheoMa(sv);
 								sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
-							} catch (Exception e) {
+							} catch (RuntimeException e) {
 								e.printStackTrace();
 							}
 						});
@@ -399,7 +403,7 @@ public class NhomController {
 
 	@PostMapping("/lay-ds-nhom-theo-vai-tro-cu-the")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public Set<NhomVaiTro> layNhomvaitroCuThe(@RequestBody NhomVaiTroRequest request) throws Exception {
+	public Set<NhomVaiTro> layNhomvaitroCuThe(@RequestBody NhomVaiTroRequest request) throws RuntimeException {
 		HocKy hocKy = null;
 		if (request.getMaHocKy() == null) {
 			hocKy = hocKyService.layHocKyCuoiCungTrongDS();
@@ -565,7 +569,7 @@ public class NhomController {
 				try {
 					SinhVien sv1 = sinhVienService.layTheoMa(sv);
 					sinhViens.add(new SinhVienNhomVaiTroDto(sv1.getMaSinhVien(), sv1.getTenSinhVien()));
-				} catch (Exception e) {
+				} catch (RuntimeException e) {
 					e.printStackTrace();
 				}
 			});

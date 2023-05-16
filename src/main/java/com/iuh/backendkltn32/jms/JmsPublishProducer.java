@@ -4,6 +4,7 @@ package com.iuh.backendkltn32.jms;
 
 
 import javax.jms.JMSException;
+import javax.jms.JMSRuntimeException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
@@ -40,7 +41,7 @@ public class JmsPublishProducer {
 
 		jmsTemplate.setDefaultDestinationName("nhom_channel");
 		jmsTemplate.send(new MessageCreator() {
-			public Message createMessage(Session session) throws JMSException {
+			public Message createMessage(Session session) throws  JMSException {
 				MapMessage mapMessage =  session.createMapMessage();
 				mapMessage.setObject("dsMaSinhVien", message.getDsMaSinhVien());
 				mapMessage.setString("maNhom", message.getMaNhom());

@@ -29,7 +29,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public PhieuCham luu(PhieuCham obj) throws Exception {
+	public PhieuCham luu(PhieuCham obj) throws RuntimeException {
 		PhieuCham phieuChamDaTonTai = layTheoMa(obj.getMaPhieu());
 
 		System.out.println("PhieuCham service - luu: " + phieuChamDaTonTai);
@@ -42,7 +42,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		PhieuCham phieuChamKhongTonTai = layTheoMa(ma);
 
 		if (phieuChamKhongTonTai == null) {
@@ -54,7 +54,7 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public PhieuCham capNhat(PhieuCham obj) throws Exception {
+	public PhieuCham capNhat(PhieuCham obj) throws RuntimeException {
 		PhieuCham phieuChamKhongTonTai = layTheoMa(obj.getMaPhieu());
 
 		if (phieuChamKhongTonTai == null) {
@@ -98,6 +98,26 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	@Override
 	public List<String> layMaPhieuPhieuTheoMaSinhVienTenVaiTro(String maHocKy, String tenPhieu, String maNhom) {
 		return repository.layMaPhieuPhieuTheoMaSinhVienTenVaiTro(maHocKy, tenPhieu, maNhom);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamQL(String maHocky, String maSInhVien) {
+		return repository.layDsPhieuTheoNamHocKyQL(maHocky, maSInhVien);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamVaiTroQL(String maHocky, String tenPhieu, String maSInhVien) {
+		return repository.layPhieuTheoVaiTroQL(maHocky, tenPhieu, maSInhVien);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamPosterVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien) {
+		return repository.layPhieuTheoPPChamPOSTERQL(maHocky, viTriPhanCong, maSInhVien);
+	}
+
+	@Override
+	public List<PhieuCham> layDsPhieuChamHoiDongVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien) {
+		return repository.layPhieuTheoPPChamHDQL(maHocky, viTriPhanCong, maSInhVien);
 	}
 
 }

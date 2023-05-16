@@ -33,19 +33,19 @@ public class VaiTroServiceImpl implements VaiTroService{
 	}
 
 	@Override
-	public VaiTro luu(VaiTro obj) throws Exception {
+	public VaiTro luu(VaiTro obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public VaiTro capNhat(VaiTro obj) throws Exception {
+	public VaiTro capNhat(VaiTro obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}

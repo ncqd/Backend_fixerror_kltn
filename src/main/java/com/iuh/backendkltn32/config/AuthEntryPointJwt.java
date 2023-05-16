@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.config;
 
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -19,9 +20,9 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
+			AuthenticationException authRuntimeException) throws IOException, ServletException {
 
-		logger.error("Unauthorized error: {}", authException.getMessage());
+		logger.error("Unauthorized error: {}", authRuntimeException.getMessage());
 		
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error Unauthorized");
 		

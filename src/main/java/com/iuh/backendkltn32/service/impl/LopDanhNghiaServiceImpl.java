@@ -25,7 +25,7 @@ public class LopDanhNghiaServiceImpl implements LopDanhNghiaService{
 	}
 
 	@Override
-	public LopDanhNghia luu(LopDanhNghia obj) throws Exception {
+	public LopDanhNghia luu(LopDanhNghia obj) throws RuntimeException {
 		LopDanhNghia lopDanhNghiaDaTonTai = layTheoMa(obj.getMaLopDanhNghia());
 
 		System.out.println("LopDanhNghia service - luu: " + lopDanhNghiaDaTonTai);
@@ -39,7 +39,7 @@ public class LopDanhNghiaServiceImpl implements LopDanhNghiaService{
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		LopDanhNghia lopDanhNghiaKhongTonTai = layTheoMa(ma);
 
 		if (lopDanhNghiaKhongTonTai == null) {
@@ -51,7 +51,7 @@ public class LopDanhNghiaServiceImpl implements LopDanhNghiaService{
 	}
 
 	@Override
-	public LopDanhNghia capNhat(LopDanhNghia obj) throws Exception {
+	public LopDanhNghia capNhat(LopDanhNghia obj) throws RuntimeException {
 		LopDanhNghia lopDanhNghiaKhongTonTai = layTheoMa(obj.getMaLopDanhNghia());
 
 		if (lopDanhNghiaKhongTonTai == null) {

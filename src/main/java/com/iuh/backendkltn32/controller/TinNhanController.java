@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +35,7 @@ public class TinNhanController {
 
 	@GetMapping("/lay-tin-nhan/{maNguoiNhan}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public TinNhanResponesDto layTinNhanTheoMaNguoiNhan(@PathVariable("maNguoiNhan") String maNguoiNhan) throws Exception {
+	public TinNhanResponesDto layTinNhanTheoMaNguoiNhan(@PathVariable("maNguoiNhan") String maNguoiNhan) throws RuntimeException {
 		List<TinNhanDto> tinNhans = new ArrayList<>();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		Integer thongBaoChuaDoc = 0;
@@ -71,7 +70,7 @@ public class TinNhanController {
 			}
 			return new TinNhanDto(tin.getId(), null, tin.getNoiDung(), tin.getTrangThai(),
 					sinhVienService.layTheoMa(tin.getMaNguoiGui()), format.format(tin.getCreatedAt()));
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return tinNhanDto;

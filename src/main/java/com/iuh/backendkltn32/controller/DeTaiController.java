@@ -64,7 +64,7 @@ public class DeTaiController {
 
 	@PostMapping("/them-de-tai/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public DeTai themDeTai(@RequestBody DeTai deTai, @PathVariable("maGiangVien") String maGiangVien) throws Exception {
+	public DeTai themDeTai(@RequestBody DeTai deTai, @PathVariable("maGiangVien") String maGiangVien) throws RuntimeException {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		TaiKhoan taiKhoan = taiKhoanService.layTheoMa(maGiangVien);
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch thêm đề tài",
@@ -72,9 +72,9 @@ public class DeTaiController {
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+				throw new RuntimeException("Chưa đến thời gian để đăng ký đề tài");
 			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-				throw new Exception("Thời gian đăng ký đề tài đã hết");
+				throw new RuntimeException("Thời gian đăng ký đề tài đã hết");
 			}
 
 			try {
@@ -106,47 +106,47 @@ public class DeTaiController {
 				DeTai ketQuaLuu = deTaiService.luu(deTai);
 
 				return ketQuaLuu;
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
 
 			return null;
 		} else {
-			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
+			throw new RuntimeException("Chưa có kế hoạch đăng ký đề tài");
 		}
 
 	}
 
 	@DeleteMapping("/xoa-de-tai/{maDeTai}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public String xoaDeTai(@PathVariable String maDeTai) throws Exception {
+	public String xoaDeTai(@PathVariable String maDeTai) throws RuntimeException {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch thêm đề tài",
 				"ROLE_GIANGVIEN");
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+				throw new RuntimeException("Chưa đến thời gian để đăng ký đề tài");
 			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-				throw new Exception("Thời gian đăng ký đề tài đã hết");
+				throw new RuntimeException("Thời gian đăng ký đề tài đã hết");
 			}
 
 			try {
 				String ketQuaXoaDeTai = deTaiService.xoa(maDeTai);
 				return ketQuaXoaDeTai;
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
 			return null;
 		} else {
-			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
+			throw new RuntimeException("Chưa có kế hoạch đăng ký đề tài");
 		}
 
 	}
 
 	@PutMapping("/sua-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public DeTai suaDeTai(@RequestBody DeTai deTai) throws Exception {
+	public DeTai suaDeTai(@RequestBody DeTai deTai) throws RuntimeException {
 
 		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Lịch thêm đề tài",
@@ -154,9 +154,9 @@ public class DeTaiController {
 		if (keHoachs.size() > 0) {
 			KeHoach keHoach = keHoachs.get(0);
 			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-				throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+				throw new RuntimeException("Chưa đến thời gian để đăng ký đề tài");
 			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-				throw new Exception("Thời gian đăng ký đề tài đã hết");
+				throw new RuntimeException("Thời gian đăng ký đề tài đã hết");
 			}
 
 			try {
@@ -166,13 +166,13 @@ public class DeTaiController {
 				DeTai ketQuaLuu = deTaiService.capNhat(deTai);
 
 				return ketQuaLuu;
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
 
 			return null;
 		} else {
-			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
+			throw new RuntimeException("Chưa có kế hoạch đăng ký đề tài");
 		}
 
 	}
@@ -206,7 +206,7 @@ public class DeTaiController {
 			}
 
 			return dsDeTai;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -239,7 +239,7 @@ public class DeTaiController {
 			}
 
 			return ResponseEntity.ok(dsDeTaiDtos);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 			return ResponseEntity.ok("Have Error");
 		}
@@ -247,7 +247,7 @@ public class DeTaiController {
 
 	@PostMapping("/dang-ky-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_GIANGVIEN')")
-	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) throws Exception {
+	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) throws RuntimeException {
 		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Lịch đăng ký đề tài",
 				request.getVaiTro());
@@ -256,9 +256,9 @@ public class DeTaiController {
 		if (keHoachs.size() > 0) {
 			for (KeHoach keHoach : keHoachs) {
 				if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
-					throw new Exception("Chưa đến thời gian để đăng ký đề tài");
+					throw new RuntimeException("Chưa đến thời gian để đăng ký đề tài");
 				} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
-					throw new Exception("Thời gian đăng ký đề tài đã hết");
+					throw new RuntimeException("Thời gian đăng ký đề tài đã hết");
 				}
 			}
 			try {
@@ -270,7 +270,7 @@ public class DeTaiController {
 			}
 
 		} else {
-			throw new Exception("Chưa có kế hoạch đăng ký đề tài");
+			throw new RuntimeException("Chưa có kế hoạch đăng ký đề tài");
 		}
 	}
 
@@ -286,8 +286,7 @@ public class DeTaiController {
 				deTaiService.luuDanhSach(deTais);
 				return ResponseEntity.ok(deTais);
 			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(500).body("Have Error");
+				throw new RuntimeException(e.getMessage());
 			}
 		}
 		return null;

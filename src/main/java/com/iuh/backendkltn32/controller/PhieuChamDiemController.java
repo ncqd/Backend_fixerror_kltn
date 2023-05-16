@@ -3,6 +3,7 @@ package com.iuh.backendkltn32.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.iuh.backendkltn32.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.entity.DiemThanhPhan;
+import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KetQua;
 import com.iuh.backendkltn32.entity.Nhom;
@@ -27,6 +29,7 @@ import com.iuh.backendkltn32.service.DiemThanhPhanService;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KetQuaService;
+import com.iuh.backendkltn32.service.NhomService;
 import com.iuh.backendkltn32.service.PhieuChamMauService;
 import com.iuh.backendkltn32.service.PhieuChamService;
 import com.iuh.backendkltn32.service.SinhVienService;
@@ -63,9 +66,12 @@ public class PhieuChamDiemController {
 	@Autowired
 	private HocKyService hocKyService;
 
+	@Autowired
+	private NhomService nhomService;
+
 	@PostMapping("/cham-diem")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
-	public List<PhieuCham> themPhieuCham(@RequestBody PhieuChamDiemDto phieuCham) throws Exception {
+	public List<PhieuCham> themPhieuCham(@RequestBody PhieuChamDiemDto phieuCham) throws RuntimeException {
 		List<PhieuCham> phieuChams = new ArrayList<>();
 		try {
 			PhieuCham phieuChamAddSV1;
@@ -82,7 +88,7 @@ public class PhieuChamDiemController {
 				tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
 					try {
 						return tieuChiChamDiemService.layTheoMa(tc);
-					} catch (Exception e) {
+					} catch (RuntimeException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -93,7 +99,7 @@ public class PhieuChamDiemController {
 			List<DiemThanhPhan> dsDiemThanhPhans = new ArrayList<>();
 			Double diemTong = (double) 0;
 
-			for (int i = 0; i < tieuChiChamDiems.size(); i++) {
+			for (int i = 0; i < Objects.requireNonNull(tieuChiChamDiems).size(); i++) {
 				TieuChiChamDiem tieuChiChamDiem = tieuChiChamDiemService
 						.layTheoMa(tieuChiChamDiems.get(i).getMaChuanDauRa() + "");
 
@@ -106,7 +112,7 @@ public class PhieuChamDiemController {
 				diemTong += phieuCham.getBangDiem().get(i).getDiemSV1();
 			}
 			if (diemTong > 10) {
-				throw new Exception("Cham Diem Sai");
+				throw new RuntimeException("Cham Diem Sai");
 			}
 			phieuChamAddSV1.setDsDiemThanhPhan(dsDiemThanhPhans);
 			phieuChamAddSV1 = phieuChamService.capNhat(phieuChamAddSV1);
@@ -119,7 +125,7 @@ public class PhieuChamDiemController {
 				ketQua.setPhieuCham(phieuChamService.layTheoMa(maPhieCHamAdd));
 				ketQua.setSinhVien(sinhVienService.layTheoMa(phieuCham.getSinhVien().get(0).getMaSinhVien()));
 				ketQuas.add(ketQuaService.luu(ketQua));
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -150,7 +156,7 @@ public class PhieuChamDiemController {
 					diemTong += phieuCham.getBangDiem().get(i).getDiemSV2();
 				}
 				if (diemTong > 10) {
-					throw new Exception("Cham Diem Sai");
+					throw new RuntimeException("Cham Diem Sai");
 				}
 				phieuChamAddSV2.setDsDiemThanhPhan(dsDiemThanhPhans);
 				phieuChamAddSV2 = phieuChamService.capNhat(phieuChamAddSV2);
@@ -163,7 +169,7 @@ public class PhieuChamDiemController {
 					ketQua.setPhieuCham(phieuChamService.layTheoMa(maPhieCHamAdd));
 					ketQua.setSinhVien(sinhVienService.layTheoMa(phieuCham.getSinhVien().get(1).getMaSinhVien()));
 					ketQuas.add(ketQuaService.luu(ketQua));
-				} catch (Exception e) {
+				} catch (RuntimeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -175,7 +181,7 @@ public class PhieuChamDiemController {
 			return phieuChams;
 		} catch (
 
-		Exception e) {
+		RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -183,7 +189,7 @@ public class PhieuChamDiemController {
 
 	@PutMapping("/sua-phieu-cham")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public PhieuCham suaPhieuCham(@RequestBody PhieuChamDiemDto phieuCham) throws Exception {
+	public PhieuCham suaPhieuCham(@RequestBody PhieuChamDiemDto phieuCham) throws RuntimeException {
 
 		try {
 			PhieuCham phieuChamUpdate = phieuChamService
@@ -204,7 +210,7 @@ public class PhieuChamDiemController {
 			phieuChamUpdate.setDsDiemThanhPhan(dsDiemThanhPhans);
 			phieuChamUpdate = phieuChamService.capNhat(phieuChamUpdate);
 			return phieuChamUpdate;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -212,11 +218,10 @@ public class PhieuChamDiemController {
 
 	@GetMapping("/lay-phieu-cham/{maPhieu}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public PhieuCham layPhieuCham(@PathVariable("maPhieu") String maPhieu) throws Exception {
+	public PhieuCham layPhieuCham(@PathVariable("maPhieu") String maPhieu) throws RuntimeException {
 		try {
-			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(maPhieu);
-			return phieuChamUpdate;
-		} catch (Exception e) {
+			return phieuChamService.layTheoMa(maPhieu);
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -224,29 +229,29 @@ public class PhieuChamDiemController {
 
 	@PutMapping("/cham-diem-a")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public PhieuCham chamDiem(@RequestBody List<DiemThanhPhanDto> diemThanhPhanDtos) throws Exception {
+	public PhieuCham chamDiem(@RequestBody List<DiemThanhPhanDto> diemThanhPhanDtos) throws RuntimeException {
 		try {
 			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(diemThanhPhanDtos.get(0).getMaPhieuCham());
 
 			List<DiemThanhPhan> dsDiemThanhPhans = diemThanhPhanService
 					.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu());
 			if (diemThanhPhanDtos.size() > dsDiemThanhPhans.size()) {
-				throw new Exception("Danh Sách chấm điểm không hợp lệ");
+				throw new RuntimeException("Danh Sách chấm điểm không hợp lệ");
 			}
 			List<DiemThanhPhan> dsDiemThanhPhanUpdate = new ArrayList<>();
-			dsDiemThanhPhans.stream().forEach(dtp -> {
-				diemThanhPhanDtos.stream().forEach(dtpa -> {
-					if (dtp.getTieuChiChamDiem().getMaChuanDauRa().equals(dtpa.getMaTieuChiCham())) {
+			for (DiemThanhPhan dtp : dsDiemThanhPhans) {
+				diemThanhPhanDtos.forEach(dtpa -> {
+					if (dtpa.getMaTieuChiCham().equals(dtp.getTieuChiChamDiem().getMaChuanDauRa() + "")) {
 						dtp.setDiemThanhPhan(dtpa.getDiem());
 						dsDiemThanhPhanUpdate.add(dtp);
 					}
 				});
-			});
+			}
 			diemThanhPhanService.capNhatAll(dsDiemThanhPhanUpdate);
 			phieuChamUpdate.setDsDiemThanhPhan(dsDiemThanhPhans);
 			phieuChamUpdate = phieuChamService.capNhat(phieuChamUpdate);
 			return phieuChamUpdate;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -254,29 +259,29 @@ public class PhieuChamDiemController {
 
 	@PutMapping("/sua-diem")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public PhieuCham suaDiem(@RequestBody List<DiemThanhPhanDto> diemThanhPhanDtos) throws Exception {
+	public PhieuCham suaDiem(@RequestBody List<DiemThanhPhanDto> diemThanhPhanDtos) throws RuntimeException {
 		try {
 			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(diemThanhPhanDtos.get(0).getMaPhieuCham());
 
 			List<DiemThanhPhan> dsDiemThanhPhans = diemThanhPhanService
 					.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu());
 			if (diemThanhPhanDtos.size() > dsDiemThanhPhans.size()) {
-				throw new Exception("Danh Sách chấm điểm không hợp lệ");
+				throw new RuntimeException("Danh Sách chấm điểm không hợp lệ");
 			}
 			List<DiemThanhPhan> dsDiemThanhPhanUpdate = new ArrayList<>();
-			dsDiemThanhPhans.stream().forEach(dtp -> {
-				diemThanhPhanDtos.stream().forEach(dtpa -> {
-					if (dtp.getTieuChiChamDiem().getMaChuanDauRa().equals(dtpa.getMaTieuChiCham())) {
+			for (DiemThanhPhan dtp : dsDiemThanhPhans) {
+				diemThanhPhanDtos.forEach(dtpa -> {
+					if (dtpa.getMaTieuChiCham().equals(dtp.getTieuChiChamDiem().getMaChuanDauRa() + "")) {
 						dtp.setDiemThanhPhan(dtpa.getDiem());
 						dsDiemThanhPhanUpdate.add(dtp);
 					}
 				});
-			});
+			}
 			diemThanhPhanService.capNhatAll(dsDiemThanhPhanUpdate);
 			phieuChamUpdate.setDsDiemThanhPhan(dsDiemThanhPhans);
 			phieuChamUpdate = phieuChamService.capNhat(phieuChamUpdate);
 			return phieuChamUpdate;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -285,7 +290,7 @@ public class PhieuChamDiemController {
 	@GetMapping("/lay/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
 	public List<DiemSinhVienDto> layPhieuChamTheoGiangVien(@PathVariable("maGiangVien") String maGiangVien)
-			throws Exception {
+			throws RuntimeException {
 		List<DiemSinhVienDto> rs = new ArrayList<>();
 		try {
 			phieuChamService.layDsPhieuCham(maGiangVien, hocKyService.layHocKyCuoiCungTrongDS().getMaHocKy())
@@ -305,7 +310,7 @@ public class PhieuChamDiemController {
 						rs.add(diemSVDTO);
 					});
 			return rs;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -313,7 +318,7 @@ public class PhieuChamDiemController {
 
 	@PostMapping("/lay-cu-the")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
-	public List<DiemSinhVienDto> layPhieuChamCuThe(@RequestBody NhomVaiTroRequest request) throws Exception {
+	public List<DiemSinhVienDto> layPhieuChamCuThe(@RequestBody NhomVaiTroRequest request) throws RuntimeException {
 		List<DiemSinhVienDto> rs = new ArrayList<>();
 		HocKy hocKy = null;
 		if (request.getMaHocKy() == null) {
@@ -321,8 +326,8 @@ public class PhieuChamDiemController {
 		} else {
 			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		}
-		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty() 
-				&& !request.getDotCham().isBlank() && !request.getDotCham().equals("") ?  request.getDotCham() : "All";
+		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty()
+				&& !request.getDotCham().isBlank() && !request.getDotCham().equals("") ? request.getDotCham() : "All";
 		if (viTriCham.equals("All")) {
 			System.out.println("ALL");
 			phieuChamService.layDsPhieuCham(request.getMaNguoiDung(), hocKy.getMaHocKy()).forEach(phieuCham -> {
@@ -343,8 +348,7 @@ public class PhieuChamDiemController {
 			return rs;
 		} else if (viTriCham.equals("HD")) {
 			System.out.println("HUOng Dan");
-			phieuChamService
-					.layDsPhieuChamVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
+			phieuChamService.layDsPhieuChamVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
 					.forEach(phieuCham -> {
 						DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 						phieuCham.getDsKetQua().forEach(sv -> {
@@ -414,9 +418,8 @@ public class PhieuChamDiemController {
 									rs.add(diemSVDTO);
 								});
 					} else {
-						phieuChamService
-								.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
-								.forEach(phieuCham -> {
+						phieuChamService.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(),
+								viTriPhanCong).forEach(phieuCham -> {
 									DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 									phieuCham.getDsKetQua().forEach(sv -> {
 										diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
@@ -470,6 +473,77 @@ public class PhieuChamDiemController {
 				}
 			}
 		}
+		return rs;
+
+	}
+
+	@PostMapping("/lay-cu-the-ql")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public List<DiemSinhVienQuanLyDto> layPhieuChamCuTheQL(@RequestBody NhomVaiTroRequest request)
+			throws RuntimeException {
+		List<DiemSinhVienQuanLyDto> rs = new ArrayList<>();
+		HocKy hocKy = null;
+		if (request.getMaHocKy() == null) {
+			hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		} else {
+			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
+		}
+		for (Nhom nhom : nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
+			for (String maSV : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
+				if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0
+						&& phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "HD", maSV).size() > 0) {
+					DiemSinhVienQuanLyDto diemSVDTO = new DiemSinhVienQuanLyDto();
+					PhieuCham phieuChamHD = phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "HD", maSV)
+							.get(0);
+					PhieuCham phieuChamHoiDong1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "CT").get(0);
+					PhieuCham phieuChamHoiDong2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "TK").get(0);
+					PhieuCham phieuChamPB1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(0);
+					PhieuCham phieuChamPB2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(1);
+					phieuChamHD.getDsKetQua().forEach(sv -> {
+						diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+						diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+						diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+						diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+					});
+					diemSVDTO.setGvhd(nhom.getDeTai().getGiangVien().getTenGiangVien());
+					diemSVDTO.setMaDeTai(nhom.getDeTai().getMaDeTai());
+					diemSVDTO.setTenDeTai(nhom.getDeTai().getTenDeTai());
+
+					diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu(),
+							phieuChamHD.getTenPhieu(), phieuChamHD.getDiemPhieuCham(), phieuChamHD.getDsDiemThanhPhan(),
+							phieuChamHD.getGiangVien().getMaGiangVien(), phieuChamHD.getGiangVien().getTenGiangVien()));
+
+					diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu(),
+							phieuChamPB1.getTenPhieu(), phieuChamPB1.getDiemPhieuCham(), phieuChamPB1.getDsDiemThanhPhan(),
+							phieuChamPB1.getGiangVien().getMaGiangVien(), phieuChamPB1.getGiangVien().getTenGiangVien()));
+					
+					diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu(),
+							phieuChamPB2.getTenPhieu(), phieuChamPB2.getDiemPhieuCham(), phieuChamPB2.getDsDiemThanhPhan(),
+							phieuChamPB2.getGiangVien().getMaGiangVien(), phieuChamPB2.getGiangVien().getTenGiangVien()));
+					
+					diemSVDTO.setPhieuChamDiemCT(new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu(),
+							phieuChamHoiDong1.getTenPhieu(), phieuChamHoiDong1.getDiemPhieuCham(), phieuChamHoiDong1.getDsDiemThanhPhan(),
+							phieuChamHoiDong1.getGiangVien().getMaGiangVien(), phieuChamHoiDong1.getGiangVien().getTenGiangVien()));
+					
+					diemSVDTO.setPhieuChamDiemTK(new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu(),
+							phieuChamHoiDong2.getTenPhieu(), phieuChamHoiDong2.getDiemPhieuCham(), phieuChamHoiDong2.getDsDiemThanhPhan(),
+							phieuChamHoiDong2.getGiangVien().getMaGiangVien(), phieuChamHoiDong2.getGiangVien().getTenGiangVien()));
+
+					Double diemTBBM = (phieuChamHD.getDiemPhieuCham() + phieuChamPB1.getDiemPhieuCham()
+							+ phieuChamPB2.getDiemPhieuCham()) / 3;
+					Double diemTBHD = (phieuChamHoiDong1.getDiemPhieuCham() + phieuChamHoiDong2.getDiemPhieuCham()) / 2;
+					Double kq = (diemTBBM + diemTBHD) / 2;
+
+					diemSVDTO.setDiemTBBM(Math.floor(diemTBBM * 10) / 10);
+					diemSVDTO.setDiemTBTVHD(Math.floor(diemTBHD * 10) / 10);
+					diemSVDTO.setKetQua(Math.floor(kq * 10) / 10);
+
+					rs.add(diemSVDTO);
+				}
+
+			}
+		}
+
 		return rs;
 
 	}

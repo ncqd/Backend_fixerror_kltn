@@ -27,7 +27,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public DeTai luu(DeTai obj) throws Exception {
+	public DeTai luu(DeTai obj) throws RuntimeException {
 		DeTai deTaiDaTonTai = layTheoMa(obj.getMaDeTai());
 
 		System.out.println("DeTai service - luu: " + deTaiDaTonTai);
@@ -40,7 +40,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		DeTai deTaiKhongTonTai = layTheoMa(ma);
 		if (deTaiKhongTonTai == null) {
 			throw new RuntimeException("Đề tài không tồn tại");
@@ -51,7 +51,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public DeTai capNhat(DeTai obj) throws Exception {
+	public DeTai capNhat(DeTai obj) throws RuntimeException {
 		DeTai deTaiCanCapNhat = layTheoMa(obj.getMaDeTai());
 
 		if (deTaiCanCapNhat == null) {
@@ -73,7 +73,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy, String maGiangVien) throws Exception {
+	public List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy, String maGiangVien) throws RuntimeException {
 	
 		List<DeTai> dsDeTai = repository.layDsDeTaiTheoNamHocKyTheoMaGiangVien(maHocKy, soHocKy, maGiangVien);
 		
@@ -81,7 +81,7 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public List<DeTai> layDsDeTaiTheoNamHocKyDaDuyet(String maHocKy, String soHocKy) throws Exception {
+	public List<DeTai> layDsDeTaiTheoNamHocKyDaDuyet(String maHocKy, String soHocKy) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return repository.layDsDeTaiTheoNamHocKyDaPheDuyet(maHocKy, soHocKy);
 	}
@@ -104,14 +104,14 @@ public class DeTaiServiceImpl implements DeTaiService {
 
 //	@Override
 //	public List<DeTai> layDsDeTaiTheoNamHocKyChuaDat(String maHocKy, String soHocKy, String maGiangVien)
-//			throws Exception {
+//			throws RuntimeException {
 //		// TODO Auto-generated method stub
 //		return repository.layDsDeTaiTheoNamHocKyChuaDat(maHocKy, soHocKy, maGiangVien);
 //	}
 
 	@Override
 	public List<DeTai> layDsDeTaiTheoNamHocKyTheoTrangThai(String maHocKy, String soHocKy, String maGiangVien, Integer trangThai)
-			throws Exception {
+			throws RuntimeException {
 		return repository.layDsDeTaiTheoNamHocKyTheoTrangThaiCoMaGv(maHocKy, soHocKy, maGiangVien, trangThai);
 	}
 
@@ -122,14 +122,14 @@ public class DeTaiServiceImpl implements DeTaiService {
 	}
 
 	@Override
-	public List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy) throws Exception {
+	public List<DeTai> layDsDeTaiTheoNamHocKy(String maHocKy, String soHocKy) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return repository.layDsDeTaiTheoNamHocKy(maHocKy, soHocKy);
 	}
 
 	@Override
 	public List<DeTai> layDsDeTaiTheoTrangThaiKhongMaGV(String maHocKy, String soHocKy, Integer trangThai)
-			throws Exception {
+			throws RuntimeException {
 		// TODO Auto-generated method stub
 		return repository.layDsDeTaiTheoNamHocKyTheoTrangThai(maHocKy, soHocKy, trangThai);
 	}

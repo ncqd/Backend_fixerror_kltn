@@ -26,19 +26,19 @@ public class QuanLyBoMonImpl implements QuanLyBoMonService{
 	}
 
 	@Override
-	public QuanLyBoMon luu(QuanLyBoMon obj) throws Exception {
+	public QuanLyBoMon luu(QuanLyBoMon obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public QuanLyBoMon capNhat(QuanLyBoMon obj) throws Exception {
+	public QuanLyBoMon capNhat(QuanLyBoMon obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}

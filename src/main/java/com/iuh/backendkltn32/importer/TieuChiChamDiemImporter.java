@@ -1,6 +1,5 @@
 package com.iuh.backendkltn32.importer;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -77,7 +76,7 @@ public class TieuChiChamDiemImporter {
 				}
 				workbook.close();
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.getStackTrace();
 		}
 		System.out.println(tieuChiChamDiems.size());

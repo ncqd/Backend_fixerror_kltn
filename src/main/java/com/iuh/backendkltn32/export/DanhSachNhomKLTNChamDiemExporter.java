@@ -1,6 +1,5 @@
 package com.iuh.backendkltn32.export;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -48,7 +47,7 @@ public class DanhSachNhomKLTNChamDiemExporter {
 		this.phanCongService = phanCongService;
 	}
 
-	private void writeHeaderLine() throws IOException {
+	private void writeHeaderLine() throws Exception {
 		sheet = workbook.createSheet("DS_Nhom_KLTN_RA_HD_POSTER");
 
 		sheet.setColumnWidth(2, 50);
@@ -147,7 +146,7 @@ public class DanhSachNhomKLTNChamDiemExporter {
 		cell.setCellStyle(style);
 	}
 
-	private void writeDataLines() throws Exception {
+	private void writeDataLines() throws RuntimeException {
 		int rowCount = 4;
 
 		CellStyle style = workbook.createCellStyle();

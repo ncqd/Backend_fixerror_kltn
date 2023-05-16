@@ -52,12 +52,12 @@ public class GiangVienController {
 	public GiangVien hienThiThongTinCaNhan(@PathVariable String maGiangVien, @RequestBody LoginRequest loginRequest) {
 		try {
 			if (!loginRequest.getTenTaiKhoan().equals(maGiangVien)) {
-				throw new Exception("Khong Dung Ma Giang Vien");
+				throw new RuntimeException("Khong Dung Ma Giang Vien");
 			}
 			GiangVien giangVien = giangVienService.layTheoMa(maGiangVien);
 
 			return giangVien;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -81,7 +81,7 @@ public class GiangVienController {
 
 			taiKhoanService.luu(taiKhoan);
 			return ketQuaLuuGiangVien;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -101,7 +101,7 @@ public class GiangVienController {
 			GiangVien ketQuaLuuGiangVien = giangVienService.capNhat(giangVien2);
 
 			return ketQuaLuuGiangVien;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -110,7 +110,7 @@ public class GiangVienController {
 
 	@PostMapping("/them-giang-vien-excel")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themGiangVienExcel(@RequestParam("file") MultipartFile file) throws Exception {
+	public ResponseEntity<?> themGiangVienExcel(@RequestParam("file") MultipartFile file) throws RuntimeException {
 		if (DeTaiImporter.isValidExcelFile(file)) {
 			try {
 
@@ -122,14 +122,12 @@ public class GiangVienController {
 								vaiTroService.layTheoMa(2L));
 						taiKhoanService.luu(taiKhoan);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						throw new RuntimeException(e.getMessage());
 					}
 				});
 				return ResponseEntity.ok(giangViens);
 			} catch (Exception e) {
-				e.printStackTrace();
-				return ResponseEntity.status(500).body("Have Error");
+				throw new RuntimeException(e.getMessage());
 			}
 		}
 		return null;

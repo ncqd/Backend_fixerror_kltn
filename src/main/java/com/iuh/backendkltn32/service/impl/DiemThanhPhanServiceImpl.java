@@ -26,13 +26,13 @@ public class DiemThanhPhanServiceImpl implements com.iuh.backendkltn32.service.D
 	}
 
 	@Override
-	public DiemThanhPhan luu(DiemThanhPhan obj) throws Exception {
+	public DiemThanhPhan luu(DiemThanhPhan obj) throws RuntimeException {
 		// TODO Auto-generated method stub
 		return repository.save(obj);
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		DiemThanhPhan khKhongTonTai = layTheoMa(ma);
 
 		if (khKhongTonTai == null) {
@@ -44,7 +44,7 @@ public class DiemThanhPhanServiceImpl implements com.iuh.backendkltn32.service.D
 	}
 
 	@Override
-	public DiemThanhPhan capNhat(DiemThanhPhan obj) throws Exception {
+	public DiemThanhPhan capNhat(DiemThanhPhan obj) throws RuntimeException {
 		DiemThanhPhan khKhongTonTai = layTheoMa(obj.getId().toString());
 
 		if (khKhongTonTai == null) {

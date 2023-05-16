@@ -4,6 +4,6 @@ import com.iuh.backendkltn32.entity.VaiTro;
 
 public interface VaiTroService extends AbstractService<VaiTro>{
 	
-	VaiTro layTheoMa(Long ma) throws Exception;
+	VaiTro layTheoMa(Long ma) throws RuntimeException;
 
 }

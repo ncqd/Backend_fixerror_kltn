@@ -32,7 +32,7 @@ public class SinhVienServiceImpl implements  SinhVienService {
 
 	@Override
 	@Transactional
-	public SinhVien luu(SinhVien obj) throws Exception {
+	public SinhVien luu(SinhVien obj) throws RuntimeException {
 
 		SinhVien sinhVienDaTonTai = layTheoMa(obj.getMaSinhVien());
 		
@@ -47,7 +47,7 @@ public class SinhVienServiceImpl implements  SinhVienService {
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 
 		SinhVien sinhVienKhongTonTai = layTheoMa(ma);
 
@@ -60,7 +60,7 @@ public class SinhVienServiceImpl implements  SinhVienService {
 	}
 
 	@Override
-	public SinhVien capNhat(SinhVien obj) throws Exception  {
+	public SinhVien capNhat(SinhVien obj) throws RuntimeException  {
 
 		SinhVien sinhVienCanCapNhat = layTheoMa(obj.getMaSinhVien());
 

@@ -34,13 +34,13 @@ public class KeHoachServiceImpl implements KeHoachService {
 	}
 
 	@Override
-	public KeHoach luu(KeHoach obj) throws Exception {
+	public KeHoach luu(KeHoach obj) throws RuntimeException {
 
 		return repository.save(obj);
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		KeHoach khKhongTonTai = layTheoMa(ma);
 
 		if (khKhongTonTai == null) {
@@ -52,7 +52,7 @@ public class KeHoachServiceImpl implements KeHoachService {
 	}
 
 	@Override
-	public KeHoach capNhat(KeHoach obj) throws Exception {
+	public KeHoach capNhat(KeHoach obj) throws RuntimeException {
 		KeHoach khKhongTonTai = layTheoMa(obj.getId().toString());
 		
 		

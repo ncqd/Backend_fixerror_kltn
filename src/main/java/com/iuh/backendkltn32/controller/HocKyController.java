@@ -51,7 +51,7 @@ public class HocKyController {
 	
 	@PostMapping("/them")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public HocKy taoHocKy(@RequestBody HocKy hocKy) throws Exception {
+	public HocKy taoHocKy(@RequestBody HocKy hocKy) throws RuntimeException {
 		HocKy hocKyCuoiCung = hocKyService.layHocKyCuoiCungTrongDS();
 		String maHK = "";
 		if (hocKyCuoiCung == null) {

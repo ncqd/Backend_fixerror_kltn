@@ -15,7 +15,6 @@ import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.HocKyService;
 
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -113,7 +112,7 @@ public class DeTaiImporter {
 			workbook.close();
 		}
 
-		catch (IOException e) {
+		catch (Exception e) {
 			e.getStackTrace();
 		}
 		System.out.println(deTais.size());

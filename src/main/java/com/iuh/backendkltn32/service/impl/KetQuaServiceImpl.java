@@ -29,13 +29,13 @@ public class KetQuaServiceImpl implements KetQuaService {
 	}
 
 	@Override
-	public KetQua luu(KetQua obj) throws Exception {
+	public KetQua luu(KetQua obj) throws RuntimeException {
 
 		return repository.save(obj);
 	}
 
 	@Override
-	public String xoa(String ma) throws Exception {
+	public String xoa(String ma) throws RuntimeException {
 		KetQua khKhongTonTai = layTheoMa(ma);
 
 		if (khKhongTonTai == null) {
@@ -47,7 +47,7 @@ public class KetQuaServiceImpl implements KetQuaService {
 	}
 
 	@Override
-	public KetQua capNhat(KetQua obj) throws Exception {
+	public KetQua capNhat(KetQua obj) throws RuntimeException {
 		KetQua khKhongTonTai = layTheoMa(obj.getId().toString());
 
 		if (khKhongTonTai == null) {

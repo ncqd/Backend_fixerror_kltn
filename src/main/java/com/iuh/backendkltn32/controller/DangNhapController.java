@@ -59,6 +59,9 @@ public class DangNhapController {
 	@PostMapping("/dang-nhap")
 	public ResponseEntity<?> dangNhap(@Validated @RequestBody LoginRequest loginRequest) throws RuntimeException {
 		String tenTaiKhoan = loginRequest.getTenTaiKhoan();
+		if (tenTaiKhoan.equals("")){
+			throw new RuntimeException("Ma Khong Rong");
+		}
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(tenTaiKhoan, loginRequest.getPassword()));
 

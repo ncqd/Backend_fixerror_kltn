@@ -52,28 +52,28 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
 	
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a "
 			+ "join detai d on a.madetai = d.madetai " + "join ketqua k on a.maPhieu = k.maPhieu "
-			+ " where maHocKy = :mahocky ; ", nativeQuery = true)
-	List<PhieuCham> layDsPhieuTheoNamHocKyQL( @Param("mahocky") String mahocky);
+			+ " where maHocKy = :mahocky and k.maSinhVien = :maSinhVien  ; ", nativeQuery = true)
+	List<PhieuCham> layDsPhieuTheoNamHocKyQL( @Param("mahocky") String mahocky, @Param("maSinhVien") String maSInhVien);
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai  "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
-			+ "where diemPhieuCham >= 8 and tenPhieu = 'PB' "
+			+ "where diemPhieuCham >= 8 and tenPhieu = 'PB'  and k.maSinhVien = :maSinhVien "
 			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
-	List<PhieuCham> layPhieuTheoPPChamHDQL( @Param("mahocky") String mahocky,
-			@Param("viTriPhanCong") String viTriPhanCong);
+	List<PhieuCham> layPhieuTheoPPChamHDQL( @Param("mahocky") String mahocky , 
+			@Param("viTriPhanCong") String viTriPhanCong , @Param("maSinhVien") String maSInhVien);
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
-			+ "where diemPhieuCham < 8 and tenPhieu = 'PB' "
+			+ "where diemPhieuCham < 8 and tenPhieu = 'PB'  and k.maSinhVien = :maSinhVien "
 			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
 	List<PhieuCham> layPhieuTheoPPChamPOSTERQL(@Param("mahocky") String mahocky,
-			@Param("viTriPhanCong") String viTriPhanCong);
+			@Param("viTriPhanCong") String viTriPhanCong , @Param("maSinhVien") String maSInhVien);
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a   \n"
 			+ "join detai d on a.madetai = d.madetai  " + "join ketqua k on a.maPhieu = k.maPhieu  "
-			+ "where tenPhieu = :tenPhieu and maHocKy = :mahocky ; ", nativeQuery = true)
-	List<PhieuCham> layPhieuTheoVaiTroQL(@Param("mahocky") String mahocky,
-			@Param("tenPhieu") String tenPhieu);
+			+ "where tenPhieu = :tenPhieu and maHocKy = :mahocky  and k.maSinhVien = :maSinhVien ; ", nativeQuery = true)
+	List<PhieuCham> layPhieuTheoVaiTroQL(@Param("mahocky") String mahocky ,
+			@Param("tenPhieu") String tenPhieu , @Param("maSinhVien") String maSInhVien);
 }

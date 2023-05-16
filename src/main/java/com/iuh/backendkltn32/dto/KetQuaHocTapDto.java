@@ -16,5 +16,6 @@ public class KetQuaHocTapDto {
 	private String soTinChi;
 	private Double diemTongKet;
 	private Double thangDiem4;
+	private String diemChu;
 
 }

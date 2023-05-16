@@ -207,7 +207,7 @@ public class KeHoachController {
 			if (kh.getMaNguoiDung() == null) {
 				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
 					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(),
-							kh.getThoiGianBatDau().getMonth() + 1,
+							kh.getThoiGianBatDau().getMonth(),
 							kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
 									: kh.getThoiGianBatDau().getDate() + date,
 							kh.getThoiGianBatDau().getHours(), kh.getThoiGianBatDau().getMinutes(),

@@ -185,12 +185,12 @@ public class SinhVienController {
 	@GetMapping("/lay-ket-qua/{maSinhVien}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_QUANLY') ")
 	public KetQuaHocTapDto layDiemCuoiCung(@PathVariable("maSinhVien") String maSinhVien) throws RuntimeException {
-		PhieuCham phieuChamHD1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "HD").get(0);
+
 		SinhVien sv = sinhVienService.layTheoMa(maSinhVien);
 		if (phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").size() <= 0) {
-			return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", null, null);
+			return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", null, null, null);
 		}
-
+		PhieuCham phieuChamHD1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "HD").get(0);
 		PhieuCham phieuChamHoiDong1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").get(0);
 		PhieuCham phieuChamHoiDong2SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "TK").get(0);
 
@@ -207,29 +207,40 @@ public class SinhVienController {
 		Double kq = (double) (Math.round(((diemHD + diemPB) / 2) * 10)) / 10;
 		
 		Double diemThang4 = (double) 0;
-		
+
+		String diemChu = "";
+
 		if (kq >= 9 && kq <= 10) {
 			diemThang4 =  4.0;
+			diemChu = "A+";
 		} else if (kq >= 8.5 && kq <= 8.9) {
 			diemThang4 =  3.8;
+			diemChu = "A";
 		} else if (kq >= 8.0 && kq <= 8.4) {
 			diemThang4 =  3.5;
+			diemChu = "B+";
 		} else if (kq >= 7.0 && kq <= 7.9) {
 			diemThang4 =  3.0;
+			diemChu = "B";
 		} else if (kq >= 6.0 && kq <= 8.9) {
 			diemThang4 =  2.5;
+			diemChu = "C+";
 		} else if (kq >= 5.5 && kq <= 5.9) {
 			diemThang4 =  2.0;
+			diemChu = "C";
 		} else if (kq >= 5.0 && kq <= 5.4) {
 			diemThang4 =  1.5;
+			diemChu = "D+";
 		} else if (kq >= 4.0 && kq <= 4.9) {
 			diemThang4 =  1.0;
+			diemChu = "D";
 		}  else {
 			diemThang4 =  0.0;
+			diemChu = "F";
 		}
 		
 		
-		return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", kq, diemThang4);
+		return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", kq, diemThang4, diemChu);
 	}
 	
 	

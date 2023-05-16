@@ -19,4 +19,6 @@ public class TinNhanDto {
 	private Object nguoiGui;
 	private String createdAt;
 
+	private String tenTinNhan;
+
 }

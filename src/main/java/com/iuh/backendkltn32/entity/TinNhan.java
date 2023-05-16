@@ -25,7 +25,9 @@ public class TinNhan {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
+	@Column(name = "tenTinNhan", nullable = false)
+	private String tenTinNhan;
 	@Column(name = "noiDung", nullable = false)
 	private String noiDung;
 	
@@ -41,8 +43,9 @@ public class TinNhan {
 	@Column(name = "createdAt", nullable = false)
 	private Timestamp createdAt;
 
-	public TinNhan(String noiDung, String maNguoiGui, String maNGuoiNhan, Integer trangThai, Timestamp createdAt) {
+	public TinNhan(String tenTinNhan,String noiDung, String maNguoiGui, String maNGuoiNhan, Integer trangThai, Timestamp createdAt) {
 		super();
+		this.tenTinNhan = tenTinNhan;
 		this.noiDung = noiDung;
 		this.maNguoiGui = maNguoiGui;
 		this.maNGuoiNhan = maNGuoiNhan;

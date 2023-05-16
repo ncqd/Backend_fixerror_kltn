@@ -42,12 +42,14 @@ public class TinNhanController {
 		for (TinNhan tn : tinNhanSerivce.layTinNhanTheoMaNguoiNhan(maNguoiNhan)) {
 			if (tn.getMaNGuoiNhan().startsWith("11")) {
 				tinNhans.add(new TinNhanDto(tn.getId(), giangVienService.layTheoMa(tn.getMaNguoiGui()), tn.getNoiDung(),
-						tn.getTrangThai(), giangVienService.layTheoMa("12392401"), format.format(tn.getCreatedAt())));
+						tn.getTrangThai(), giangVienService.layTheoMa("12392401"), format.format(tn.getCreatedAt()),
+						tn.getTenTinNhan()));
 
 			} else {
 				tinNhans.add(new TinNhanDto(tn.getId(), sinhVienService.layTheoMa(tn.getMaNGuoiNhan()), tn.getNoiDung(),
 						tn.getTrangThai(), sinhVienService.layTheoMa(tn.getMaNguoiGui()),
-						format.format(tn.getCreatedAt())));
+						format.format(tn.getCreatedAt()),
+						tn.getTenTinNhan()));
 			}
 			thongBaoChuaDoc = tn.getTrangThai() == 0 ? thongBaoChuaDoc + 1 : thongBaoChuaDoc;
 		}
@@ -66,10 +68,12 @@ public class TinNhanController {
 			tin = tinNhanSerivce.capNhat(tin);
 			if (tin.getMaNguoiGui().startsWith("11")) {
 				return new TinNhanDto(tin.getId(), null, tin.getNoiDung(), tin.getTrangThai(),
-						giangVienService.layTheoMa(tin.getMaNguoiGui()), format.format(tin.getCreatedAt()));
+						giangVienService.layTheoMa(tin.getMaNguoiGui()), format.format(tin.getCreatedAt()),
+						tin.getTenTinNhan());
 			}
 			return new TinNhanDto(tin.getId(), null, tin.getNoiDung(), tin.getTrangThai(),
-					sinhVienService.layTheoMa(tin.getMaNguoiGui()), format.format(tin.getCreatedAt()));
+					sinhVienService.layTheoMa(tin.getMaNguoiGui()), format.format(tin.getCreatedAt()),
+					tin.getTenTinNhan());
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}

@@ -130,13 +130,14 @@ public class QuanLyBoMonController {
 			deTaiService.capNhat(deTai);
 			TinNhan tinNhan;
 			if (duyetDeTaiRequest.getTrangThai() == 1) {
-				tinNhan = new TinNhan(
-						"Đề " + deTai.getTenDeTai() + " chưa đủ điều kiện duyệt.Chi Tiết: "
+				tinNhan = new TinNhan( "Bạn có đề tài chưa được duyệt",
+						"Đề Tài: " + deTai.getTenDeTai() + " | Chưa đạt | "
 								+ duyetDeTaiRequest.getLoiNhan(),
 						"12392401", deTai.getGiangVien().getMaGiangVien(), 0,
 						new Timestamp(System.currentTimeMillis()));
 			} else {
-				tinNhan = new TinNhan("Đề Tài " + deTai.getTenDeTai() + " Đã Được Duyệt Bởi người quản lý", "12392401",
+				tinNhan = new TinNhan( "Bạn có đề tài đã duyệt"
+						, "Đề Tài " + deTai.getTenDeTai() + "| Đã Được Duyệt  |", "12392401",
 						deTai.getGiangVien().getMaGiangVien(), 0, new Timestamp(System.currentTimeMillis()));
 			}
 
@@ -209,7 +210,8 @@ public class QuanLyBoMonController {
 		return new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
 				new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
-				kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
+				kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
+				kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
 	}
 
 	@GetMapping("/lay-ke-hoach-theo-hocky/{maHocKy}")
@@ -224,7 +226,8 @@ public class QuanLyBoMonController {
 			LapKeHoachDto lapKeHoachDto = new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
 					new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
-					kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId());
+					kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
+					kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
 			ds.add(lapKeHoachDto);
 		});
 		return ds;

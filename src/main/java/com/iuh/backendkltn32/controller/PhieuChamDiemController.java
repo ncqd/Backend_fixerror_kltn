@@ -31,6 +31,7 @@ import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KetQuaService;
 import com.iuh.backendkltn32.service.NhomService;
+import com.iuh.backendkltn32.service.PhanCongService;
 import com.iuh.backendkltn32.service.PhieuChamMauService;
 import com.iuh.backendkltn32.service.PhieuChamService;
 import com.iuh.backendkltn32.service.SinhVienService;
@@ -70,6 +71,9 @@ public class PhieuChamDiemController {
 	@Autowired
 	private NhomService nhomService;
 
+	@Autowired
+	private PhanCongService phanCongService;
+
 	@PostMapping("/cham-diem")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
 	public List<PhieuCham> themPhieuCham(@RequestBody PhieuChamDiemDto phieuCham) throws RuntimeException {
@@ -90,7 +94,6 @@ public class PhieuChamDiemController {
 					try {
 						return tieuChiChamDiemService.layTheoMa(tc);
 					} catch (RuntimeException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					return null;
@@ -492,79 +495,177 @@ public class PhieuChamDiemController {
 			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		}
 		for (Nhom nhom : nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
-			for (String maSV : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
-				if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0) {
-					System.out.println(maSV);
-					DiemSinhVienQuanLyDto diemSVDTO = new DiemSinhVienQuanLyDto();
-					PhieuCham phieuChamHD = phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "HD", maSV)
-							.get(0);
-					PhieuCham phieuChamHoiDong1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "CT").get(0);
-					PhieuCham phieuChamHoiDong2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "TK").get(0);
-					PhieuCham phieuChamPB1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(0);
-					PhieuCham phieuChamPB2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(1);
+			if (phanCongService.layPhanCongTheoMaNhom(nhom).size() > 3) {
+				for (String maSV : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
+					if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0) {
+						System.out.println(maSV);
+						DiemSinhVienQuanLyDto diemSVDTO = new DiemSinhVienQuanLyDto();
+						PhieuCham phieuChamHD = phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "HD", maSV)
+								.get(0);
+						PhieuCham phieuChamHoiDong1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "CT")
+								.get(0);
+						PhieuCham phieuChamHoiDong2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "TK")
+								.get(0);
+						PhieuCham phieuChamHoiDong3 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "TV3")
+								.get(0);
 
-					phieuChamHD.getDsKetQua().forEach(sv -> {
-						diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
-						diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
-						diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
-						diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
-					});
-					diemSVDTO.setGvhd(nhom.getDeTai().getGiangVien().getTenGiangVien());
-					diemSVDTO.setMaDeTai(nhom.getDeTai().getMaDeTai());
-					diemSVDTO.setTenDeTai(nhom.getDeTai().getTenDeTai());
+						PhieuCham phieuChamPB1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(0);
+						PhieuCham phieuChamPB2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(1);
 
-					diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu(),
-							phieuChamHD.getTenPhieu(), phieuChamHD.getDiemPhieuCham(), phieuChamHD.getDsDiemThanhPhan(),
-							phieuChamHD.getGiangVien().getMaGiangVien(), phieuChamHD.getGiangVien().getTenGiangVien()));
+						phieuChamHD.getDsKetQua().forEach(sv -> {
+							diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+							diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+							diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+							diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+						});
+						diemSVDTO.setGvhd(nhom.getDeTai().getGiangVien().getTenGiangVien());
+						diemSVDTO.setMaDeTai(nhom.getDeTai().getMaDeTai());
+						diemSVDTO.setTenDeTai(nhom.getDeTai().getTenDeTai());
 
-					diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu(),
-							phieuChamPB1.getTenPhieu(), phieuChamPB1.getDiemPhieuCham(),
-							phieuChamPB1.getDsDiemThanhPhan(), phieuChamPB1.getGiangVien().getMaGiangVien(),
-							phieuChamPB1.getGiangVien().getTenGiangVien()));
+						diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu(),
+								phieuChamHD.getTenPhieu(), phieuChamHD.getDiemPhieuCham(),
+								phieuChamHD.getDsDiemThanhPhan(), phieuChamHD.getGiangVien().getMaGiangVien(),
+								phieuChamHD.getGiangVien().getTenGiangVien()));
 
-					diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu(),
-							phieuChamPB2.getTenPhieu(), phieuChamPB2.getDiemPhieuCham(),
-							phieuChamPB2.getDsDiemThanhPhan(), phieuChamPB2.getGiangVien().getMaGiangVien(),
-							phieuChamPB2.getGiangVien().getTenGiangVien()));
+						diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu(),
+								phieuChamPB1.getTenPhieu(), phieuChamPB1.getDiemPhieuCham(),
+								phieuChamPB1.getDsDiemThanhPhan(), phieuChamPB1.getGiangVien().getMaGiangVien(),
+								phieuChamPB1.getGiangVien().getTenGiangVien()));
 
-					Double diemTBBM = (phieuChamHD.getDiemPhieuCham() + phieuChamPB1.getDiemPhieuCham()
-							+ phieuChamPB2.getDiemPhieuCham()) / 3;
+						diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu(),
+								phieuChamPB2.getTenPhieu(), phieuChamPB2.getDiemPhieuCham(),
+								phieuChamPB2.getDsDiemThanhPhan(), phieuChamPB2.getGiangVien().getMaGiangVien(),
+								phieuChamPB2.getGiangVien().getTenGiangVien()));
 
-					diemSVDTO.setPhieuChamDiemCT(
-							new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu(), phieuChamHoiDong1.getTenPhieu(),
-									diemTBBM >= 8 && phieuChamHoiDong1.getDiemPhieuCham() >= 8
-											? phieuChamHoiDong1.getDiemPhieuCham()
-											: 8,
-									phieuChamHoiDong1.getDsDiemThanhPhan(),
-									phieuChamHoiDong1.getGiangVien().getMaGiangVien(),
-									phieuChamHoiDong1.getGiangVien().getTenGiangVien()));
+						Double diemTBBM = (phieuChamHD.getDiemPhieuCham() + phieuChamPB1.getDiemPhieuCham()
+								+ phieuChamPB2.getDiemPhieuCham()) / 3;
 
-					diemSVDTO.setPhieuChamDiemTK(
-							new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu(), phieuChamHoiDong2.getTenPhieu(),
-									diemTBBM >= 8 && phieuChamHoiDong1.getDiemPhieuCham() >= 8
-											? phieuChamHoiDong2.getDiemPhieuCham()
-											: 8,
-									phieuChamHoiDong2.getDsDiemThanhPhan(),
-									phieuChamHoiDong2.getGiangVien().getMaGiangVien(),
-									phieuChamHoiDong2.getGiangVien().getTenGiangVien()));
+						diemSVDTO.setPhieuChamDiemCT(
+								new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu(), phieuChamHoiDong1.getTenPhieu(),
+										diemTBBM >= 8 && phieuChamHoiDong1.getDiemPhieuCham() >= 8
+												? phieuChamHoiDong1.getDiemPhieuCham()
+												: 8,
+										phieuChamHoiDong1.getDsDiemThanhPhan(),
+										phieuChamHoiDong1.getGiangVien().getMaGiangVien(),
+										phieuChamHoiDong1.getGiangVien().getTenGiangVien()));
 
-					Double diemTBHD = (phieuChamHoiDong1.getDiemPhieuCham() + phieuChamHoiDong2.getDiemPhieuCham()) / 2;
-					Double kq = (diemTBBM + diemTBHD) / 2;
+						diemSVDTO.setPhieuChamDiemTK(
+								new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu(), phieuChamHoiDong2.getTenPhieu(),
+										diemTBBM >= 8 && phieuChamHoiDong2.getDiemPhieuCham() >= 8
+												? phieuChamHoiDong2.getDiemPhieuCham()
+												: 8,
+										phieuChamHoiDong2.getDsDiemThanhPhan(),
+										phieuChamHoiDong2.getGiangVien().getMaGiangVien(),
+										phieuChamHoiDong2.getGiangVien().getTenGiangVien()));
 
-					diemSVDTO.setDiemTBBM(Math.floor(diemTBBM * 10) / 10);
-					diemSVDTO.setDiemTBTVHD(Math.floor(diemTBHD * 10) / 10);
-					diemSVDTO.setKetQua(Math.floor(kq * 100) / 100);
-					diemSVDTO.setDuocRaPB(phieuChamHD.getDiemPhieuCham() >= 5 ? "Yes" : "No");
-					Double diemBao = phieuChamHoiDong1.getDsKetQua().get(0).getDiemBao() != null
-							? phieuChamHoiDong1.getDsKetQua().get(0).getDiemBao()
-							: 0;
-					diemSVDTO
-							.setDiemTK(diemBao > 0 ? Math.floor(((kq + diemBao) * 10) / 10) : Math.floor(kq * 10) / 10);
-					diemSVDTO.setDiembao(diemBao);
+						diemSVDTO.setPhieuChamDiemTK(
+								new PhieuChamKetQuaQL(phieuChamHoiDong3.getMaPhieu(), phieuChamHoiDong3.getTenPhieu(),
+										diemTBBM >= 8 && phieuChamHoiDong3.getDiemPhieuCham() >= 8
+												? phieuChamHoiDong3.getDiemPhieuCham()
+												: 8,
+										phieuChamHoiDong3.getDsDiemThanhPhan(),
+										phieuChamHoiDong3.getGiangVien().getMaGiangVien(),
+										phieuChamHoiDong3.getGiangVien().getTenGiangVien()));
 
-					rs.add(diemSVDTO);
+						Double diemTBHD = (phieuChamHoiDong1.getDiemPhieuCham() + phieuChamHoiDong2.getDiemPhieuCham()
+								+ phieuChamHoiDong3.getDiemPhieuCham()) / 3;
+						Double kq = (diemTBBM + diemTBHD) / 2;
+
+						diemSVDTO.setDiemTBBM(Math.floor(diemTBBM * 10) / 10);
+						diemSVDTO.setDiemTBTVHD(Math.floor(diemTBHD * 10) / 10);
+						diemSVDTO.setKetQua(Math.floor(kq * 100) / 100);
+						diemSVDTO.setDuocRaPB(phieuChamHD.getDiemPhieuCham() >= 5 ? "Yes" : "No");
+						Double diemBao = phieuChamHoiDong1.getDsKetQua().get(0).getDiemBao() != null
+								? phieuChamHoiDong1.getDsKetQua().get(0).getDiemBao()
+								: 0;
+						diemSVDTO.setDiemTK(
+								diemBao > 0 ? Math.floor(((kq + diemBao) * 10) / 10) : Math.floor(kq * 10) / 10);
+						diemSVDTO.setDiembao(diemBao);
+
+						rs.add(diemSVDTO);
+					}
+
 				}
+			} else {
+				for (String maSV : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
+					if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0) {
+						System.out.println(maSV);
+						DiemSinhVienQuanLyDto diemSVDTO = new DiemSinhVienQuanLyDto();
+						PhieuCham phieuChamHD = phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "HD", maSV)
+								.get(0);
+						PhieuCham phieuChamHoiDong1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "CT")
+								.get(0);
+						PhieuCham phieuChamHoiDong2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "TK")
+								.get(0);
 
+						PhieuCham phieuChamPB1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(0);
+						PhieuCham phieuChamPB2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(1);
+
+						phieuChamHD.getDsKetQua().forEach(sv -> {
+							diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
+							diemSVDTO.setTenSV(sv.getSinhVien().getTenSinhVien());
+							diemSVDTO.setMaNhom(sv.getSinhVien().getNhom().getMaNhom());
+							diemSVDTO.setTenNhom(sv.getSinhVien().getNhom().getTenNhom());
+						});
+						diemSVDTO.setGvhd(nhom.getDeTai().getGiangVien().getTenGiangVien());
+						diemSVDTO.setMaDeTai(nhom.getDeTai().getMaDeTai());
+						diemSVDTO.setTenDeTai(nhom.getDeTai().getTenDeTai());
+
+						diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu(),
+								phieuChamHD.getTenPhieu(), phieuChamHD.getDiemPhieuCham(),
+								phieuChamHD.getDsDiemThanhPhan(), phieuChamHD.getGiangVien().getMaGiangVien(),
+								phieuChamHD.getGiangVien().getTenGiangVien()));
+
+						diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu(),
+								phieuChamPB1.getTenPhieu(), phieuChamPB1.getDiemPhieuCham(),
+								phieuChamPB1.getDsDiemThanhPhan(), phieuChamPB1.getGiangVien().getMaGiangVien(),
+								phieuChamPB1.getGiangVien().getTenGiangVien()));
+
+						diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu(),
+								phieuChamPB2.getTenPhieu(), phieuChamPB2.getDiemPhieuCham(),
+								phieuChamPB2.getDsDiemThanhPhan(), phieuChamPB2.getGiangVien().getMaGiangVien(),
+								phieuChamPB2.getGiangVien().getTenGiangVien()));
+
+						Double diemTBBM = (phieuChamHD.getDiemPhieuCham() + phieuChamPB1.getDiemPhieuCham()
+								+ phieuChamPB2.getDiemPhieuCham()) / 3;
+
+						diemSVDTO.setPhieuChamDiemCT(
+								new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu(), phieuChamHoiDong1.getTenPhieu(),
+										diemTBBM >= 8 && phieuChamHoiDong1.getDiemPhieuCham() >= 8
+												? phieuChamHoiDong1.getDiemPhieuCham()
+												: 8,
+										phieuChamHoiDong1.getDsDiemThanhPhan(),
+										phieuChamHoiDong1.getGiangVien().getMaGiangVien(),
+										phieuChamHoiDong1.getGiangVien().getTenGiangVien()));
+
+						diemSVDTO.setPhieuChamDiemTK(
+								new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu(), phieuChamHoiDong2.getTenPhieu(),
+										diemTBBM >= 8 && phieuChamHoiDong2.getDiemPhieuCham() >= 8
+												? phieuChamHoiDong2.getDiemPhieuCham()
+												: 8,
+										phieuChamHoiDong2.getDsDiemThanhPhan(),
+										phieuChamHoiDong2.getGiangVien().getMaGiangVien(),
+										phieuChamHoiDong2.getGiangVien().getTenGiangVien()));
+
+
+						Double diemTBHD = (phieuChamHoiDong1.getDiemPhieuCham() + phieuChamHoiDong2.getDiemPhieuCham()) / 2;
+						Double kq = (diemTBBM + diemTBHD) / 2;
+
+						diemSVDTO.setDiemTBBM(Math.floor(diemTBBM * 10) / 10);
+						diemSVDTO.setDiemTBTVHD(Math.floor(diemTBHD * 10) / 10);
+						diemSVDTO.setKetQua(Math.floor(kq * 100) / 100);
+						diemSVDTO.setDuocRaPB(phieuChamHD.getDiemPhieuCham() >= 5 ? "Yes" : "No");
+						Double diemBao = phieuChamHoiDong1.getDsKetQua().get(0).getDiemBao() != null
+								? phieuChamHoiDong1.getDsKetQua().get(0).getDiemBao()
+								: 0;
+						diemSVDTO.setDiemTK(
+								diemBao > 0 ? Math.floor(((kq + diemBao) * 10) / 10) : Math.floor(kq * 10) / 10);
+						diemSVDTO.setDiembao(diemBao);
+
+						rs.add(diemSVDTO);
+					}
+
+				}
 			}
 		}
 

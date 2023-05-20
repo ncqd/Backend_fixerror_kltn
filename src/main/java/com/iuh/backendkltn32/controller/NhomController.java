@@ -26,6 +26,7 @@ import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.NhomPBResponeDto;
 import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
 import com.iuh.backendkltn32.dto.NhomSinhVienDto;
+import com.iuh.backendkltn32.dto.NhomTruyenDto;
 import com.iuh.backendkltn32.dto.NhomVaiTro;
 import com.iuh.backendkltn32.dto.NhomVaiTroRequest;
 import com.iuh.backendkltn32.dto.SinhVienNhomVaiTroDto;
@@ -96,7 +97,7 @@ public class NhomController {
 				throw new RuntimeException(e.getMessage());
 			}
 		}
-			throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
+		throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
 
 	}
 
@@ -118,7 +119,8 @@ public class NhomController {
 						}
 						return null;
 					}).toList();
-					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom, nhom.getDeTai() ==null ? null : nhom.getDeTai().getMaDeTai(), sinhViens, sinhViens2);
+					NhomRoleGVRespone nhomRoleGVRespone = new NhomRoleGVRespone(nhom,
+							nhom.getDeTai() == null ? null : nhom.getDeTai().getMaDeTai(), sinhViens, sinhViens2);
 					respones.add(nhomRoleGVRespone);
 				});
 
@@ -174,7 +176,8 @@ public class NhomController {
 
 	@GetMapping("/lay-ds-nhom/{tinhTrang}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
-	public Set<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang) throws RuntimeException {
+	public Set<NhomRoleGVRespone> layNhomTheoTinhTrang(@PathVariable("tinhTrang") Integer tinhTrang)
+			throws RuntimeException {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), tinhTrang);
 		Set<NhomRoleGVRespone> respones = new HashSet<>();
@@ -272,7 +275,7 @@ public class NhomController {
 		SinhVien sinhVienXinGiaNhap = sinhVienService.layTheoMa(request.getDsMaSinhVien().get(0));
 		TinNhan tinNhan = new TinNhan("Có Sinh Viên Muốn xin gia nhập nhóm của bạn",
 				"Có Sinh Viên Muốn xin gia nhập nhóm của bạn | " + sinhVienXinGiaNhap.getMaSinhVien() + " | "
-						+ sinhVienXinGiaNhap.getTenSinhVien()+ " | " + request.getPassword(),
+						+ sinhVienXinGiaNhap.getTenSinhVien() + " | " + request.getPassword(),
 				request.getDsMaSinhVien().get(0), sinhVienTrongNhom.get(0), 0,
 				new Timestamp(System.currentTimeMillis()));
 		tinNhanSerivce.luu(tinNhan);
@@ -378,9 +381,8 @@ public class NhomController {
 					if (!sinhVienService
 							.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro(), maGV)
 							.contains(nhom.getMaNhom())
-							|| sinhVienService
-									.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), request.getVaiTro(), maGV)
-									.size() == 0) {
+							|| sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(),
+									request.getVaiTro(), maGV).size() == 0) {
 						List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
 						sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 							try {
@@ -411,7 +413,7 @@ public class NhomController {
 			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		}
 		Set<NhomVaiTro> respones = new HashSet<>();
-		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty() 
+		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty()
 				&& !request.getDotCham().isBlank() && !request.getDotCham().equals("") ? request.getDotCham() : "All";
 		System.out.println(viTriCham);
 		if (viTriCham.equals("All")) {
@@ -443,14 +445,15 @@ public class NhomController {
 					vaiTroCham = "phan bien";
 					break;
 				}
-				Set<Nhom> nhomBs = new HashSet<>(nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), vaiTroCham,
-						request.getMaNguoiDung()));
+				Set<Nhom> nhomBs = new HashSet<>(
+						nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), vaiTroCham, request.getMaNguoiDung()));
 				if (!nhomBs.isEmpty() && nhomBs != null) {
 					nhomBs.stream().forEach(nhom -> {
 						String maGV = request.getMaNguoiDung();
 						if (xuatSinhVienKhiCan(nhom, viTriCham2, maGV).size() > 0) {
-							respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
-									nhom.getDeTai().getTenDeTai(), xuatSinhVienKhiCan(nhom, viTriCham2, maGV), viTriCham2));
+							respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
+									nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
+									xuatSinhVienKhiCan(nhom, viTriCham2, maGV), viTriCham2));
 						}
 					});
 				}
@@ -488,7 +491,8 @@ public class NhomController {
 			}
 		} else if (viTriCham.equals("Hoi Dong")) {
 			System.out.println("Hoi Dong");
-			List<String> vaiTroTemp = request.getVaitro() != null ? request.getVaitro() : Arrays.asList("CT", "TK", "TV3");
+			List<String> vaiTroTemp = request.getVaitro() != null ? request.getVaitro()
+					: Arrays.asList("CT", "TK", "TV3");
 			for (String vaiTro : vaiTroTemp) {
 				String viTriPhanCong = "";
 				switch (vaiTro) {
@@ -524,7 +528,8 @@ public class NhomController {
 							nhoms.stream().forEach(nhom -> {
 								respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
 										nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
-										xuatSinhVienKhiCan(nhom, request.getDotCham(), request.getMaNguoiDung()), vaiTro));
+										xuatSinhVienKhiCan(nhom, request.getDotCham(), request.getMaNguoiDung()),
+										vaiTro));
 							});
 						}
 					}
@@ -537,7 +542,8 @@ public class NhomController {
 
 								respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
 										nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
-										xuatSinhVienKhiCan(nhom, request.getDotCham(), request.getMaNguoiDung()), vaiTro));
+										xuatSinhVienKhiCan(nhom, request.getDotCham(), request.getMaNguoiDung()),
+										vaiTro));
 							}
 						});
 					}
@@ -548,7 +554,8 @@ public class NhomController {
 							if (xuatSinhVienKhiCan(nhom, viTriCham, request.getMaNguoiDung()).size() > 0) {
 								respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(),
 										nhom.getDeTai().getMaDeTai(), nhom.getDeTai().getTenDeTai(),
-										xuatSinhVienKhiCan(nhom, request.getDotCham(), request.getMaNguoiDung()), vaiTro));
+										xuatSinhVienKhiCan(nhom, request.getDotCham(), request.getMaNguoiDung()),
+										vaiTro));
 							}
 						});
 					}
@@ -558,13 +565,44 @@ public class NhomController {
 		return respones;
 	}
 
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
+	public Set<NhomVaiTro> layNhomTruyenVaiTro(@RequestBody NhomTruyenDto request) throws RuntimeException {
+		HocKy hocKy = null;
+		if (request.getMaHocKy() == null) {
+			hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		} else {
+			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
+		}
+		Set<NhomVaiTro> respones = new HashSet<>();
+		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty()
+				&& !request.getDotCham().isBlank() && !request.getDotCham().equals("") ? request.getDotCham() : "All";
+		if (viTriCham.equals("All")) {
+			System.out.println("All");
+			List<Nhom> nhomAs = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					request.getMaNguoiDung());
+			if (!nhomAs.isEmpty() && nhomAs != null) {
+				nhomAs.stream().forEach(nhom -> {
+					String maGV = request.getMaNguoiDung();
+					if (xuatSinhVienKhiCan(nhom, "HD", maGV).size() > 0) {
+						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
+								nhom.getDeTai().getTenDeTai(), xuatSinhVienKhiCan(nhom, "HD", maGV), "HD"));
+					}
+				});
+			}
+
+			return respones;
+		}
+		return respones;
+	}
+
 	private List<SinhVienNhomVaiTroDto> xuatSinhVienKhiCan(Nhom nhom, String dotCham, String maGV) {
 		List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
-		
+
 		if (!sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), dotCham, maGV)
 				.contains(nhom.getMaNhom())
-				|| sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), dotCham, maGV).size() == 0) {
-			
+				|| sinhVienService.timMaSinhVienChuaCoPhieuChamDiemTheoNhuCau(nhom.getMaNhom(), dotCham, maGV)
+						.size() == 0) {
+
 			sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).stream().forEach(sv -> {
 				try {
 					SinhVien sv1 = sinhVienService.layTheoMa(sv);

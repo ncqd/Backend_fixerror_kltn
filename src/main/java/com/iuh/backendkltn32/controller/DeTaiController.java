@@ -297,8 +297,8 @@ public class DeTaiController {
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> layDeTaiTheoMa(@PathVariable("maDeTai") String maDeTai) {
 		DeTai deTai1 = deTaiService.layTheoMa(maDeTai);
-		DeTaiRes deTai = new DeTaiRes(deTai1.getMaDeTai(), deTai1.getTenDeTai(), deTai1.getMucTieuDeTai(),deTai1.getSanPhamDuKien(), 
-				deTai1.getMoTa(), deTai1.getYeuCauDauVao(), deTai1.getTrangThai(),deTai1.getGioiHanSoNhomThucHien(), deTai1.getGiangVien(), deTai1.getHocKy().getMaHocKy());
-		return ResponseEntity.ok(deTai);
+//		DeTaiRes deTai = new DeTaiRes(deTai1.getMaDeTai(), deTai1.getTenDeTai(), deTai1.getMucTieuDeTai(),deTai1.getSanPhamDuKien(), 
+//				deTai1.getMoTa(), deTai1.getYeuCauDauVao(), deTai1.getTrangThai(),deTai1.getGioiHanSoNhomThucHien(), deTai1.getGiangVien(), deTai1.getHocKy().getMaHocKy());
+		return ResponseEntity.ok(deTai1);
 	}
 }

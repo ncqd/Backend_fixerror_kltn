@@ -88,43 +88,48 @@ public class KeHoachServiceImpl implements KeHoachService {
 
 	@Override
 	public List<KeHoach> layTheoTenVaMaHocKyVaiTro(String maHocKy, String tenKeHoach, String vaiTro) {
-		// TODO Auto-generated method stub
 		return repository.layTheoTenVaMaHocKyVaiTro(maHocKy, tenKeHoach, vaiTro);
 	}
 
 	@Override
 	public List<KeHoach> layKeHoachTheoMaHocKyVaMaLoai(String maHocKy, String maLoai, String maNguoiDung) {
-		// TODO Auto-generated method stub
 		return repository.layKeHoachTheoMaNguoiDungVaMaLoai(maHocKy, maLoai, maNguoiDung);
 	}
 
 	@Override
 	public List<String> layMaNGuoiDung(Timestamp thoiGianBatDau, String phong) {
-		// TODO Auto-generated method stub
 		return repository.layMaNGuoiDung(thoiGianBatDau);
 	}
 
 	@Override
 	public List<String> layPhong(Timestamp thoiGianBatDau) {
-		// TODO Auto-generated method stub
 		return repository.layPhong(thoiGianBatDau);
 	}
 
 	@Override
 	public List<KeHoach> layTheoTenKhongMaNguoiDung(String maHocKy, String tenKeHoach, String vaiTro) {
-		// TODO Auto-generated method stub
 		return repository.layTheoTenKhongMaNguoiDung(maHocKy, tenKeHoach, vaiTro);
 	}
 
 	@Override
 	public List<String> layTheoPhongTg(String phong, Timestamp thoiGianBatDau) {
-		// TODO Auto-generated method stub
 		return repository.layTheoPhongTg(phong, thoiGianBatDau);
 	}
 
 	@Override
 	public List<KeHoach> layTheoPhongTGChuaChiaNhom(String phong, Timestamp thoiGianBatDau) {
 		return repository.layTheoPhongTGChuaChiaNhom(phong, thoiGianBatDau);
+	}
+
+	@Override
+	public List<KeHoach> layKeHoachTheoMaNguoiDungMaLoai(String maHocKy, String maNguoiDung, String maLoai) {
+		return repository.layKeHoachTheoMaNguoiDungMaLoai(maHocKy, maNguoiDung, maLoai);
+	}
+
+	@Override
+	public List<KeHoach> layKeHoachPB(String phong, Timestamp thoiGianBatDau) {
+		// TODO Auto-generated method stub
+		return repository.layKeHoachPB(phong, thoiGianBatDau);
 	}
 
 }

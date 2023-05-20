@@ -20,16 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.KeHoachDto;
 import com.iuh.backendkltn32.dto.KeHoachGvDto;
+import com.iuh.backendkltn32.dto.KeHoachPBDto;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LapKeHoachValidateDto;
 import com.iuh.backendkltn32.dto.LayKeHoachHocKyDto;
 import com.iuh.backendkltn32.dto.LayKeHoachRequest;
 import com.iuh.backendkltn32.dto.NgayDto;
+import com.iuh.backendkltn32.dto.NhomVaiTro;
+import com.iuh.backendkltn32.dto.SinhVienNhomVaiTroDto;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.LoaiKeHoach;
+import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.Phong;
+import com.iuh.backendkltn32.entity.SinhVien;
+import com.iuh.backendkltn32.export.GiangVienPBDto;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KeHoachService;
@@ -67,7 +73,7 @@ public class KeHoachController {
 					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
 					new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
 					kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
-					kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
+					kh.getPhong() != null ? phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
 			dsKeHoach.add(lapKeHoachDto);
 		});
 		if (request.getMaNguoiDung() != null) {
@@ -80,7 +86,8 @@ public class KeHoachController {
 								kh.getChuThich(), Arrays.asList(ngayThucHienKL), kh.getHocKy(),
 								new Timestamp(kh.getThoiGianBatDau().getTime()),
 								new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
-								kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(), phongService.layTheoMa(kh.getPhong()).getTenPhong());
+								kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
+								phongService.layTheoMa(kh.getPhong()).getTenPhong());
 						dsKeHoach.add(lapKeHoachDto);
 					});
 		}
@@ -190,7 +197,8 @@ public class KeHoachController {
 								new Timestamp(kh.getThoiGianBatDau().getTime()),
 								new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
 								kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
-								kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
+								kh.getPhong() != null ? phongService.layTheoMa(kh.getPhong()).getTenPhong()
+										: "Khong Co Phong");
 						ds.add(lapKeHoachDtoa);
 					});
 		}
@@ -209,8 +217,7 @@ public class KeHoachController {
 		for (KeHoach kh : keHoachService.layTheoTenVaMaHocKyVaiTro(maHocKy, "Lịch chấm phản biện", "ROLE_GIANGVIEN")) {
 			if (kh.getMaNguoiDung() == null) {
 				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
-					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(),
-							kh.getThoiGianBatDau().getMonth(),
+					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(), kh.getThoiGianBatDau().getMonth(),
 							kh.getThoiGianBatDau().getDate() + date > 31 ? date + 1
 									: kh.getThoiGianBatDau().getDate() + date,
 							kh.getThoiGianBatDau().getHours(), kh.getThoiGianBatDau().getMinutes(),
@@ -356,8 +363,8 @@ public class KeHoachController {
 				tgbd.setMinutes(40);
 				break;
 			}
-			KeHoach keHoach = new KeHoach("Lịch chấm phản biện", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt,
-					1, "ROLE_GIANGVIEN", ma, new LoaiKeHoach(3), keHoachGvDto.getPhong());
+			KeHoach keHoach = new KeHoach("Lịch chấm phản biện", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt, 1,
+					"ROLE_GIANGVIEN", ma, new LoaiKeHoach(3), keHoachGvDto.getPhong());
 			result.add(keHoachService.luu(keHoach));
 		}
 
@@ -405,30 +412,33 @@ public class KeHoachController {
 						break;
 					}
 					if (keHoachService.layTheoPhongTGChuaChiaNhom(kh.getPhong(), kh.getThoiGianBatDau()).size() == 0) {
-					if (!phong.getId().toString().equals(kh.getPhong()) || tgbd.getHours() != kh.getThoiGianBatDau().getHours()
-							|| tgbd.getDate() != kh.getThoiGianBatDau().getDate()) {
-						try {
-							phong.setId(Integer.parseInt(kh.getPhong()));
-							tgbd.setHours(kh.getThoiGianBatDau().getHours());
-							tgbd.setDate(kh.getThoiGianBatDau().getDate());
-							List<GiangVien> gv = new ArrayList<>();
-							for (String maGV : keHoachService.layTheoPhongTg(kh.getPhong(), kh.getThoiGianBatDau())) {
-								gv.add(giangVienService.layTheoMa(maGV));
+						if (!phong.getId().toString().equals(kh.getPhong())
+								|| tgbd.getHours() != kh.getThoiGianBatDau().getHours()
+								|| tgbd.getDate() != kh.getThoiGianBatDau().getDate()) {
+							try {
+								phong.setId(Integer.parseInt(kh.getPhong()));
+								tgbd.setHours(kh.getThoiGianBatDau().getHours());
+								tgbd.setDate(kh.getThoiGianBatDau().getDate());
+								List<GiangVien> gv = new ArrayList<>();
+								for (String maGV : keHoachService.layTheoPhongTg(kh.getPhong(),
+										kh.getThoiGianBatDau())) {
+									gv.add(giangVienService.layTheoMa(maGV));
+								}
+								result.add(new KeHoachDto(kh.getId() + "", kh.getTenKeHoach(), tiet,
+										format.format(kh.getThoiGianBatDau()),
+										phongService.layTheoMa(kh.getPhong()).getTenPhong(), gv));
+							} catch (RuntimeException e) {
+								e.printStackTrace();
 							}
-							result.add(new KeHoachDto(kh.getId()+"", kh.getTenKeHoach(),tiet, format.format(kh.getThoiGianBatDau()),
-									phongService.layTheoMa(kh.getPhong()).getTenPhong(), gv));
-						} catch (RuntimeException e) {
-							e.printStackTrace();
 						}
-					}
-						
+
 					}
 
 				});
 
 		return result;
 	}
-	
+
 	@GetMapping("/tach-ke-hoach-hd")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public List<NgayDto> tachKeHoachHD() {
@@ -439,8 +449,7 @@ public class KeHoachController {
 		for (KeHoach kh : keHoachService.layTheoTenVaMaHocKyVaiTro(maHocKy, "Lịch chấm hội đồng", "ROLE_GIANGVIEN")) {
 			if (kh.getMaNguoiDung() == null) {
 				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
-					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(),
-							kh.getThoiGianBatDau().getMonth(),
+					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(), kh.getThoiGianBatDau().getMonth(),
 							kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
 									: kh.getThoiGianBatDau().getDate() + date,
 							kh.getThoiGianBatDau().getHours(), kh.getThoiGianBatDau().getMinutes(),
@@ -453,7 +462,7 @@ public class KeHoachController {
 		}
 		return result;
 	}
-	
+
 	@PostMapping("/tao-kehoach-giangvien-hd")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
 	public List<KeHoach> taoKeHoachGiangVienhhd(@RequestBody KeHoachGvDto keHoachGvDto) throws RuntimeException {
@@ -497,12 +506,52 @@ public class KeHoachController {
 				tgbd.setMinutes(40);
 				break;
 			}
-			KeHoach keHoach = new KeHoach("Lịch chấm hội đồng", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt,
-					1, "ROLE_GIANGVIEN", ma, new LoaiKeHoach(3), keHoachGvDto.getPhong());
+			KeHoach keHoach = new KeHoach("Lịch chấm hội đồng", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt, 1,
+					"ROLE_GIANGVIEN", ma, new LoaiKeHoach(3), keHoachGvDto.getPhong());
 			result.add(keHoachService.luu(keHoach));
 		}
 
 		return result;
+	}
+
+	@PostMapping("/lay-ke-hoach-pb")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	public List<KeHoachPBDto> layKeHoachPB(@RequestBody LayKeHoachRequest request) {
+		List<KeHoachPBDto> dsKeHoach = new ArrayList<>();
+		if (request.getMaNguoiDung() == null) {
+			throw new RuntimeException("Mã người dùng không hợp lệ");
+		}
+		keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3", request.getMaNguoiDung()).stream()
+				.forEach(kh -> {
+					String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null
+							? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
+							: new String[0];
+					List<SinhVienNhomVaiTroDto> nhomSinhVienPB = new ArrayList<>();
+					NhomVaiTro nhomSvPB = new NhomVaiTro();
+					for (KeHoach keHoachSV : keHoachService.layTheoPhongTGChuaChiaNhom(kh.getPhong(), kh.getThoiGianBatDau())) {
+						SinhVien sinhVien = sinhVienService.layTheoMa(keHoachSV.getMaNguoiDung());
+						nhomSvPB.setMaNhom(sinhVien.getNhom().getMaNhom());
+						nhomSvPB.setMaDeTai(sinhVien.getNhom().getDeTai().getMaDeTai());
+						nhomSvPB.setTenNhom(sinhVien.getNhom().getTenNhom());
+						nhomSvPB.setTenDeTai(sinhVien.getNhom().getDeTai().getTenDeTai());
+						nhomSinhVienPB.add(new SinhVienNhomVaiTroDto(sinhVien.getMaSinhVien(), sinhVien.getTenSinhVien()));
+						
+					}
+					
+					List<GiangVienPBDto> nhomGiangVienPB = new ArrayList<>();
+					for (KeHoach keHoachGV : keHoachService.layKeHoachPB(kh.getPhong(), kh.getThoiGianBatDau())) {
+						GiangVien giangVien = giangVienService.layTheoMa(keHoachGV.getMaNguoiDung());
+						nhomGiangVienPB.add(new GiangVienPBDto(giangVien.getMaGiangVien(), giangVien.getTenGiangVien()));
+					}
+					KeHoachPBDto keHoachPBDto = new KeHoachPBDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(), 
+							Arrays.asList(ngayThucHienKL),kh.getHocKy(), kh.getHocKy().getMaHocKy(), kh.getThoiGianBatDau(), 
+							kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(),
+							kh.getLoaiKeHoach().getId(), kh.getPhong(), nhomSvPB,nhomSinhVienPB, nhomGiangVienPB);
+					
+					dsKeHoach.add(keHoachPBDto);
+				});
+
+		return dsKeHoach;
 	}
 
 }

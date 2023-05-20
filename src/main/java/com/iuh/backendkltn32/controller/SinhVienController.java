@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,12 +189,12 @@ public class SinhVienController {
 	
 	@GetMapping("/lay-ket-qua/{maSinhVien}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_QUANLY') ")
-	public KetQuaHocTapDto layDiemCuoiCung(@PathVariable("maSinhVien") String maSinhVien) throws RuntimeException {
+	public ResponseEntity<?> layDiemCuoiCung(@PathVariable("maSinhVien") String maSinhVien) throws RuntimeException {
 		
 		SinhVien sv = sinhVienService.layTheoMa(maSinhVien);
 		if (sv.getLopHocPhan().getHocPhanKhoaLuanTotNghiep().getHocKy().getChoXemDiem()) {
 			if (phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").size() <= 0) {
-				return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", null, null, null);
+				return ResponseEntity.ok(new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", null, null, null));
 			}
 			PhieuCham phieuChamHD1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "HD").get(0);
 			PhieuCham phieuChamHoiDong1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").get(0);
@@ -245,9 +246,9 @@ public class SinhVienController {
 			}
 			
 			
-			return new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", kq, diemThang4, diemChu);
+			return ResponseEntity.ok(new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", kq, diemThang4, diemChu));
 		}
-		return null;
+		return ResponseEntity.ok(new ArrayList<>());
 		
 	}
 	

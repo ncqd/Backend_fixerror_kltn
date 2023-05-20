@@ -27,6 +27,7 @@ public class DiemSinhVienQuanLyDto {
 	private PhieuChamKetQuaQL phieuChamDiemPB2;
 	private PhieuChamKetQuaQL phieuChamDiemCT;
 	private PhieuChamKetQuaQL phieuChamDiemTK;
+	private PhieuChamKetQuaQL phieuChamDiemTV3;
 	private Double diemTBBM;
 	private Double diemTBTVHD;
 	private Double ketQua;

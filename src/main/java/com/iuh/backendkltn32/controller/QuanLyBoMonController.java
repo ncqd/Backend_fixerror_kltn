@@ -72,7 +72,7 @@ public class QuanLyBoMonController {
 
 	@Autowired
 	private PhongService phongService;
-	
+
 	@Autowired
 	private QuanLyBoMonService quanLyBoMonService;
 
@@ -105,7 +105,8 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/xuat-ds-sinhvien")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void exportToExcel(@RequestBody LopHocPhanDto lopHocPhanDto, HttpServletResponse response) throws RuntimeException {
+	public void exportToExcel(@RequestBody LopHocPhanDto lopHocPhanDto, HttpServletResponse response)
+			throws RuntimeException {
 		response.setContentType("application/octet-stream");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
@@ -134,14 +135,14 @@ public class QuanLyBoMonController {
 			deTaiService.capNhat(deTai);
 			TinNhan tinNhan;
 			if (duyetDeTaiRequest.getTrangThai() == 1) {
-				tinNhan = new TinNhan( "Bạn có đề tài chưa được duyệt",
-						"Đề Tài: " + deTai.getTenDeTai() + " | Chưa đạt | "
-								+ duyetDeTaiRequest.getLoiNhan(),
+				tinNhan = new TinNhan("Bạn có đề tài chưa được duyệt",
+						"Đề Tài: " + deTai.getTenDeTai() + " | Chưa đạt | " + duyetDeTaiRequest.getLoiNhan() + " | "
+								+ deTai.getMaDeTai(),
 						"12392401", deTai.getGiangVien().getMaGiangVien(), 0,
 						new Timestamp(System.currentTimeMillis()));
 			} else {
-				tinNhan = new TinNhan( "Bạn có đề tài đã duyệt"
-						, "Đề Tài " + deTai.getTenDeTai() + "| Đã Được Duyệt  |", "12392401",
+				tinNhan = new TinNhan("Bạn có đề tài đã duyệt",
+						"Đề Tài " + deTai.getTenDeTai() + "| Đã Được Duyệt  |" + deTai.getMaDeTai(), "12392401",
 						deTai.getGiangVien().getMaGiangVien(), 0, new Timestamp(System.currentTimeMillis()));
 			}
 
@@ -211,11 +212,11 @@ public class QuanLyBoMonController {
 
 		String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null ? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
 				: new String[0];
-		return new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
-				Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
+		return new LapKeHoachDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(), Arrays.asList(ngayThucHienKL),
+				kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
 				new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
 				kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
-				kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
+				kh.getPhong() != null ? phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
 	}
 
 	@GetMapping("/lay-ke-hoach-theo-hocky/{maHocKy}")
@@ -231,7 +232,7 @@ public class QuanLyBoMonController {
 					Arrays.asList(ngayThucHienKL), kh.getHocKy(), new Timestamp(kh.getThoiGianBatDau().getTime()),
 					new Timestamp(kh.getThoiGianKetThuc().getTime()), kh.getTinhTrang(), kh.getVaiTro(),
 					kh.getMaNguoiDung(), kh.getLoaiKeHoach().getId(),
-					kh.getPhong() != null ?  phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
+					kh.getPhong() != null ? phongService.layTheoMa(kh.getPhong()).getTenPhong() : "Khong Co Phong");
 			ds.add(lapKeHoachDto);
 		});
 		return ds;
@@ -267,7 +268,9 @@ public class QuanLyBoMonController {
 		tgbd.setHours(gioBatDau);
 		Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
 		tgkt.setHours(gioKetThuc);
-		sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom() == null ? "123" : Objects.requireNonNull(nhom).getMaNhom())
+		sinhVienService
+				.layTatCaSinhVienTheoNhom(
+						phanCongDto.getMaNhom() == null ? "123" : Objects.requireNonNull(nhom).getMaNhom())
 				.forEach(sv -> {
 					try {
 
@@ -284,7 +287,8 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/them-ds-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto2> phanCongDtos) throws RuntimeException {
+	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto2> phanCongDtos)
+			throws RuntimeException {
 		List<PhanCong> phanCongs = new ArrayList<>();
 		for (PhanCongDto2 phanCongDto : phanCongDtos) {
 			Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
@@ -313,10 +317,9 @@ public class QuanLyBoMonController {
 				try {
 					String maGVCT = phanCongDto.getDsMaGiangVienPB().get(0);
 					String maGVTK = phanCongDto.getDsMaGiangVienPB().get(1);
-					String maGVTV3 = phanCongDto.getDsMaGiangVienPB().get(2);
+
 					GiangVien giangVienCT = giangVienService.layTheoMa(maGVCT);
 					GiangVien giangVienTK = giangVienService.layTheoMa(maGVTK);
-					GiangVien giangVientv3 = giangVienService.layTheoMa(maGVTV3);
 
 					if (nhom != null) {
 						if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVCT)) {
@@ -330,12 +333,6 @@ public class QuanLyBoMonController {
 									.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
 						}
 					}
-					if (nhom != null) {
-						if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVTV3)) {
-							return ResponseEntity.status(500)
-									.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
-						}
-					}
 
 					PhanCong phanCongCT = new PhanCong("chu tich", phanCongDto.getChamCong(), nhom, giangVienCT);
 					phanCongCT.setMaPhanCong(phanCongDto.getMaPhanCong());
@@ -345,9 +342,22 @@ public class QuanLyBoMonController {
 					phanCongTK.setMaPhanCong(phanCongDto.getMaPhanCong());
 					phanCongs.add(phanCongService.luu(phanCongTK));
 
-					PhanCong phanCongTV3 = new PhanCong("thanh vien 3", phanCongDto.getChamCong(), nhom, giangVientv3);
-					phanCongTV3.setMaPhanCong(phanCongDto.getMaPhanCong());
-					phanCongs.add(phanCongService.luu(phanCongTV3));
+					if (phanCongDto.getDsMaGiangVienPB().size() > 2) {
+
+						String maGVTV3 = phanCongDto.getDsMaGiangVienPB().get(2);
+						GiangVien giangVientv3 = giangVienService.layTheoMa(maGVTV3);
+						PhanCong phanCongTV3 = new PhanCong("thanh vien 3", phanCongDto.getChamCong(), nhom,
+								giangVientv3);
+						if (nhom != null) {
+							if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVTV3)) {
+								return ResponseEntity.status(500)
+										.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+							}
+						}
+						phanCongTV3.setMaPhanCong(phanCongDto.getMaPhanCong());
+						phanCongs.add(phanCongService.luu(phanCongTV3));
+					}
+
 				} catch (RuntimeException e) {
 					e.printStackTrace();
 				}
@@ -356,48 +366,50 @@ public class QuanLyBoMonController {
 			Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
 			Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
 			switch (phanCongDto.getTiet()) {
-				case "1-2" : {
-					tgbd.setHours(6);
-					tgbd.setMinutes(30);
-					tgkt.setHours(8);
-					tgkt.setMinutes(10);
-					break;
-				}
-				case "3-4": {
-					tgbd.setHours(8);
-					tgbd.setMinutes(10);
-					tgkt.setHours(10);
-					break;
-				}
-				case "5-6" : {
-					tgbd.setHours(10);
-					tgkt.setHours(11);
-					tgbd.setMinutes(40);
-					break;
-				}
-				case "7-8" : {
-					tgbd.setHours(12);
-					tgbd.setMinutes(30);
-					tgkt.setHours(2);
-					tgbd.setMinutes(10);
-					break;
-				}
-				case "9-10" :{
-					tgbd.setHours(14);
-					tgbd.setMinutes(10);
-					tgkt.setHours(3);
-					tgbd.setMinutes(50);
-					break;
-				}
-				case "11-12" : {
-					tgbd.setHours(16);
-					tgkt.setHours(17);
-					tgbd.setMinutes(40);
-					break;
-				}
+			case "1-2": {
+				tgbd.setHours(6);
+				tgbd.setMinutes(30);
+				tgkt.setHours(8);
+				tgkt.setMinutes(10);
+				break;
 			}
-			sinhVienService.layTatCaSinhVienTheoNhom(phanCongDto.getMaNhom() == null ?
-				"123" : Objects.requireNonNull(nhom).getMaNhom()).forEach(sv -> {
+			case "3-4": {
+				tgbd.setHours(8);
+				tgbd.setMinutes(10);
+				tgkt.setHours(10);
+				break;
+			}
+			case "5-6": {
+				tgbd.setHours(10);
+				tgkt.setHours(11);
+				tgbd.setMinutes(40);
+				break;
+			}
+			case "7-8": {
+				tgbd.setHours(12);
+				tgbd.setMinutes(30);
+				tgkt.setHours(2);
+				tgbd.setMinutes(10);
+				break;
+			}
+			case "9-10": {
+				tgbd.setHours(14);
+				tgbd.setMinutes(10);
+				tgkt.setHours(3);
+				tgbd.setMinutes(50);
+				break;
+			}
+			case "11-12": {
+				tgbd.setHours(16);
+				tgkt.setHours(17);
+				tgbd.setMinutes(40);
+				break;
+			}
+			}
+			sinhVienService
+					.layTatCaSinhVienTheoNhom(
+							phanCongDto.getMaNhom() == null ? "123" : Objects.requireNonNull(nhom).getMaNhom())
+					.forEach(sv -> {
 						try {
 							Phong phong = phongService.layPhongTheoTenPhong(phanCongDto.getPhong());
 							if (phanCongDto.getViTriPhanCong().equals("PB")) {
@@ -550,7 +562,8 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/xuat-ketquanhom-kltn")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuatKetQuaNhomKLTN(@RequestBody DuyetRequest request, HttpServletResponse response) throws RuntimeException {
+	public void xuatKetQuaNhomKLTN(@RequestBody DuyetRequest request, HttpServletResponse response)
+			throws RuntimeException {
 		if (request.getMaHocKy() == null) {
 			throw new RuntimeException("Please give me ma Hoc Ky");
 		}
@@ -574,7 +587,8 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/xuat-nhom-ra-pb")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public void xuatDSNhomRaPB(@RequestBody DuyetRequest request, HttpServletResponse response) throws RuntimeException {
+	public void xuatDSNhomRaPB(@RequestBody DuyetRequest request, HttpServletResponse response)
+			throws RuntimeException {
 		if (request.getMaHocKy() == null) {
 			throw new RuntimeException("Please give me ma Hoc Ky");
 		}
@@ -615,7 +629,7 @@ public class QuanLyBoMonController {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/xuat-file-mau-gv")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public void xuaFileMauGaingVien(HttpServletResponse response) throws RuntimeException {

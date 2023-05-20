@@ -546,7 +546,7 @@ public class KeHoachController {
 					KeHoachPBDto keHoachPBDto = new KeHoachPBDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(), 
 							Arrays.asList(ngayThucHienKL),kh.getHocKy(), kh.getHocKy().getMaHocKy(), kh.getThoiGianBatDau(), 
 							kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(),
-							kh.getLoaiKeHoach().getId(), kh.getPhong(), nhomSvPB,nhomSinhVienPB, nhomGiangVienPB);
+							kh.getLoaiKeHoach().getId(), phongService.layTheoMa(kh.getPhong()).getTenPhong(), nhomSvPB,nhomSinhVienPB, nhomGiangVienPB);
 					
 					dsKeHoach.add(keHoachPBDto);
 				});

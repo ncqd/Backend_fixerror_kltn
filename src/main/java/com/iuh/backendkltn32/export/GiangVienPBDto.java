@@ -12,10 +12,10 @@ import lombok.Setter;
 public class GiangVienPBDto {
 	
 	private String maGiangVien;
-	private String tenGiangnhVien;
+	private String tenGiangVien;
 	@Override
 	public String toString() {
-		return "SinhVienNhomVaiTroDto [maGiangVien=" + maGiangVien + ", tenGiangnhVien=" + tenGiangnhVien + "]";
+		return "SinhVienNhomVaiTroDto [maGiangVien=" + maGiangVien + ", tenGiangnhVien=" + tenGiangVien + "]";
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.ChoXemDiemDto;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.HocPhanKhoaLuanTotNghiep;
 import com.iuh.backendkltn32.entity.KeHoach;
@@ -97,5 +99,18 @@ public class HocKyController {
 				"ROLE_QUANLY", null, new LoaiKeHoach(5)));
 
 		return hocKy;
+	}
+	
+	@PostMapping("/cho-xem-diem")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public ResponseEntity<?> choXemDiem(@RequestBody ChoXemDiemDto choXemDiemDto) throws RuntimeException {
+		if (choXemDiemDto.getMaHocKy() == null) {
+			throw new RuntimeException("Mã Học Kỳ Sai");
+		}
+		HocKy hocKy = hocKyService.layTheoMa(choXemDiemDto.getMaHocKy());
+		hocKy.setChoXemDiem(choXemDiemDto.getChoXemDiem());
+		hocKyService.capNhat(hocKy);
+		
+		return ResponseEntity.ok("Cập nhật thành công");
 	}
 }

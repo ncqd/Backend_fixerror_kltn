@@ -183,7 +183,7 @@ public class DeTaiController {
 		try {
 
 			List<DeTai> dsDeTai = new ArrayList<>();
-			HocKy hocKy = new HocKy(layDeTaiRquestDto.getMaHocKy(), layDeTaiRquestDto.getSoHocKy(), null, null);
+			HocKy hocKy = new HocKy(layDeTaiRquestDto.getMaHocKy(), layDeTaiRquestDto.getSoHocKy(), null, null, null);
 			if (hocKy.getMaHocKy() == null) {
 				hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 			}

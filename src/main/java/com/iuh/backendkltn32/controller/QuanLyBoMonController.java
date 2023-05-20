@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.ChoXemDiemDto;
 import com.iuh.backendkltn32.dto.DuyetRequest;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
@@ -71,6 +72,9 @@ public class QuanLyBoMonController {
 
 	@Autowired
 	private PhongService phongService;
+	
+	@Autowired
+	private QuanLyBoMonService quanLyBoMonService;
 
 	@Autowired
 	private PhieuChamMauService phieuChamMauService;

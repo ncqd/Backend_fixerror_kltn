@@ -1,5 +1,7 @@
 package com.iuh.backendkltn32.service.impl;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,7 @@ import com.iuh.backendkltn32.repository.QuanLyBoMonRepository;
 import com.iuh.backendkltn32.service.QuanLyBoMonService;
 
 @Service
+@Transactional
 public class QuanLyBoMonImpl implements QuanLyBoMonService{
 	
 	@Autowired
@@ -39,8 +42,13 @@ public class QuanLyBoMonImpl implements QuanLyBoMonService{
 
 	@Override
 	public QuanLyBoMon capNhat(QuanLyBoMon obj) throws RuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		QuanLyBoMon quanLyBoMon = quanLyBoMonRepository.getQuanLyTheoMaGiangVien(obj.getMaGiangVien());
+		
+		if (quanLyBoMon == null) {
+			throw new RuntimeException("Không tồn tại người dùng");
+		}
+//		quanLyBoMon.setChoXemDiem(obj.getChoXemDiem());
+		return quanLyBoMonRepository.save(quanLyBoMon);
 	}
 
 	@Override

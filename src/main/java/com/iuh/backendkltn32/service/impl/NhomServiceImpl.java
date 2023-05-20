@@ -9,7 +9,10 @@ import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.repository.NhomRepository;
 import com.iuh.backendkltn32.service.NhomService;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class NhomServiceImpl implements NhomService{
 	
 	@Autowired
@@ -62,10 +65,8 @@ public class NhomServiceImpl implements NhomService{
 		}
 		nhomKhongTonTai.setDeTai(obj.getDeTai());
 		nhomKhongTonTai.setTenNhom(obj.getTenNhom());
-		
-		repository.save(nhomKhongTonTai);
 
-		return nhomKhongTonTai;
+		return repository.save(nhomKhongTonTai);
 	}
 
 	@Override

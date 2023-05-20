@@ -384,7 +384,7 @@ public class KetQuaKLTNExporter {
 			diemPB += pc.getDiemPhieuCham();
 		}
 		diemPB = diemPB / 3;
-		createCellTieuDe(row, nextColum++, diemPB, style);
+		createCellTieuDe(row, nextColum++, Math.floor(diemPB * 100) / 100, style);
 
 		Double diemHD = (phieuChamHoiDong1SV1.getDiemPhieuCham() + phieuChamHoiDong2SV1.getDiemPhieuCham()) / 2;
 		createCellTieuDe(row, nextColum++, phieuChamHoiDong1SV1.getDiemPhieuCham(), style);
@@ -392,9 +392,10 @@ public class KetQuaKLTNExporter {
 		createCellTieuDe(row, nextColum++, diemHD, style);
 
 		Double kq = (diemHD + diemPB) / 2;
-		createCellTieuDe(row, nextColum++, kq, style);
-		createCellTieuDe(row, nextColum++, "", style);
-		createCellTieuDe(row, nextColum++, Math.floor(kq * 10) / 10, style);
+		Double diemBao = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
+		createCellTieuDe(row, nextColum++, Math.floor(kq * 100) / 100, style);
+		createCellTieuDe(row, nextColum++, diemBao, style);
+		createCellTieuDe(row, nextColum++, Math.floor((kq + diemBao) * 10) / 10, style);
 
 		if (mas.size() > 1) {
 			PhieuCham phieuChamHDSV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "HD").get(0);
@@ -446,7 +447,7 @@ public class KetQuaKLTNExporter {
 				diemPB2 += pc.getDiemPhieuCham();
 			}
 			diemPB2 = diemPB2 / 3;
-			createCellTieuDe(rowNext, nextColum2++, diemPB2, style);
+			createCellTieuDe(rowNext, nextColum2++,  Math.floor(diemPB2 * 100) / 100, style);
 
 			Double diemHD2 = (phieuChamHoiDong1SV2.getDiemPhieuCham() + phieuChamHoiDong2SV2.getDiemPhieuCham()) / 2;
 			createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
@@ -454,9 +455,10 @@ public class KetQuaKLTNExporter {
 			createCellTieuDe(rowNext, nextColum2++, diemHD, style);
 
 			Double kq2 = (diemHD2 + diemPB2) / 2;
-			createCellTieuDe(rowNext, nextColum2++, kq2, style);
-			createCellTieuDe(rowNext, nextColum2++, "", style);
-			createCellTieuDe(rowNext, nextColum2++, Math.floor(kq * 10) / 10, style);
+			Double diemBao2 = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
+			createCellTieuDe(rowNext, nextColum2++,  Math.floor(kq2 * 100) / 100, style);
+			createCellTieuDe(rowNext, nextColum2++, diemBao2, style);
+			createCellTieuDe(rowNext, nextColum2++, Math.floor((kq + diemBao2) * 10) / 10, style);
 		} else {
 			int nextColum2 = columnCount + 1;
 			for (int i = 0; i < 47; i++) {

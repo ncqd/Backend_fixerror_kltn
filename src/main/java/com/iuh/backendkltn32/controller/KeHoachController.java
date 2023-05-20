@@ -200,6 +200,7 @@ public class KeHoachController {
 
 	@GetMapping("/tach-ke-hoach")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_SINHVIEN')")
+	@SuppressWarnings("deprecation")
 	public List<NgayDto> tachKeHoach() {
 		List<NgayDto> result = new ArrayList<>();
 		String maHocKy = hocKyService.layHocKyCuoiCungTrongDS().getMaHocKy();
@@ -210,7 +211,7 @@ public class KeHoachController {
 				while (kh.getThoiGianKetThuc().getDate() - (kh.getThoiGianBatDau().getDate() + date) >= 0) {
 					Timestamp ngay = new Timestamp(kh.getThoiGianBatDau().getYear(),
 							kh.getThoiGianBatDau().getMonth(),
-							kh.getThoiGianBatDau().getDate() + date >= 30 ? date + 1
+							kh.getThoiGianBatDau().getDate() + date > 31 ? date + 1
 									: kh.getThoiGianBatDau().getDate() + date,
 							kh.getThoiGianBatDau().getHours(), kh.getThoiGianBatDau().getMinutes(),
 							kh.getThoiGianBatDau().getSeconds(), kh.getThoiGianBatDau().getNanos());

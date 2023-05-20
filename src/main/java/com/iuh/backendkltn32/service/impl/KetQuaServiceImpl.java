@@ -57,5 +57,15 @@ public class KetQuaServiceImpl implements KetQuaService {
 		return repository.save(khKhongTonTai);
 	}
 
+	@Override
+	public List<KetQua> layKetQuaMaSinHVien(String maSinhVien) {
+		return repository.layDiemBaoByMaSv(maSinhVien);
+	}
+
+	@Override
+	public List<KetQua> capNhatDiemBao(List<KetQua> ketQuas) {
+		return repository.saveAll(ketQuas);
+	}
+
 
 }

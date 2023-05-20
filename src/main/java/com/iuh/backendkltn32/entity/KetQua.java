@@ -22,6 +22,11 @@ import java.io.Serializable;
 @Table(name = "KetQua")
 public class KetQua implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -36,6 +41,8 @@ public class KetQua implements Serializable {
 	private PhieuCham phieuCham;
 
 	private Double diemTongKet;
+	
+	private Double diemBao;
 	
 	public Double getDiemTongKet() {
 		this.diemTongKet = (double) 0;
@@ -68,4 +75,14 @@ public class KetQua implements Serializable {
 	public void setPhieuCham(PhieuCham phieuCham) {
 		this.phieuCham = phieuCham;
 	}
+
+	public Double getDiemBao() {
+		return diemBao;
+	}
+
+	public void setDiemBao(Double diemBao) {
+		this.diemBao = diemBao;
+	}
+	
+	
 }

@@ -55,12 +55,12 @@ public class PhieuChamMauController {
 			try {
 				diemTong += tieuChiChamDiemService.layTheoMa(matc).getDiemToiDa();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				throw new RuntimeException(e.getMessage());
 			}
 		}
 
 		if (diemTong != 10) {
+			System.out.println(diemTong);
 			throw new RuntimeException("Khong Duoc Qua 10 Diem");
 		}
 		return phieuChamMauService

@@ -30,6 +30,9 @@ public class DiemSinhVienQuanLyDto {
 	private Double diemTBBM;
 	private Double diemTBTVHD;
 	private Double ketQua;
+	private String duocRaPB;
+	private Double diemTK;
+	private Double diembao;
 	
 
 }

@@ -60,6 +60,7 @@ public class HocKyServiceImpl implements HocKyService{
 			throw new RuntimeException("Học kỳ không tồn tại");
 		}
 		hocKyKhongTonTai.setSoHocKy(obj.getSoHocKy());
+		hocKyKhongTonTai.setChoXemDiem(obj.getChoXemDiem());
 		
 		repository.save(hocKyKhongTonTai);
 

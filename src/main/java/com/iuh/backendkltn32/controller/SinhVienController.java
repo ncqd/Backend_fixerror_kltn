@@ -1,6 +1,7 @@
 package com.iuh.backendkltn32.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,7 +195,7 @@ public class SinhVienController {
 		SinhVien sv = sinhVienService.layTheoMa(maSinhVien);
 		if (sv.getLopHocPhan().getHocPhanKhoaLuanTotNghiep().getHocKy().getChoXemDiem()) {
 			if (phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").size() <= 0) {
-				return ResponseEntity.ok(new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", null, null, null));
+				return ResponseEntity.ok(Arrays.asList(new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", null, null, null)));
 			}
 			PhieuCham phieuChamHD1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "HD").get(0);
 			PhieuCham phieuChamHoiDong1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSinhVien, "CT").get(0);
@@ -246,7 +247,7 @@ public class SinhVienController {
 			}
 			
 			
-			return ResponseEntity.ok(new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", kq, diemThang4, diemChu));
+			return ResponseEntity.ok(Arrays.asList(new KetQuaHocTapDto(sv.getLopHocPhan().getMaLopHocPhan(), "Khóa luận tốt nghiệp", "5", kq, diemThang4, diemChu)));
 		}
 		return ResponseEntity.ok(new ArrayList<>());
 		

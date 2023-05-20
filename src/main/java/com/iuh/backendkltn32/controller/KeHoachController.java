@@ -468,6 +468,9 @@ public class KeHoachController {
 	public List<KeHoach> taoKeHoachGiangVienhhd(@RequestBody KeHoachGvDto keHoachGvDto) throws RuntimeException {
 		List<KeHoach> result = new ArrayList<>();
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		if (keHoachGvDto.getDsMaGiangVienPB().size() < 2 ||keHoachGvDto.getDsMaGiangVienPB().size() >3 ) {
+			throw new RuntimeException("Chỉ từ 2 đến 3 giảng viên");
+		}
 		for (String ma : keHoachGvDto.getDsMaGiangVienPB()) {
 			Timestamp tgbd = new Timestamp(keHoachGvDto.getNgay().getTime());
 			Timestamp tgkt = new Timestamp(keHoachGvDto.getNgay().getTime());

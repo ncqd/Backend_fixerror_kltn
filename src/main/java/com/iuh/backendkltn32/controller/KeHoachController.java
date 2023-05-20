@@ -348,7 +348,7 @@ public class KeHoachController {
 			case "7-8":
 				tgbd.setHours(12);
 				tgbd.setMinutes(30);
-				tgkt.setHours(2);
+				tgkt.setHours(14);
 				tgbd.setMinutes(10);
 				break;
 			case "9-10":
@@ -491,7 +491,7 @@ public class KeHoachController {
 			case "7-8":
 				tgbd.setHours(12);
 				tgbd.setMinutes(30);
-				tgkt.setHours(2);
+				tgkt.setHours(14);
 				tgbd.setMinutes(10);
 				break;
 			case "9-10":
@@ -503,7 +503,7 @@ public class KeHoachController {
 			case "11-12":
 				tgbd.setHours(16);
 				tgkt.setHours(17);
-				tgbd.setMinutes(40);
+				tgkt.setMinutes(40);
 				break;
 			}
 			KeHoach keHoach = new KeHoach("Lịch chấm hội đồng", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt, 1,

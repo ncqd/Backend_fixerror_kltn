@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import com.iuh.backendkltn32.entity.*;
 import com.iuh.backendkltn32.service.*;
@@ -288,150 +289,155 @@ public class QuanLyBoMonController {
 
 	@PostMapping("/them-ds-phan-cong")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	@Transactional
 	public ResponseEntity<?> themPhanCongGiangVien(@RequestBody List<PhanCongDto2> phanCongDtos)
 			throws RuntimeException {
-		List<PhanCong> phanCongs = new ArrayList<>();
-		for (PhanCongDto2 phanCongDto : phanCongDtos) {
-			Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
-			if (phanCongDto.getViTriPhanCong().equals("phan bien")) {
-				for (String ma : phanCongDto.getDsMaGiangVienPB()) {
-					GiangVien giangVien;
+		try {
+			List<PhanCong> phanCongs = new ArrayList<>();
+			for (PhanCongDto2 phanCongDto : phanCongDtos) {
+				Nhom nhom = nhomService.layTheoMa(phanCongDto.getMaNhom() == null ? "123" : phanCongDto.getMaNhom());
+				if (phanCongDto.getViTriPhanCong().equals("phan bien")) {
+					for (String ma : phanCongDto.getDsMaGiangVienPB()) {
+						GiangVien giangVien;
+						try {
+							if (nhom != null) {
+								if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+									return ResponseEntity.status(500)
+											.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+								}
+							}
+							System.out.println(ma);
+							giangVien = giangVienService.layTheoMa(ma);
+
+							PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(),
+									nhom, giangVien);
+							phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
+							phanCongs.add(phanCongService.luu(phanCong));
+						} catch (RuntimeException e) {
+							e.printStackTrace();
+						}
+					}
+				} else if (phanCongDto.getViTriPhanCong().equals("hoi dong")) {
 					try {
+						String maGVCT = phanCongDto.getDsMaGiangVienPB().get(0);
+						String maGVTK = phanCongDto.getDsMaGiangVienPB().get(1);
+
+						GiangVien giangVienCT = giangVienService.layTheoMa(maGVCT);
+						GiangVien giangVienTK = giangVienService.layTheoMa(maGVTK);
+
 						if (nhom != null) {
-							if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(ma)) {
+							if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVCT)) {
 								return ResponseEntity.status(500)
 										.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
 							}
 						}
-						System.out.println(ma);
-						giangVien = giangVienService.layTheoMa(ma);
+						if (nhom != null) {
+							if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVTK)) {
+								return ResponseEntity.status(500)
+										.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+							}
+						}
 
-						PhanCong phanCong = new PhanCong(phanCongDto.getViTriPhanCong(), phanCongDto.getChamCong(),
-								nhom, giangVien);
-						phanCong.setMaPhanCong(phanCongDto.getMaPhanCong());
-						phanCongs.add(phanCongService.luu(phanCong));
+						PhanCong phanCongCT = new PhanCong("chu tich", phanCongDto.getChamCong(), nhom, giangVienCT);
+						phanCongCT.setMaPhanCong(phanCongDto.getMaPhanCong());
+						phanCongs.add(phanCongService.luu(phanCongCT));
+
+						PhanCong phanCongTK = new PhanCong("thu ky", phanCongDto.getChamCong(), nhom, giangVienTK);
+						phanCongTK.setMaPhanCong(phanCongDto.getMaPhanCong());
+						phanCongs.add(phanCongService.luu(phanCongTK));
+
+						if (phanCongDto.getDsMaGiangVienPB().size() > 2) {
+
+							String maGVTV3 = phanCongDto.getDsMaGiangVienPB().get(2);
+							GiangVien giangVientv3 = giangVienService.layTheoMa(maGVTV3);
+							PhanCong phanCongTV3 = new PhanCong("thanh vien 3", phanCongDto.getChamCong(), nhom,
+									giangVientv3);
+							if (nhom != null) {
+								if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVTV3)) {
+									return ResponseEntity.status(500)
+											.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
+								}
+							}
+							phanCongTV3.setMaPhanCong(phanCongDto.getMaPhanCong());
+							phanCongs.add(phanCongService.luu(phanCongTV3));
+						}
+
 					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}
 				}
-			} else if (phanCongDto.getViTriPhanCong().equals("hoi dong")) {
-				try {
-					String maGVCT = phanCongDto.getDsMaGiangVienPB().get(0);
-					String maGVTK = phanCongDto.getDsMaGiangVienPB().get(1);
 
-					GiangVien giangVienCT = giangVienService.layTheoMa(maGVCT);
-					GiangVien giangVienTK = giangVienService.layTheoMa(maGVTK);
-
-					if (nhom != null) {
-						if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVCT)) {
-							return ResponseEntity.status(500)
-									.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
-						}
-					}
-					if (nhom != null) {
-						if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVTK)) {
-							return ResponseEntity.status(500)
-									.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
-						}
-					}
-
-					PhanCong phanCongCT = new PhanCong("chu tich", phanCongDto.getChamCong(), nhom, giangVienCT);
-					phanCongCT.setMaPhanCong(phanCongDto.getMaPhanCong());
-					phanCongs.add(phanCongService.luu(phanCongCT));
-
-					PhanCong phanCongTK = new PhanCong("thu ky", phanCongDto.getChamCong(), nhom, giangVienTK);
-					phanCongTK.setMaPhanCong(phanCongDto.getMaPhanCong());
-					phanCongs.add(phanCongService.luu(phanCongTK));
-
-					if (phanCongDto.getDsMaGiangVienPB().size() > 2) {
-
-						String maGVTV3 = phanCongDto.getDsMaGiangVienPB().get(2);
-						GiangVien giangVientv3 = giangVienService.layTheoMa(maGVTV3);
-						PhanCong phanCongTV3 = new PhanCong("thanh vien 3", phanCongDto.getChamCong(), nhom,
-								giangVientv3);
-						if (nhom != null) {
-							if (nhom.getDeTai().getGiangVien().getMaGiangVien().equals(maGVTV3)) {
-								return ResponseEntity.status(500)
-										.body("Không cho phép giảng viên hướng dẫn phản biện đề tài này");
-							}
-						}
-						phanCongTV3.setMaPhanCong(phanCongDto.getMaPhanCong());
-						phanCongs.add(phanCongService.luu(phanCongTV3));
-					}
-
-				} catch (RuntimeException e) {
-					e.printStackTrace();
+				Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
+				Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
+				switch (phanCongDto.getTiet()) {
+				case "1-2": {
+					tgbd.setHours(6);
+					tgbd.setMinutes(30);
+					tgkt.setHours(8);
+					tgkt.setMinutes(10);
+					break;
 				}
-			}
+				case "3-4": {
+					tgbd.setHours(8);
+					tgbd.setMinutes(10);
+					tgkt.setHours(10);
+					break;
+				}
+				case "5-6": {
+					tgbd.setHours(10);
+					tgkt.setHours(11);
+					tgkt.setMinutes(40);
+					break;
+				}
+				case "7-8": {
+					tgbd.setHours(12);
+					tgbd.setMinutes(30);
+					tgkt.setHours(2);
+					tgkt.setMinutes(10);
+					break;
+				}
+				case "9-10": {
+					tgbd.setHours(14);
+					tgbd.setMinutes(10);
+					tgkt.setHours(3);
+					tgkt.setMinutes(50);
+					break;
+				}
+				case "11-12": {
+					tgbd.setHours(16);
+					tgkt.setHours(17);
+					tgkt.setMinutes(40);
+					break;
+				}
+				}
+				sinhVienService
+						.layTatCaSinhVienTheoNhom(
+								phanCongDto.getMaNhom() == null ? "123" : Objects.requireNonNull(nhom).getMaNhom())
+						.forEach(sv -> {
+							try {
+								Phong phong = phongService.layPhongTheoTenPhong(phanCongDto.getPhong());
+								if (phanCongDto.getViTriPhanCong().equals("PB")) {
+									KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phong.getTenPhong(), null,
+											hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1,
+											"ROLE_SINHVIEN", sv, new LoaiKeHoach(3), phong.getId() + "");
+									keHoachService.luu(keHoach);
+								} else {
+									KeHoach keHoach = new KeHoach("Lịch chấm hội đồng sinh viên", phong.getTenPhong(), null,
+											hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1,
+											"ROLE_SINHVIEN", sv, new LoaiKeHoach(3), phong.getId() + "");
+									keHoachService.luu(keHoach);
+								}
 
-			Timestamp tgbd = new Timestamp(phanCongDto.getNgay().getTime());
-			Timestamp tgkt = new Timestamp(phanCongDto.getNgay().getTime());
-			switch (phanCongDto.getTiet()) {
-			case "1-2": {
-				tgbd.setHours(6);
-				tgbd.setMinutes(30);
-				tgkt.setHours(8);
-				tgkt.setMinutes(10);
-				break;
-			}
-			case "3-4": {
-				tgbd.setHours(8);
-				tgbd.setMinutes(10);
-				tgkt.setHours(10);
-				break;
-			}
-			case "5-6": {
-				tgbd.setHours(10);
-				tgkt.setHours(11);
-				tgbd.setMinutes(40);
-				break;
-			}
-			case "7-8": {
-				tgbd.setHours(12);
-				tgbd.setMinutes(30);
-				tgkt.setHours(2);
-				tgbd.setMinutes(10);
-				break;
-			}
-			case "9-10": {
-				tgbd.setHours(14);
-				tgbd.setMinutes(10);
-				tgkt.setHours(3);
-				tgbd.setMinutes(50);
-				break;
-			}
-			case "11-12": {
-				tgbd.setHours(16);
-				tgkt.setHours(17);
-				tgbd.setMinutes(40);
-				break;
-			}
-			}
-			sinhVienService
-					.layTatCaSinhVienTheoNhom(
-							phanCongDto.getMaNhom() == null ? "123" : Objects.requireNonNull(nhom).getMaNhom())
-					.forEach(sv -> {
-						try {
-							Phong phong = phongService.layPhongTheoTenPhong(phanCongDto.getPhong());
-							if (phanCongDto.getViTriPhanCong().equals("PB")) {
-								KeHoach keHoach = new KeHoach("Lịch phản biện sinh viên", phong.getTenPhong(), null,
-										hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1,
-										"ROLE_SINHVIEN", sv, new LoaiKeHoach(3), phong.getId() + "");
-								keHoachService.luu(keHoach);
-							} else {
-								KeHoach keHoach = new KeHoach("Lịch chấm hội đồng sinh viên", phong.getTenPhong(), null,
-										hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1,
-										"ROLE_SINHVIEN", sv, new LoaiKeHoach(3), phong.getId() + "");
-								keHoachService.luu(keHoach);
+							} catch (RuntimeException e) {
+								e.printStackTrace();
 							}
-
-						} catch (RuntimeException e) {
-							e.printStackTrace();
-						}
-					});
+						});
+			}
+			return ResponseEntity.ok(phanCongs);
+		} catch (Exception e) {
+			throw new RuntimeException("Đã xảy ra lỗi \n" +e.getMessage());
 		}
-		return ResponseEntity.ok(phanCongs);
-
+		
 	}
 
 	@PutMapping("/cap-nhat-phan-cong")

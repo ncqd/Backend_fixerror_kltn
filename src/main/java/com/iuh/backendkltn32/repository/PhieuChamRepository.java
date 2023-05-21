@@ -18,18 +18,20 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai  "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
-			+ "where a.maGiangVien = :maGiangVien and diemPhieuCham >= 8 and tenPhieu = 'PB' "
+			+ "where a.maGiangVien = :maGiangVien and diemPhieuCham >= 8 and tenPhieu =  :tenPhieu "
 			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
 	List<PhieuCham> layPhieuTheoPPChamHD(@Param("maGiangVien") String maGiangVien, @Param("mahocky") String mahocky,
-			@Param("viTriPhanCong") String viTriPhanCong);
+			@Param("viTriPhanCong") String viTriPhanCong, 
+			@Param("tenPhieu") String tenPhieu);
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
-			+ "where a.maGiangVien = :maGiangVien and diemPhieuCham < 8 and tenPhieu = 'PB' "
+			+ "where a.maGiangVien = :maGiangVien and diemPhieuCham < 8 and tenPhieu = :tenPhieu "
 			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
 	List<PhieuCham> layPhieuTheoPPChamPOSTER(@Param("maGiangVien") String maGiangVien, @Param("mahocky") String mahocky,
-			@Param("viTriPhanCong") String viTriPhanCong);
+			@Param("viTriPhanCong") String viTriPhanCong, 
+			@Param("tenPhieu") String tenPhieu);
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a   \n"
 			+ "join detai d on a.madetai = d.madetai  " + "join ketqua k on a.maPhieu = k.maPhieu  "
@@ -58,18 +60,20 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai  "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
-			+ "where diemPhieuCham >= 8 and tenPhieu = 'PB'  and k.maSinhVien = :maSinhVien "
+			+ "where diemPhieuCham >= 8 and tenPhieu = :tenPhieu  and k.maSinhVien = :maSinhVien "
 			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
 	List<PhieuCham> layPhieuTheoPPChamHDQL( @Param("mahocky") String mahocky , 
-			@Param("viTriPhanCong") String viTriPhanCong , @Param("maSinhVien") String maSInhVien);
+			@Param("viTriPhanCong") String viTriPhanCong , @Param("maSinhVien") String maSInhVien, 
+			@Param("tenPhieu") String tenPhieu);
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
-			+ "where diemPhieuCham < 8 and tenPhieu = 'PB'  and k.maSinhVien = :maSinhVien "
+			+ "where diemPhieuCham < 8 and tenPhieu = :tenPhieu  and k.maSinhVien = :maSinhVien "
 			+ "and viTriPhanCong = :viTriPhanCong and maHocKy = :mahocky ; ", nativeQuery = true)
 	List<PhieuCham> layPhieuTheoPPChamPOSTERQL(@Param("mahocky") String mahocky,
-			@Param("viTriPhanCong") String viTriPhanCong , @Param("maSinhVien") String maSInhVien);
+			@Param("viTriPhanCong") String viTriPhanCong , @Param("maSinhVien") String maSInhVien, 
+			@Param("tenPhieu") String tenPhieu);
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a   \n"
 			+ "join detai d on a.madetai = d.madetai  " + "join ketqua k on a.maPhieu = k.maPhieu  "

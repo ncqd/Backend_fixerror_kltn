@@ -12,9 +12,9 @@ public interface PhieuChamService extends AbstractService<PhieuCham> {
 
 	List<PhieuCham> layDsPhieuChamVaiTro(String maGiangVien, String maHocky, String tenPhieu);
 
-	List<PhieuCham> layDsPhieuChamPosterVaiTro(String maGiangVien, String maHocky, String viTriPhanCong);
+	List<PhieuCham> layDsPhieuChamPosterVaiTro(String maGiangVien, String maHocky, String viTriPhanCong, String tenPhieu);
 
-	List<PhieuCham> layDsPhieuChamHoiDongVaiTro(String maGiangVien, String maHocky, String viTriPhanCong);
+	List<PhieuCham> layDsPhieuChamHoiDongVaiTro(String maGiangVien, String maHocky, String viTriPhanCong, String tenPhieu);
 
 	List<PhieuCham> layPhieuTheoMaSinhVienTenVaiTro(String maSinhVien, String tenPhieu);
 
@@ -24,8 +24,8 @@ public interface PhieuChamService extends AbstractService<PhieuCham> {
 
 	List<PhieuCham> layDsPhieuChamVaiTroQL(String maHocky, String tenPhieu, String maSInhVien);
 
-	List<PhieuCham> layDsPhieuChamPosterVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien);
+	List<PhieuCham> layDsPhieuChamPosterVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien, String tenPhieu);
 
-	List<PhieuCham> layDsPhieuChamHoiDongVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien);
+	List<PhieuCham> layDsPhieuChamHoiDongVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien, String tenPhieu);
 
 }

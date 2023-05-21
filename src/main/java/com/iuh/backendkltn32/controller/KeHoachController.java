@@ -546,12 +546,15 @@ public class KeHoachController {
 						GiangVien giangVien = giangVienService.layTheoMa(keHoachGV.getMaNguoiDung());
 						nhomGiangVienPB.add(new GiangVienPBDto(giangVien.getMaGiangVien(), giangVien.getTenGiangVien()));
 					}
-					KeHoachPBDto keHoachPBDto = new KeHoachPBDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(), 
-							Arrays.asList(ngayThucHienKL),kh.getHocKy(), kh.getHocKy().getMaHocKy(), kh.getThoiGianBatDau(), 
-							kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(),
-							kh.getLoaiKeHoach().getId(), phongService.layTheoMa(kh.getPhong()).getTenPhong(), nhomSvPB,nhomSinhVienPB, nhomGiangVienPB);
-					
-					dsKeHoach.add(keHoachPBDto);
+					if (nhomSinhVienPB.size() > 0) {
+						KeHoachPBDto keHoachPBDto = new KeHoachPBDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
+								Arrays.asList(ngayThucHienKL),kh.getHocKy(), kh.getHocKy().getMaHocKy(), kh.getThoiGianBatDau(),
+								kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(),
+								kh.getLoaiKeHoach().getId(), phongService.layTheoMa(kh.getPhong()).getTenPhong(), nhomSvPB,nhomSinhVienPB, nhomGiangVienPB);
+
+						dsKeHoach.add(keHoachPBDto);
+					}
+
 				});
 
 		return dsKeHoach;

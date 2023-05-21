@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.iuh.backendkltn32.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,17 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iuh.backendkltn32.dto.DangKyNhomRequest;
-import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
-import com.iuh.backendkltn32.dto.LayDsNhomPBDto;
-import com.iuh.backendkltn32.dto.LayKeHoachRequest;
-import com.iuh.backendkltn32.dto.NhomPBResponeDto;
-import com.iuh.backendkltn32.dto.NhomRoleGVRespone;
-import com.iuh.backendkltn32.dto.NhomSinhVienDto;
-import com.iuh.backendkltn32.dto.NhomTruyenDto;
-import com.iuh.backendkltn32.dto.NhomVaiTro;
-import com.iuh.backendkltn32.dto.NhomVaiTroRequest;
-import com.iuh.backendkltn32.dto.SinhVienNhomVaiTroDto;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
@@ -279,7 +269,7 @@ public class NhomController {
 				request.getDsMaSinhVien().get(0), sinhVienTrongNhom.get(0), 0,
 				new Timestamp(System.currentTimeMillis()));
 		tinNhanSerivce.luu(tinNhan);
-		return ResponseEntity.ok("Tin Nhan Da Gui Di Thanh Cong");
+		return ResponseEntity.ok(tinNhan);
 	}
 
 	@PostMapping("/roi-nhom")

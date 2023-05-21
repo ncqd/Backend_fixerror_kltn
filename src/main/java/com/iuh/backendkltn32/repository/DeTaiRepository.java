@@ -55,7 +55,7 @@ public interface DeTaiRepository extends JpaRepository<DeTai, String> {
 			+ "where  h.maHocKy = :maHocKy and h.soHocKy = :soHocKy and maGiangVien = :maGianVien and trangThai = 1; " ,nativeQuery = true)
 	List<DeTai> layDsDeTaiTheoNamHocKyChuaDat(@Param("maHocKy") String maHocKy,@Param("soHocKy") String soHocKy, @Param("maGianVien") String maGiangVien);
 	
-	@Query(value = "select * from DeTai d join nhom n on d.maDeTai = n.maDeTai  "
+	@Query(value = "select * from DeTai "
 			+ "where  maHocKy = :maHocKy and trangThai = 2  order by maGiangVien ; " ,nativeQuery = true)
 	List<DeTai> layDsDeTaiXuaExcel(@Param("maHocKy") String maHocKy);
 	

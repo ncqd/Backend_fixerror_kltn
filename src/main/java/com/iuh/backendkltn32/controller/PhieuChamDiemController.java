@@ -385,7 +385,7 @@ public class PhieuChamDiemController {
 		} else if (viTriCham.equals("PB")) {
 			System.out.println("PB");
 			phieuChamService
-					.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
+					.layDsPhieuChamVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), request.getDotCham())
 					.forEach(phieuCham -> {
 						DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 						phieuCham.getDsKetQua().forEach(sv -> {
@@ -403,7 +403,8 @@ public class PhieuChamDiemController {
 					});
 		} else {
 			System.out.println("Hoi Dong ");
-			for (String vaiTro : request.getVaitro()) {
+			List<String> dsVaiTro = request.getVaitro() == null ? Arrays.asList("CT", "TK", "TV3") :  request.getVaitro();
+			for (String vaiTro : dsVaiTro) {
 				String viTriPhanCong = "";
 				switch (vaiTro) {
 				case "CT":
@@ -416,7 +417,8 @@ public class PhieuChamDiemController {
 					viTriPhanCong = "thanh vien 3";
 					break;
 				}
-				if (request.getPpcham().size() == 1) {
+				List<String> dsPP = request.getPpcham() == null ? new ArrayList<>() :  request.getPpcham();
+				if (dsPP.size() == 1) {
 					if (request.getPpcham().get(0).equals("chamPoster")) {
 						phieuChamService
 								.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)

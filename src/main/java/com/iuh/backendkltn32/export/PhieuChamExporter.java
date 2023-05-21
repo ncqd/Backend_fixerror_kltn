@@ -1,12 +1,19 @@
 package com.iuh.backendkltn32.export;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -61,15 +68,20 @@ public class PhieuChamExporter {
 		this.dsTieuChiChamDiems = dsTieuChiChamDiems;
 	}
 
-	public void export(HttpServletResponse response) throws Exception {
+	public ByteArrayInputStream export() throws Exception {
 		writeHeaderLine();
 		writeDataLines();
 
-		ServletOutputStream outputStream = response.getOutputStream();
+		ByteArrayOutputStream  outputStream = new ByteArrayOutputStream();
 		document.write(outputStream);
-		document.close();
-
+		
 		outputStream.close();
+		
+		 
+//		document.close();
+		
+		 return new ByteArrayInputStream(outputStream.toByteArray());
+		
 
 	}
 
@@ -204,7 +216,6 @@ public class PhieuChamExporter {
 			break;
 
 		}
-		
 
 		XWPFParagraph p6 = document.createParagraph();
 		p6.setAlignment(ParagraphAlignment.CENTER);

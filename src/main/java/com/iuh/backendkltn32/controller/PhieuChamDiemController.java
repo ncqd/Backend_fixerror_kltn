@@ -1,5 +1,9 @@
 package com.iuh.backendkltn32.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,6 +11,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -698,8 +704,8 @@ public class PhieuChamDiemController {
 	@PostMapping("/xuat-phieu-cham-gv")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
 	public void xuatPhieuChamGVPB(HttpServletResponse response, @RequestBody PhieuChamDiemDowRequest request)
-			throws RuntimeException {
-		response.setContentType("multipart/x-mixed-replace;boundary=END");
+			throws Exception {
+		response.setContentType("application/zip");
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
@@ -763,16 +769,21 @@ public class PhieuChamDiemController {
 				throw new RuntimeException(e.getMessage());
 			}
 		}).toList();
+		ZipOutputStream zippedOut = new ZipOutputStream(response.getOutputStream());
 		for (Nhom nhom : nhoms) {
+			byte[] bytes = new byte[1024];
 			PhieuChamExporter phieuChamExporter = new PhieuChamExporter(nhom, request.getVaiTro(), sinhVienService,
 					giangVienService.layTheoMa(request.getMaGiangVien()), tieuChiChamDiems);
-			try {
-				phieuChamExporter.export(response);
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage());
-			}
-		}
+			ByteArrayInputStream  fis = phieuChamExporter.export();
+			zippedOut.putNextEntry(new ZipEntry("PhieuCham_"+request.getVaiTro() + "_" +nhom.getTenNhom() + ".docx"));
 
+			int length;
+			while((length = fis.read(bytes)) >= 0) {
+				zippedOut.write(bytes, 0, length);
+			}
+
+		}
+		zippedOut.close();
 	}
 
 }

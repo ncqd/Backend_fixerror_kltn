@@ -511,7 +511,7 @@ public class PhieuChamDiemController {
 			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
 		}
 		for (Nhom nhom : nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
-			if (phanCongService.layPhanCongTheoMaNhom(nhom).size() > 3) {
+			if (phanCongService.layPhanCongTheoMaNhomVaTen(nhom.getMaNhom(), "thanh vien 3").size() >= 1) {
 				for (String maSV : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
 					if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0) {
 						System.out.println(maSV);

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.GiangVienPBDto;
 import com.iuh.backendkltn32.dto.KeHoachDto;
 import com.iuh.backendkltn32.dto.KeHoachGvDto;
 import com.iuh.backendkltn32.dto.KeHoachPBDto;
@@ -35,7 +36,6 @@ import com.iuh.backendkltn32.entity.LoaiKeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.Phong;
 import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.export.GiangVienPBDto;
 import com.iuh.backendkltn32.service.GiangVienService;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KeHoachService;

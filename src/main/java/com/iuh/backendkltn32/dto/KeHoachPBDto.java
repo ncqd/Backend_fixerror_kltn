@@ -8,7 +8,6 @@ import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.SinhVien;
-import com.iuh.backendkltn32.export.GiangVienPBDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -40,6 +40,7 @@ import com.iuh.backendkltn32.export.FileMauGiangVienExporter;
 import com.iuh.backendkltn32.export.FileMauSinhVienExporter;
 import com.iuh.backendkltn32.export.KetQuaKLTNExporter;
 import com.iuh.backendkltn32.export.MailMergeExporter;
+import com.iuh.backendkltn32.export.PhieuChamExporter;
 import com.iuh.backendkltn32.export.SinhVienExcelExporoter;
 
 @RestController
@@ -647,5 +648,24 @@ public class QuanLyBoMonController {
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
+	}
+	
+	@GetMapping("/xuat-phieu-cham-ql")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public void xuatPhieuChamGVPB(HttpServletResponse response) throws RuntimeException {
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=ketqua_" + currentDateTime + ".xlsx";
+		response.setHeader(headerKey, headerValue);
+
+//		PhieuChamExporter phieuChamExporter = new PhieuChamExporter();
+//		try {
+//			phieuChamExporter.export(response);
+//		} catch (Exception e) {
+//			throw new RuntimeException(e.getMessage());
+//		}
 	}
 }

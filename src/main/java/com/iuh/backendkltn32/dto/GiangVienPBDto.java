@@ -1,4 +1,4 @@
-package com.iuh.backendkltn32.export;
+package com.iuh.backendkltn32.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

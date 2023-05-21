@@ -1,9 +1,14 @@
 package com.iuh.backendkltn32.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import javax.servlet.http.HttpServletResponse;
 
 import com.iuh.backendkltn32.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +30,7 @@ import com.iuh.backendkltn32.entity.PhieuCham;
 import com.iuh.backendkltn32.entity.PhieuChamMau;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
+import com.iuh.backendkltn32.export.PhieuChamExporter;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.DiemThanhPhanService;
 import com.iuh.backendkltn32.service.GiangVienService;
@@ -647,8 +653,8 @@ public class PhieuChamDiemController {
 										phieuChamHoiDong2.getGiangVien().getMaGiangVien(),
 										phieuChamHoiDong2.getGiangVien().getTenGiangVien()));
 
-
-						Double diemTBHD = (phieuChamHoiDong1.getDiemPhieuCham() + phieuChamHoiDong2.getDiemPhieuCham()) / 2;
+						Double diemTBHD = (phieuChamHoiDong1.getDiemPhieuCham() + phieuChamHoiDong2.getDiemPhieuCham())
+								/ 2;
 						Double kq = (diemTBBM + diemTBHD) / 2;
 
 						diemSVDTO.setDiemTBBM(Math.floor(diemTBBM * 10) / 10);
@@ -686,6 +692,82 @@ public class PhieuChamDiemController {
 			});
 		}
 		return ketQuaService.capNhatDiemBao(ketQuas);
+
+	}
+
+	@PostMapping("/xuat-phieu-cham-gv")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
+	public void xuatPhieuChamGVPB(HttpServletResponse response, @RequestBody PhieuChamDiemDowRequest request)
+			throws RuntimeException {
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=ketqua_" + currentDateTime + ".docx";
+		response.setHeader(headerKey, headerValue);
+
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<Nhom> nhoms = new ArrayList<>();
+		switch (request.getVaiTro()) {
+		case "HD":
+			nhoms = nhomService.layNhomTheoHK(hocKy.getMaHocKy(), request.getMaGiangVien());
+			break;
+		case "PB":
+			nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), "phan bien", request.getMaGiangVien());
+			break;
+		case "HoiDong":
+			List<String> vaiTroTemp = Arrays.asList("CT", "TK", "TV3");
+			for (String vaiTro : vaiTroTemp) {
+				String viTriPhanCong = "";
+				switch (vaiTro) {
+				case "CT":
+					viTriPhanCong = "chu tich";
+					break;
+				case "TK":
+					viTriPhanCong = "thu ky";
+					break;
+				case "TV3":
+					viTriPhanCong = "thanh vien 3";
+					break;
+				}
+				List<Nhom> nhomPoster = nhomService.layNhomTheoPPChamPoster(hocKy.getMaHocKy(),
+						request.getMaGiangVien(), viTriPhanCong);
+				if (!nhomPoster.isEmpty() && nhomPoster != null) {
+					for (Nhom nhom : nhomPoster) {
+						nhoms.add(nhom);
+					}
+				}
+				List<Nhom> nhomHD = nhomService.layNhomTheoPPChamHD(hocKy.getMaHocKy(), request.getMaGiangVien(),
+						viTriPhanCong);
+				if (!nhomHD.isEmpty() && nhomHD != null) {
+					for (Nhom nhom : nhomHD) {
+						nhoms.add(nhom);
+					}
+				}
+			}
+			break;
+
+		}
+		PhieuChamMau pcm = phieuChamMauService.layHet(request.getVaiTro(), hocKy.getMaHocKy()).get(0);
+		List<String> maTieuChiChamDiems = Arrays
+				.asList(pcm.getTieuChiChamDiems().substring(1, pcm.getTieuChiChamDiems().length() - 1).split(",\\s"));
+		List<TieuChiChamDiem> tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
+			try {
+				return tieuChiChamDiemService.layTheoMa(tc);
+			} catch (RuntimeException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+		}).toList();
+		for (Nhom nhom : nhoms) {
+			PhieuChamExporter phieuChamExporter = new PhieuChamExporter(nhom, request.getVaiTro(), sinhVienService,
+					giangVienService.layTheoMa(request.getMaGiangVien()), tieuChiChamDiems);
+			try {
+				phieuChamExporter.export(response);
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage());
+			}
+		}
 
 	}
 

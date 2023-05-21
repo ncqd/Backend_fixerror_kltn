@@ -1,7 +1,12 @@
 package com.iuh.backendkltn32.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +32,8 @@ import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.TaiKhoan;
+import com.iuh.backendkltn32.export.FileMauExcelDeTai;
+import com.iuh.backendkltn32.export.FileMauGiangVienExporter;
 import com.iuh.backendkltn32.importer.DeTaiImporter;
 import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
@@ -296,10 +303,34 @@ public class DeTaiController {
 	@GetMapping("/lay-theo-ma/{maDeTai}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> layDeTaiTheoMa(@PathVariable("maDeTai") String maDeTai) {
+<<<<<<< HEAD
+		DeTai deTai1 = deTaiService.layTheoMa(maDeTai);
+=======
 		System.out.println(maDeTai);
 		DeTai deTai1 = deTaiService.layTheoMa(maDeTai.trim());
 //		DeTaiRes deTai = new DeTaiRes(deTai1.getMaDeTai(), deTai1.getTenDeTai(), deTai1.getMucTieuDeTai(),deTai1.getSanPhamDuKien(), 
 //				deTai1.getMoTa(), deTai1.getYeuCauDauVao(), deTai1.getTrangThai(),deTai1.getGioiHanSoNhomThucHien(), deTai1.getGiangVien(), deTai1.getHocKy().getMaHocKy());
+>>>>>>> f584d64fce2ddd14741f89af3e2bc50a074ae575
 		return ResponseEntity.ok(deTai1);
 	}
+	
+	@GetMapping("/xuat-file-mau-de-tai")
+	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN')")
+	public void xuatFileMauDeTai(HttpServletResponse response) throws RuntimeException {
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=ketqua_" + currentDateTime + ".xlsx";
+		response.setHeader(headerKey, headerValue);
+
+		FileMauExcelDeTai fileMauExcelDeTai = new FileMauExcelDeTai();
+		try {
+			fileMauExcelDeTai.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+	
 }

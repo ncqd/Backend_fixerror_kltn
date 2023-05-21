@@ -565,36 +565,6 @@ public class NhomController {
 		return respones;
 	}
 
-	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public Set<NhomVaiTro> layNhomTruyenVaiTro(@RequestBody NhomTruyenDto request) throws RuntimeException {
-		HocKy hocKy = null;
-		if (request.getMaHocKy() == null) {
-			hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-		} else {
-			hocKy = hocKyService.layTheoMa(request.getMaHocKy());
-		}
-		Set<NhomVaiTro> respones = new HashSet<>();
-		String viTriCham = request.getDotCham() != null && !request.getDotCham().isEmpty()
-				&& !request.getDotCham().isBlank() && !request.getDotCham().equals("") ? request.getDotCham() : "All";
-		if (viTriCham.equals("All")) {
-			System.out.println("All");
-			List<Nhom> nhomAs = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
-					request.getMaNguoiDung());
-			if (!nhomAs.isEmpty() && nhomAs != null) {
-				nhomAs.stream().forEach(nhom -> {
-					String maGV = request.getMaNguoiDung();
-					if (xuatSinhVienKhiCan(nhom, "HD", maGV).size() > 0) {
-						respones.add(new NhomVaiTro(nhom.getMaNhom(), nhom.getTenNhom(), nhom.getDeTai().getMaDeTai(),
-								nhom.getDeTai().getTenDeTai(), xuatSinhVienKhiCan(nhom, "HD", maGV), "HD"));
-					}
-				});
-			}
-
-			return respones;
-		}
-		return respones;
-	}
-
 	private List<SinhVienNhomVaiTroDto> xuatSinhVienKhiCan(Nhom nhom, String dotCham, String maGV) {
 		List<SinhVienNhomVaiTroDto> sinhViens = new ArrayList<>();
 

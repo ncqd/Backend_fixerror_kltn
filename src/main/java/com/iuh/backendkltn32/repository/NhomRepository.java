@@ -40,7 +40,7 @@ public interface NhomRepository extends JpaRepository<Nhom, String> {
 			+ "where k.maHocKy = :maHocKy and k.soHocKy = :soHocKy and n.tinhTrang = :tinhTrang   ; ", nativeQuery = true)
 	List<Nhom> layNhomTheoTinhTrang(@Param("maHocKy") String hocKy, @Param("soHocKy") String soHocKy, @Param("tinhTrang") Integer tinhTrang);
 	
-	@Query(value = "select n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s  "
+	@Query(value = "select distinct n.maNhom, tenNhom, maDeTai, tinhTrang, dkDeTai from nhom n join sinhvien s  "
 			+ "on n.maNhom = s.maNhom join lopHocPhan l "
 			+ "on l.maLopHocPhan = s.maLopHocPhan join hocphankhoaluantotnghiep h "
 			+ "on l.maHocPhan = h.maHocPhan join hocKy k " + "on k.maHocKy = h.maHocKy join phancong p " 

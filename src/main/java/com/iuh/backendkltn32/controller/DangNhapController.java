@@ -62,41 +62,46 @@ public class DangNhapController {
 		if (tenTaiKhoan.equals("")){
 			throw new RuntimeException("Ma Khong Rong");
 		}
-		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(tenTaiKhoan, loginRequest.getPassword()));
+		try {
+			Authentication authentication = authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(tenTaiKhoan, loginRequest.getPassword()));
 
-		System.out.println("DangNhapController-dangNhap- " + loginRequest.getTenTaiKhoan());
+			System.out.println("DangNhapController-dangNhap- " + loginRequest.getTenTaiKhoan());
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtService.generateJWTToken(authentication);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = jwtService.generateJWTToken(authentication);
 
-		UserInfoUserDetails userDetailsImpl = (UserInfoUserDetails) authentication.getPrincipal();
+			UserInfoUserDetails userDetailsImpl = (UserInfoUserDetails) authentication.getPrincipal();
 
-		List<String> roles = userDetailsImpl.getAuthorities().stream().map(item -> item.getAuthority())
-				.collect(Collectors.toList());
+			List<String> roles = userDetailsImpl.getAuthorities().stream().map(item -> item.getAuthority())
+					.collect(Collectors.toList());
 
-		RoleDto roleDto = new RoleDto(roles.get(0), roles.get(0).substring(5) + " Role");
+			RoleDto roleDto = new RoleDto(roles.get(0), roles.get(0).substring(5) + " Role");
 
-		switch (roleDto.getRoleName()) {
-		case "ROLE_GIANGVIEN": {
-			
-			GiangVien giangVien = giangVienService.layTheoMa(tenTaiKhoan);
-			return ResponseEntity.ok(new JwtResponse(jwt,  new UserDto<GiangVien>(Arrays.asList(roleDto),  
-					giangVien)));
-		}
-		case "ROLE_SINHVIEN" : {
-			SinhVien sinhVien = sinhVienService.layTheoMa(tenTaiKhoan);
-			return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<SinhVien>(Arrays.asList(roleDto), 
-				 sinhVien)));
-		}
-			
-		case "ROLE_QUANLY": {
-			GiangVien quanLyBoMon = quanLyBoMonService.layTheoMaGiangVien(tenTaiKhoan);
-			return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<GiangVien>(Arrays.asList(roleDto), 
-				 quanLyBoMon)));
+			switch (roleDto.getRoleName()) {
+				case "ROLE_GIANGVIEN": {
+
+					GiangVien giangVien = giangVienService.layTheoMa(tenTaiKhoan);
+					return ResponseEntity.ok(new JwtResponse(jwt,  new UserDto<GiangVien>(Arrays.asList(roleDto),
+							giangVien)));
+				}
+				case "ROLE_SINHVIEN" : {
+					SinhVien sinhVien = sinhVienService.layTheoMa(tenTaiKhoan);
+					return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<SinhVien>(Arrays.asList(roleDto),
+							sinhVien)));
+				}
+
+				case "ROLE_QUANLY": {
+					GiangVien quanLyBoMon = quanLyBoMonService.layTheoMaGiangVien(tenTaiKhoan);
+					return ResponseEntity.ok(new JwtResponse(jwt, new UserDto<GiangVien>(Arrays.asList(roleDto),
+							quanLyBoMon)));
+				}
 			}
+		} catch (RuntimeException e) {
+			throw new RuntimeException("Mã Hoặc Mật Khẩu Sai");
 		}
-		return ResponseEntity.status(401).body("ko co");
+		throw new RuntimeException("Mã Hoặc Mật Khẩu Sai");
+
 //		throw new RuntimeException("Dont have user");
 	}
 

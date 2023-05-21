@@ -143,7 +143,7 @@ public class QuanLyBoMonController {
 						new Timestamp(System.currentTimeMillis()));
 			} else {
 				tinNhan = new TinNhan("Bạn có đề tài đã duyệt",
-						"Đề Tài " + deTai.getTenDeTai() + "| Đã Được Duyệt  |" + deTai.getMaDeTai(), "12392401",
+						"Đề Tài " + deTai.getTenDeTai() + "| Đã Được Duyệt  | "  + " | "+ deTai.getMaDeTai(), "12392401",
 						deTai.getGiangVien().getMaGiangVien(), 0, new Timestamp(System.currentTimeMillis()));
 			}
 

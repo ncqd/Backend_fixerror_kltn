@@ -105,7 +105,6 @@ public class DanhSachNhomKLTNChamDiemExporter {
 		createCell(row, 12, "GVPB1", style);
 		createCell(row, 13, "GVPB2", style);
 		createCell(row, 14, "Hình thức báo cáo", style);
-//		createCell(row, 15, "Hội đồng", style);
 		createCell(row, 15, "TV_HD1", style);
 		createCell(row, 16, "TV_HD2", style);
 		createCell(row, 17, "ThuKy", style);
@@ -170,6 +169,7 @@ public class DanhSachNhomKLTNChamDiemExporter {
 			if (nhomService.layNhomRaDuocPBPoster(hocKy.getMaHocKy()).contains(nhom)) {
 				break;
 			}
+			if (phanCongService.layPhanCongTheoMaNhom(nhom).size() > 3) {
 			Row row = sheet.createRow(rowCount++);
 			row.setHeight((short) 550);
 			int columnCount = 0;

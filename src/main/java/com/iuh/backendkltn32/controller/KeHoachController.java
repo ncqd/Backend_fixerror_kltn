@@ -526,6 +526,7 @@ public class KeHoachController {
 		}
 		keHoachService.layKeHoachTheoMaHocKyVaMaLoai(request.getMaHocKy(), "3", request.getMaNguoiDung()).stream()
 				.forEach(kh -> {
+					
 					String[] ngayThucHienKL = kh.getDsNgayThucHienKhoaLuan() != null
 							? kh.getDsNgayThucHienKhoaLuan().split(",\\s")
 							: new String[0];
@@ -547,6 +548,7 @@ public class KeHoachController {
 						nhomGiangVienPB.add(new GiangVienPBDto(giangVien.getMaGiangVien(), giangVien.getTenGiangVien()));
 					}
 					if (nhomSinhVienPB.size() > 0) {
+						System.out.println(kh);
 						KeHoachPBDto keHoachPBDto = new KeHoachPBDto(kh.getId(), kh.getTenKeHoach(), kh.getChuThich(),
 								Arrays.asList(ngayThucHienKL),kh.getHocKy(), kh.getHocKy().getMaHocKy(), kh.getThoiGianBatDau(),
 								kh.getThoiGianKetThuc(), kh.getTinhTrang(), kh.getVaiTro(), kh.getMaNguoiDung(),

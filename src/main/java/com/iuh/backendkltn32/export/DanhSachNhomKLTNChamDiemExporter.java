@@ -169,7 +169,7 @@ public class DanhSachNhomKLTNChamDiemExporter {
 			if (nhomService.layNhomRaDuocPBPoster(hocKy.getMaHocKy()).contains(nhom)) {
 				break;
 			}
-			if (phanCongService.layPhanCongTheoMaNhom(nhom).size() > 3) {
+//			if (phanCongService.layPhanCongTheoMaNhom(nhom).size() > 3) {
 			Row row = sheet.createRow(rowCount++);
 			row.setHeight((short) 550);
 			int columnCount = 0;

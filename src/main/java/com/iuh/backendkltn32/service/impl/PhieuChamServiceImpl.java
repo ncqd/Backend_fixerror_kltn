@@ -81,13 +81,13 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public List<PhieuCham> layDsPhieuChamPosterVaiTro(String maGiangVien, String maHocky, String viTriPhanCong) {
-		return repository.layPhieuTheoPPChamPOSTER(maGiangVien, maHocky, viTriPhanCong);
+	public List<PhieuCham> layDsPhieuChamPosterVaiTro(String maGiangVien, String maHocky, String viTriPhanCong, String tenPhieu) {
+		return repository.layPhieuTheoPPChamPOSTER(maGiangVien, maHocky, viTriPhanCong, tenPhieu);
 	}
 
 	@Override
-	public List<PhieuCham> layDsPhieuChamHoiDongVaiTro(String maGiangVien, String maHocky, String viTriPhanCong) {
-		return repository.layPhieuTheoPPChamHD(maGiangVien, maHocky, viTriPhanCong);
+	public List<PhieuCham> layDsPhieuChamHoiDongVaiTro(String maGiangVien, String maHocky, String viTriPhanCong, String tenPhieu) {
+		return repository.layPhieuTheoPPChamHD(maGiangVien, maHocky, viTriPhanCong, tenPhieu);
 	}
 
 	@Override
@@ -111,13 +111,13 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 	}
 
 	@Override
-	public List<PhieuCham> layDsPhieuChamPosterVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien) {
-		return repository.layPhieuTheoPPChamPOSTERQL(maHocky, viTriPhanCong, maSInhVien);
+	public List<PhieuCham> layDsPhieuChamPosterVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien, String tenPhieu) {
+		return repository.layPhieuTheoPPChamPOSTERQL(maHocky, viTriPhanCong, maSInhVien, tenPhieu);
 	}
 
 	@Override
-	public List<PhieuCham> layDsPhieuChamHoiDongVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien) {
-		return repository.layPhieuTheoPPChamHDQL(maHocky, viTriPhanCong, maSInhVien);
+	public List<PhieuCham> layDsPhieuChamHoiDongVaiTroQL(String maHocky, String viTriPhanCong, String maSInhVien, String tenPhieu) {
+		return repository.layPhieuTheoPPChamHDQL(maHocky, viTriPhanCong, maSInhVien, tenPhieu);
 	}
 
 }

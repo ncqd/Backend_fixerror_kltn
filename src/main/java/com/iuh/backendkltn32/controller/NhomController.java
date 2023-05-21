@@ -446,6 +446,7 @@ public class NhomController {
 									xuatSinhVienKhiCan(nhom, viTriCham2, maGV), viTriCham2));
 						}
 					});
+					System.out.println(respones);
 				}
 			}
 

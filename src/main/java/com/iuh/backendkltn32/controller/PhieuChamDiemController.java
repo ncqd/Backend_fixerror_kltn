@@ -418,10 +418,10 @@ public class PhieuChamDiemController {
 					break;
 				}
 				List<String> dsPP = request.getPpcham() == null ? new ArrayList<>() :  request.getPpcham();
-				if (dsPP.size() == 1) {
+				if (dsPP.size() == 2) {
 					if (request.getPpcham().get(0).equals("chamPoster")) {
 						phieuChamService
-								.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+								.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong, vaiTro)
 								.forEach(phieuCham -> {
 									DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 									phieuCham.getDsKetQua().forEach(sv -> {
@@ -439,7 +439,7 @@ public class PhieuChamDiemController {
 								});
 					} else {
 						phieuChamService.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(),
-								viTriPhanCong).forEach(phieuCham -> {
+								viTriPhanCong, vaiTro).forEach(phieuCham -> {
 									DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 									phieuCham.getDsKetQua().forEach(sv -> {
 										diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
@@ -454,10 +454,11 @@ public class PhieuChamDiemController {
 									diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
 									rs.add(diemSVDTO);
 								});
+						System.out.println("hoi co 1\n" + rs);
 					}
 				} else {
 					phieuChamService
-							.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+							.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong, vaiTro)
 							.forEach(phieuCham -> {
 								DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 								phieuCham.getDsKetQua().forEach(sv -> {
@@ -474,7 +475,7 @@ public class PhieuChamDiemController {
 								rs.add(diemSVDTO);
 							});
 					phieuChamService
-							.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong)
+							.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong, vaiTro)
 							.forEach(phieuCham -> {
 								DiemSinhVienDto diemSVDTO = new DiemSinhVienDto();
 								phieuCham.getDsKetQua().forEach(sv -> {
@@ -490,6 +491,7 @@ public class PhieuChamDiemController {
 								diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
 								rs.add(diemSVDTO);
 							});
+					System.out.println("hoi co 2\n" + rs);
 				}
 			}
 		}

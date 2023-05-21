@@ -699,7 +699,7 @@ public class PhieuChamDiemController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN')")
 	public void xuatPhieuChamGVPB(HttpServletResponse response, @RequestBody PhieuChamDiemDowRequest request)
 			throws RuntimeException {
-		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setContentType("multipart/x-mixed-replace;boundary=END");
 
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
@@ -711,10 +711,14 @@ public class PhieuChamDiemController {
 		List<Nhom> nhoms = new ArrayList<>();
 		switch (request.getVaiTro()) {
 		case "HD":
-			nhoms = nhomService.layNhomTheoHK(hocKy.getMaHocKy(), request.getMaGiangVien());
+			System.out.println(request.getMaGiangVien());
+			nhoms = nhomService.layDSNhomTheMaGiangVien(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					request.getMaGiangVien());
+			System.out.println(nhoms);
 			break;
 		case "PB":
 			nhoms = nhomService.layNhomTheoVaiTro(hocKy.getMaHocKy(), "phan bien", request.getMaGiangVien());
+			System.out.println(nhoms);
 			break;
 		case "HoiDong":
 			List<String> vaiTroTemp = Arrays.asList("CT", "TK", "TV3");

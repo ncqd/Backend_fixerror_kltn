@@ -41,14 +41,13 @@ public class FileMauExcelDeTai {
 		font.setFontHeight(15);
 		font.setFontHeightInPoints((short) 12);
 		style.setFont(font);
-		createCell(row, 0, "Mã đề tài", style);
-		createCell(row, 1, "GVHD", style);
-		createCell(row, 2, "Tên đề tài", style);
-		createCell(row, 3, "MỤC TIÊU ĐỀ TÀI", style);
-		createCell(row, 4, "DỰ KIẾN SẢN PHẨM NGHIÊN CỨU CỦA ĐỀ TÀI VÀ KHẢ NĂNG ỨNG DỤNG", style);
-		createCell(row, 5, "Mô tả", style);
-		createCell(row, 6, "Yêu cầu đầu vào", style);
-		createCell(row, 7, "Yêu cầu đầu ra (Output Standards)", style);
+		createCell(row, 0, "#", style);
+		createCell(row, 1, "Tên đề tài", style);
+		createCell(row, 2, "MỤC TIÊU ĐỀ TÀI", style);
+		createCell(row, 3, "DỰ KIẾN SẢN PHẨM NGHIÊN CỨU CỦA ĐỀ TÀI VÀ KHẢ NĂNG ỨNG DỤNG", style);
+		createCell(row, 4, "Mô tả", style);
+		createCell(row, 5, "Yêu cầu đầu vào", style);
+		createCell(row, 6, "Yêu cầu đầu ra (Output Standards)", style);
 	}
 
 	private void createCell(Row row, int columnCount, Object value, CellStyle style) {

@@ -303,14 +303,10 @@ public class DeTaiController {
 	@GetMapping("/lay-theo-ma/{maDeTai}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> layDeTaiTheoMa(@PathVariable("maDeTai") String maDeTai) {
-<<<<<<< HEAD
-		DeTai deTai1 = deTaiService.layTheoMa(maDeTai);
-=======
 		System.out.println(maDeTai);
 		DeTai deTai1 = deTaiService.layTheoMa(maDeTai.trim());
 //		DeTaiRes deTai = new DeTaiRes(deTai1.getMaDeTai(), deTai1.getTenDeTai(), deTai1.getMucTieuDeTai(),deTai1.getSanPhamDuKien(), 
 //				deTai1.getMoTa(), deTai1.getYeuCauDauVao(), deTai1.getTrangThai(),deTai1.getGioiHanSoNhomThucHien(), deTai1.getGiangVien(), deTai1.getHocKy().getMaHocKy());
->>>>>>> f584d64fce2ddd14741f89af3e2bc50a074ae575
 		return ResponseEntity.ok(deTai1);
 	}
 	

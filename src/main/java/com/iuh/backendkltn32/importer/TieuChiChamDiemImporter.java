@@ -11,23 +11,13 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.iuh.backendkltn32.entity.DeTai;
-import com.iuh.backendkltn32.entity.GiangVien;
-import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
-import com.iuh.backendkltn32.service.DeTaiService;
-import com.iuh.backendkltn32.service.HocKyService;
-import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 
 @Component
 public class TieuChiChamDiemImporter {
-
-	@Autowired
-	private HocKyService hocKyService;
 
 	public static boolean isValidExcelFile(MultipartFile file) {
 		return Objects.equals(file.getContentType(),
@@ -40,8 +30,8 @@ public class TieuChiChamDiemImporter {
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 			XSSFSheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
+			rowIterator.next();
 			boolean isHasValue = true;
-			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 
 			while (rowIterator.hasNext() && isHasValue) {
 				Row nextRow = rowIterator.next();
@@ -51,6 +41,7 @@ public class TieuChiChamDiemImporter {
 				while (cellIterator.hasNext() && isHasValue) {
 					Cell nextCell = cellIterator.next();
 					int columnIndex = nextCell.getColumnIndex();
+					System.out.println(columnIndex);
 					switch (columnIndex) {
 					case 0:
 						break;
@@ -66,20 +57,20 @@ public class TieuChiChamDiemImporter {
 						break;
 					}
 					columnIndex++;
-					if (tieuChiChamDiem.getTenChuanDauRa() == null || tieuChiChamDiem.getTenChuanDauRa().isBlank()
-							|| tieuChiChamDiem.getTenChuanDauRa().isEmpty()) {
-						System.out.println("null;");
-						isHasValue = false;
-					} else {
-						tieuChiChamDiems.add(tieuChiChamDiem);
-					}
 				}
-				workbook.close();
+				if (tieuChiChamDiem.getTenChuanDauRa() == null || tieuChiChamDiem.getTenChuanDauRa().isBlank()
+						|| tieuChiChamDiem.getTenChuanDauRa().isEmpty()) {
+					System.out.println("null;");
+					isHasValue = false;
+				} else {
+					tieuChiChamDiems.add(tieuChiChamDiem);
+				}
 			}
+			workbook.close();
 		} catch (Exception e) {
 			e.getStackTrace();
 		}
-		System.out.println(tieuChiChamDiems.size());
+
 		return tieuChiChamDiems;
 	}
 

@@ -94,6 +94,7 @@ public class KetQuaKLTNExporter {
 		List<TieuChiChamDiem> tieuChiChamDiemPB2 = phatSinhTieuChiTuaDe(row, "PB", styleContent, false);
 		List<TieuChiChamDiem> tieuChiChamDiemHoiDong1 = phatSinhTieuChiTuaDe(row, "CT", styleContent, false);
 		List<TieuChiChamDiem> tieuChiChamDiemHoiDong2 = phatSinhTieuChiTuaDe(row, "TK", styleContent, false);
+		List<TieuChiChamDiem> tieuChiChamDiemHoiDong3 = phatSinhTieuChiTuaDe(row, "TV3", styleContent, false);
 
 		row = sheet.createRow(1);
 		createCell(row, 0, "DANH SÁCH NHÓM THỰC HIỆN - ĐỀ TÀI - GIÁO VIÊN HƯỚNG DẪN KLTN HK1 2022-2023",
@@ -140,7 +141,7 @@ public class KetQuaKLTNExporter {
 		createCellTieuDe(row, count + 5, "", styleContent);
 		sheet.addMergedRegion(
 				new CellRangeAddress(2, 2, count + 1, count = count + tieuChiChamDiemHoiDong2.size() + 1));
-		createCellTieuDe(row, count + 1, "DOANH NGHIỆP", styleContent);
+		createCellTieuDe(row, count + 1, "TVHD", styleContent);
 		createCellTieuDe(row, count + 2, "", styleContent);
 		createCellTieuDe(row, count + 3, "", styleContent);
 		createCellTieuDe(row, count + 4, "", styleContent);
@@ -217,6 +218,7 @@ public class KetQuaKLTNExporter {
 		createCellTieuDe(row, count++, "TBBM", styleHeader);
 		createCellTieuDe(row, count++, "TVHD1", styleHeader);
 		createCellTieuDe(row, count++, "TVHD2", styleHeader);
+		createCellTieuDe(row, count++, "TVHD3", styleHeader);
 		createCellTieuDe(row, count++, "TBTVHD", styleHeader);
 		createCellTieuDe(row, count++, "Kết quả", styleHeader);
 		createCellTieuDe(row, count++, "Điểm Báo", styleHeader);
@@ -336,136 +338,278 @@ public class KetQuaKLTNExporter {
 				return;
 			}
 		}
+		if (phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "TV3").size() > 0) {
+			PhieuCham phieuChamHoiDong1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "CT").get(0);
+			PhieuCham phieuChamHoiDong2SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "TK").get(0);
+			PhieuCham phieuChamHoiDong3SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "TV3").get(0);
+			createCell(row, nextColum++, mas.get(0), style);
+			createCell(row, nextColum++, sv.getTenSinhVien(), style);
+			createCell(row, nextColum++, sv.getEmail(), style);
+			createCell(row, nextColum++, nhom.getDeTai().getMaDeTai(), style);
+			createCell(row, nextColum++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
+			createCell(row, nextColum++, nhom.getDeTai().getTenDeTai(), style);
+			createCell(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham() >= 5 ? "Yes" : "No", style);
 
-		PhieuCham phieuChamHoiDong1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "CT").get(0);
-		PhieuCham phieuChamHoiDong2SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "TK").get(0);
-		createCell(row, nextColum++, mas.get(0), style);
-		createCell(row, nextColum++, sv.getTenSinhVien(), style);
-		createCell(row, nextColum++, sv.getEmail(), style);
-		createCell(row, nextColum++, nhom.getDeTai().getMaDeTai(), style);
-		createCell(row, nextColum++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
-		createCell(row, nextColum++, nhom.getDeTai().getTenDeTai(), style);
-		createCell(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham() >= 5 ? "Yes" : "No", style);
-
-		for (DiemThanhPhan dtp : phieuChamHD1SV1.getDsDiemThanhPhan()) {
-			createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
-		}
-		createCellTieuDe(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham(), style);
-
-		for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
-			for (DiemThanhPhan dtp : pc.getDsDiemThanhPhan()) {
+			for (DiemThanhPhan dtp : phieuChamHD1SV1.getDsDiemThanhPhan()) {
 				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
 			}
-			createCellTieuDe(row, nextColum++, pc.getDiemPhieuCham(), style);
-		}
-		for (DiemThanhPhan dtp : phieuChamHoiDong1SV1.getDsDiemThanhPhan()) {
-			createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
-		}
-		createCellTieuDe(row, nextColum++, phieuChamHoiDong1SV1.getDiemPhieuCham(), style);
-
-		for (DiemThanhPhan dtp : phieuChamHoiDong2SV1.getDsDiemThanhPhan()) {
-			createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
-		}
-		createCellTieuDe(row, nextColum++, phieuChamHoiDong2SV1.getDiemPhieuCham(), style);
-
-		for (DiemThanhPhan dtp : phieuChamHoiDong2SV1.getDsDiemThanhPhan()) {
-			
-			createCellTieuDe(row, nextColum++, "", style);
-		}
-		createCellTieuDe(rowNext, nextColum++, "", style);
-		
-
-		Double diemPB = (double) 0;
-		diemPB += phieuChamHD1SV1.getDiemPhieuCham();
-		createCellTieuDe(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham() +"", style);
-
-		for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
-			createCellTieuDe(row, nextColum++, pc.getDiemPhieuCham(), style);
-			diemPB += pc.getDiemPhieuCham();
-		}
-		diemPB = diemPB / 3;
-		createCellTieuDe(row, nextColum++, Math.floor(diemPB * 100) / 100, style);
-
-		Double diemHD = (phieuChamHoiDong1SV1.getDiemPhieuCham() + phieuChamHoiDong2SV1.getDiemPhieuCham()) / 2;
-		createCellTieuDe(row, nextColum++, phieuChamHoiDong1SV1.getDiemPhieuCham(), style);
-		createCellTieuDe(row, nextColum++, phieuChamHoiDong2SV1.getDiemPhieuCham(), style);
-		createCellTieuDe(row, nextColum++, diemHD, style);
-
-		Double kq = (diemHD + diemPB) / 2;
-		Double diemBao = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
-		createCellTieuDe(row, nextColum++, Math.floor(kq * 100) / 100, style);
-		createCellTieuDe(row, nextColum++, diemBao, style);
-		createCellTieuDe(row, nextColum++, Math.floor((kq + diemBao) * 10) / 10, style);
-
-		if (mas.size() > 1) {
-			PhieuCham phieuChamHDSV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "HD").get(0);
-			PhieuCham phieuChamHoiDong1SV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "CT").get(0);
-			PhieuCham phieuChamHoiDong2SV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "TK").get(0);
-			int nextColum2 = columnCount + 1;
-			SinhVien sv2 = sinhVienService.layTheoMa(mas.get(1));
-			createCell(rowNext, nextColum2++, mas.get(1), style);
-			createCell(rowNext, nextColum2++, sv2.getTenSinhVien(), style);
-			createCell(rowNext, nextColum2++, sv2.getEmail(), style);
-			createCell(rowNext, nextColum2++, nhom.getDeTai().getMaDeTai(), style);
-			createCell(rowNext, nextColum2++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
-			createCell(rowNext, nextColum2++, nhom.getDeTai().getTenDeTai(), style);
-			createCell(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham() >= 5 ? "Yes" : "No", style);
-
-			for (DiemThanhPhan dtp : phieuChamHDSV2.getDsDiemThanhPhan()) {
-				createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
-			}
-			createCellTieuDe(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham()+"", style);
-
-			for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "PB")) {
-				for (DiemThanhPhan dtp : pc.getDsDiemThanhPhan()) {
-					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
-				}
-				createCellTieuDe(rowNext, nextColum2++, pc.getDiemPhieuCham(), style);
-			}
-			for (DiemThanhPhan dtp : phieuChamHoiDong1SV2.getDsDiemThanhPhan()) {
-				createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
-			}
-			createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
-
-			for (DiemThanhPhan dtp : phieuChamHoiDong2SV2.getDsDiemThanhPhan()) {
-				createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
-			}
-			createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong2SV2.getDiemPhieuCham(), style);
-			
-			for (DiemThanhPhan dtp : phieuChamHoiDong2SV2.getDsDiemThanhPhan()) {
-				createCellTieuDe(rowNext, nextColum2++, "", style);
-			}
-			createCellTieuDe(rowNext, nextColum2++, "", style);
-			
-
-			Double diemPB2 = (double) 0;
-			diemPB2 += phieuChamHDSV2.getDiemPhieuCham();
-			createCellTieuDe(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham(), style);
+			createCellTieuDe(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham(), style);
 
 			for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
-				createCellTieuDe(rowNext, nextColum2++, pc.getDiemPhieuCham(), style);
-				diemPB2 += pc.getDiemPhieuCham();
+				for (DiemThanhPhan dtp : pc.getDsDiemThanhPhan()) {
+					createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(row, nextColum++, pc.getDiemPhieuCham(), style);
 			}
-			diemPB2 = diemPB2 / 3;
-			createCellTieuDe(rowNext, nextColum2++,  Math.floor(diemPB2 * 100) / 100, style);
+			for (DiemThanhPhan dtp : phieuChamHoiDong1SV1.getDsDiemThanhPhan()) {
+				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+			}
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong1SV1.getDiemPhieuCham(), style);
 
-			Double diemHD2 = (phieuChamHoiDong1SV2.getDiemPhieuCham() + phieuChamHoiDong2SV2.getDiemPhieuCham()) / 2;
-			createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
-			createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong2SV2.getDiemPhieuCham(), style);
-			createCellTieuDe(rowNext, nextColum2++, diemHD, style);
+			for (DiemThanhPhan dtp : phieuChamHoiDong2SV1.getDsDiemThanhPhan()) {
+				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+			}
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong2SV1.getDiemPhieuCham(), style);
 
-			Double kq2 = (diemHD2 + diemPB2) / 2;
-			Double diemBao2 = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
-			createCellTieuDe(rowNext, nextColum2++,  Math.floor(kq2 * 100) / 100, style);
-			createCellTieuDe(rowNext, nextColum2++, diemBao2, style);
-			createCellTieuDe(rowNext, nextColum2++, Math.floor((kq + diemBao2) * 10) / 10, style);
+			for (DiemThanhPhan dtp : phieuChamHoiDong3SV1.getDsDiemThanhPhan()) {
+				
+				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+			}
+			createCellTieuDe(rowNext, nextColum++, phieuChamHoiDong3SV1.getDiemPhieuCham(), style);
+			
+
+			Double diemPB = (double) 0;
+			diemPB += phieuChamHD1SV1.getDiemPhieuCham();
+			createCellTieuDe(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham() +"", style);
+
+			for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
+				createCellTieuDe(row, nextColum++, pc.getDiemPhieuCham(), style);
+				diemPB += pc.getDiemPhieuCham();
+			}
+			diemPB = diemPB / 3;
+			createCellTieuDe(row, nextColum++, Math.floor(diemPB * 100) / 100, style);
+
+			Double diemHD = (phieuChamHoiDong1SV1.getDiemPhieuCham() + phieuChamHoiDong2SV1.getDiemPhieuCham() + phieuChamHoiDong3SV1.getDiemPhieuCham()) / 3;
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong1SV1.getDiemPhieuCham(), style);
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong2SV1.getDiemPhieuCham(), style);
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong3SV1.getDiemPhieuCham(), style);
+			
+			createCellTieuDe(row, nextColum++, diemHD, style);
+
+			Double kq = (diemHD + diemPB) / 2;
+			Double diemBao = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
+			createCellTieuDe(row, nextColum++, Math.floor(kq * 100) / 100, style);
+			createCellTieuDe(row, nextColum++, diemBao, style);
+			createCellTieuDe(row, nextColum++, Math.floor((kq + diemBao) * 10) / 10, style);
+
+			if (mas.size() > 1) {
+				PhieuCham phieuChamHDSV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "HD").get(0);
+				PhieuCham phieuChamHoiDong1SV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "CT").get(0);
+				PhieuCham phieuChamHoiDong2SV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "TK").get(0);
+				PhieuCham phieuChamHoiDong3SV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "TV3").get(0);
+				int nextColum2 = columnCount + 1;
+				SinhVien sv2 = sinhVienService.layTheoMa(mas.get(1));
+				createCell(rowNext, nextColum2++, mas.get(1), style);
+				createCell(rowNext, nextColum2++, sv2.getTenSinhVien(), style);
+				createCell(rowNext, nextColum2++, sv2.getEmail(), style);
+				createCell(rowNext, nextColum2++, nhom.getDeTai().getMaDeTai(), style);
+				createCell(rowNext, nextColum2++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
+				createCell(rowNext, nextColum2++, nhom.getDeTai().getTenDeTai(), style);
+				createCell(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham() >= 5 ? "Yes" : "No", style);
+
+				for (DiemThanhPhan dtp : phieuChamHDSV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham()+"", style);
+
+				for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "PB")) {
+					for (DiemThanhPhan dtp : pc.getDsDiemThanhPhan()) {
+						createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+					}
+					createCellTieuDe(rowNext, nextColum2++, pc.getDiemPhieuCham(), style);
+				}
+				for (DiemThanhPhan dtp : phieuChamHoiDong1SV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
+
+				for (DiemThanhPhan dtp : phieuChamHoiDong2SV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong2SV2.getDiemPhieuCham(), style);
+				
+				for (DiemThanhPhan dtp : phieuChamHoiDong2SV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong3SV2.getDiemPhieuCham(), style);
+				
+
+				Double diemPB2 = (double) 0;
+				diemPB2 += phieuChamHDSV2.getDiemPhieuCham();
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham(), style);
+
+				for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
+					createCellTieuDe(rowNext, nextColum2++, pc.getDiemPhieuCham(), style);
+					diemPB2 += pc.getDiemPhieuCham();
+				}
+				diemPB2 = diemPB2 / 3;
+				createCellTieuDe(rowNext, nextColum2++,  Math.floor(diemPB2 * 100) / 100, style);
+
+				Double diemHD2 = (phieuChamHoiDong1SV2.getDiemPhieuCham() + phieuChamHoiDong2SV2.getDiemPhieuCham() + phieuChamHoiDong3SV2.getDiemPhieuCham()) / 3;
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong2SV2.getDiemPhieuCham(), style);
+				createCellTieuDe(row, nextColum++, phieuChamHoiDong3SV1.getDiemPhieuCham(), style);
+				
+				createCellTieuDe(rowNext, nextColum2++, diemHD, style);
+
+				Double kq2 = (diemHD2 + diemPB2) / 2;
+				Double diemBao2 = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
+				createCellTieuDe(rowNext, nextColum2++,  Math.floor(kq2 * 100) / 100, style);
+				createCellTieuDe(rowNext, nextColum2++, diemBao2, style);
+				createCellTieuDe(rowNext, nextColum2++, Math.floor((kq + diemBao2) * 10) / 10, style);
+			} else {
+				int nextColum2 = columnCount + 1;
+				for (int i = 0; i < 47; i++) {
+					createCell(rowNext, nextColum2++, "", style);
+
+				}
+			}
 		} else {
-			int nextColum2 = columnCount + 1;
-			for (int i = 0; i < 47; i++) {
-				createCell(rowNext, nextColum2++, "", style);
+			PhieuCham phieuChamHoiDong1SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "CT").get(0);
+			PhieuCham phieuChamHoiDong2SV1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "TK").get(0);
+			createCell(row, nextColum++, mas.get(0), style);
+			createCell(row, nextColum++, sv.getTenSinhVien(), style);
+			createCell(row, nextColum++, sv.getEmail(), style);
+			createCell(row, nextColum++, nhom.getDeTai().getMaDeTai(), style);
+			createCell(row, nextColum++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
+			createCell(row, nextColum++, nhom.getDeTai().getTenDeTai(), style);
+			createCell(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham() >= 5 ? "Yes" : "No", style);
 
+			for (DiemThanhPhan dtp : phieuChamHD1SV1.getDsDiemThanhPhan()) {
+				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+			}
+			createCellTieuDe(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham(), style);
+
+			for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
+				for (DiemThanhPhan dtp : pc.getDsDiemThanhPhan()) {
+					createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(row, nextColum++, pc.getDiemPhieuCham(), style);
+			}
+			for (DiemThanhPhan dtp : phieuChamHoiDong1SV1.getDsDiemThanhPhan()) {
+				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+			}
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong1SV1.getDiemPhieuCham(), style);
+
+			for (DiemThanhPhan dtp : phieuChamHoiDong2SV1.getDsDiemThanhPhan()) {
+				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
+			}
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong2SV1.getDiemPhieuCham(), style);
+
+			for (DiemThanhPhan dtp : phieuChamHoiDong2SV1.getDsDiemThanhPhan()) {
+				
+				createCellTieuDe(row, nextColum++, "", style);
+			}
+			createCellTieuDe(rowNext, nextColum++, "", style);
+			
+
+			Double diemPB = (double) 0;
+			diemPB += phieuChamHD1SV1.getDiemPhieuCham();
+			createCellTieuDe(row, nextColum++, phieuChamHD1SV1.getDiemPhieuCham() +"", style);
+
+			for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
+				createCellTieuDe(row, nextColum++, pc.getDiemPhieuCham(), style);
+				diemPB += pc.getDiemPhieuCham();
+			}
+			diemPB = diemPB / 3;
+			createCellTieuDe(row, nextColum++, Math.floor(diemPB * 100) / 100, style);
+
+			Double diemHD = (phieuChamHoiDong1SV1.getDiemPhieuCham() + phieuChamHoiDong2SV1.getDiemPhieuCham()) / 2;
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong1SV1.getDiemPhieuCham(), style);
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong2SV1.getDiemPhieuCham(), style);
+			createCellTieuDe(row, nextColum++, "", style);
+			
+			createCellTieuDe(row, nextColum++, diemHD, style);
+
+			Double kq = (diemHD + diemPB) / 2;
+			Double diemBao = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
+			createCellTieuDe(row, nextColum++, Math.floor(kq * 100) / 100, style);
+			createCellTieuDe(row, nextColum++, diemBao, style);
+			createCellTieuDe(row, nextColum++, Math.floor((kq + diemBao) * 10) / 10, style);
+
+			if (mas.size() > 1) {
+				PhieuCham phieuChamHDSV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "HD").get(0);
+				PhieuCham phieuChamHoiDong1SV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "CT").get(0);
+				PhieuCham phieuChamHoiDong2SV2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "TK").get(0);
+				int nextColum2 = columnCount + 1;
+				SinhVien sv2 = sinhVienService.layTheoMa(mas.get(1));
+				createCell(rowNext, nextColum2++, mas.get(1), style);
+				createCell(rowNext, nextColum2++, sv2.getTenSinhVien(), style);
+				createCell(rowNext, nextColum2++, sv2.getEmail(), style);
+				createCell(rowNext, nextColum2++, nhom.getDeTai().getMaDeTai(), style);
+				createCell(rowNext, nextColum2++, nhom.getDeTai().getGiangVien().getTenGiangVien(), style);
+				createCell(rowNext, nextColum2++, nhom.getDeTai().getTenDeTai(), style);
+				createCell(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham() >= 5 ? "Yes" : "No", style);
+
+				for (DiemThanhPhan dtp : phieuChamHDSV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham()+"", style);
+
+				for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(1), "PB")) {
+					for (DiemThanhPhan dtp : pc.getDsDiemThanhPhan()) {
+						createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+					}
+					createCellTieuDe(rowNext, nextColum2++, pc.getDiemPhieuCham(), style);
+				}
+				for (DiemThanhPhan dtp : phieuChamHoiDong1SV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
+
+				for (DiemThanhPhan dtp : phieuChamHoiDong2SV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, dtp.getDiemThanhPhan(), style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong2SV2.getDiemPhieuCham(), style);
+				
+				for (DiemThanhPhan dtp : phieuChamHoiDong2SV2.getDsDiemThanhPhan()) {
+					createCellTieuDe(rowNext, nextColum2++, "", style);
+				}
+				createCellTieuDe(rowNext, nextColum2++, "", style);
+				
+
+				Double diemPB2 = (double) 0;
+				diemPB2 += phieuChamHDSV2.getDiemPhieuCham();
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHDSV2.getDiemPhieuCham(), style);
+
+				for (PhieuCham pc : phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(mas.get(0), "PB")) {
+					createCellTieuDe(rowNext, nextColum2++, pc.getDiemPhieuCham(), style);
+					diemPB2 += pc.getDiemPhieuCham();
+				}
+				diemPB2 = diemPB2 / 3;
+				createCellTieuDe(rowNext, nextColum2++,  Math.floor(diemPB2 * 100) / 100, style);
+
+				Double diemHD2 = (phieuChamHoiDong1SV2.getDiemPhieuCham() + phieuChamHoiDong2SV2.getDiemPhieuCham() ) / 2;
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong2SV2.getDiemPhieuCham(), style);
+				createCellTieuDe(rowNext, nextColum2++, "", style);
+				
+				createCellTieuDe(rowNext, nextColum2++, diemHD, style);
+
+				Double kq2 = (diemHD2 + diemPB2) / 2;
+				Double diemBao2 = phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() != null ? phieuChamHoiDong1SV1.getDsKetQua().get(0).getDiemBao() : 0 ;
+				createCellTieuDe(rowNext, nextColum2++,  Math.floor(kq2 * 100) / 100, style);
+				createCellTieuDe(rowNext, nextColum2++, diemBao2, style);
+				createCellTieuDe(rowNext, nextColum2++, Math.floor((kq + diemBao2) * 10) / 10, style);
+			} else {
+				int nextColum2 = columnCount + 1;
+				for (int i = 0; i < 47; i++) {
+					createCell(rowNext, nextColum2++, "", style);
+
+				}
 			}
 		}
+		
 
 	}
 

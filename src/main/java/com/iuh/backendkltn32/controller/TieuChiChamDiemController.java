@@ -1,6 +1,11 @@
 package com.iuh.backendkltn32.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import com.iuh.backendkltn32.entity.TieuChiChamDiem;
+import com.iuh.backendkltn32.export.FileMauGiangVienExporter;
+import com.iuh.backendkltn32.export.FileMauTieuChiChamDiem;
 import com.iuh.backendkltn32.importer.TieuChiChamDiemImporter;
 import com.iuh.backendkltn32.service.TieuChiChamDiemService;
 
@@ -94,12 +101,12 @@ public class TieuChiChamDiemController {
 	
 	@PostMapping("/them-tieu-chi-excel")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public ResponseEntity<?> themSinhVienExcel(@RequestParam("file") MultipartFile file) throws RuntimeException {
-		if (tieuChiChamDiemImporter.isValidExcelFile(file)) {
+	public ResponseEntity<?> themTieuChiChamDiem(@RequestParam("file") MultipartFile file) throws RuntimeException {
+		if (TieuChiChamDiemImporter.isValidExcelFile(file)) {
 			try {
 				
 				List<TieuChiChamDiem> tieuChiChamDiems = tieuChiChamDiemImporter.addDataFDromExcel(file.getInputStream());
-				
+				tieuChiChamDiemService.luuDs(tieuChiChamDiems);
 				
 				return ResponseEntity.ok(tieuChiChamDiems);
 			} catch (Exception e) {
@@ -107,5 +114,24 @@ public class TieuChiChamDiemController {
 			}
 		}
 		return null;
+	}
+	
+	@GetMapping("/xuat-tieu-chi-excel-mau")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public void xuatTieuChiChamMau(HttpServletResponse response) throws RuntimeException {
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=ketqua_" + currentDateTime + ".xlsx";
+		response.setHeader(headerKey, headerValue);
+
+		FileMauTieuChiChamDiem tieuChiChamExporter = new FileMauTieuChiChamDiem();
+		try {
+			tieuChiChamExporter.export(response);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 }

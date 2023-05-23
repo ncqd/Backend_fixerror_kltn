@@ -25,7 +25,7 @@ public class FileMauExcelDeTai {
 	}
 
 	private void writeHeaderLine() throws Exception {
-		sheet = workbook.createSheet("MaDeTai");
+		sheet = workbook.createSheet("MauTieuChi");
 
 		Row row = sheet.createRow(1);
 		sheet.setColumnWidth(2, 50);

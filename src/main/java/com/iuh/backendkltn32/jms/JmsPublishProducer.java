@@ -25,7 +25,7 @@ public class JmsPublishProducer {
 
 	public void sendMessageOnDeTaiChanel(final DangKyDeTaiRequest message) {
 
-//		jmsTemplate.setDefaultDestinationName("deTai_channel");
+		jmsTemplate.setDefaultDestinationName("detai_channel");
 		jmsTemplate.send(new MessageCreator() {
 			public Message createMessage(Session session) throws JMSException {
 				MapMessage mapMessage =  session.createMapMessage();

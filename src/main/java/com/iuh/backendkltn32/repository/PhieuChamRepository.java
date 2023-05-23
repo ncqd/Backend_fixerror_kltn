@@ -8,14 +8,14 @@ import org.springframework.data.repository.query.Param;
 
 import com.iuh.backendkltn32.entity.PhieuCham;
 
-public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
+public interface PhieuChamRepository extends JpaRepository<PhieuCham, Integer> {
 
 	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a "
 			+ "join detai d on a.madetai = d.madetai " + "join ketqua k on a.maPhieu = k.maPhieu "
 			+ " where a.maGiangVien = :maGiangVien and maHocKy = :mahocky ; ", nativeQuery = true)
 	List<PhieuCham> layDsDeTaiTheoNamHocKy(@Param("maGiangVien") String maGiangVien, @Param("mahocky") String mahocky);
 
-	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
+	@Query(value = "select distinct a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai  "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
 			+ "where a.maGiangVien = :maGiangVien and diemPhieuCham >= 8 and tenPhieu =  :tenPhieu "
@@ -24,7 +24,7 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
 			@Param("viTriPhanCong") String viTriPhanCong, 
 			@Param("tenPhieu") String tenPhieu);
 
-	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
+	@Query(value = "select distinct a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
 			+ "where a.maGiangVien = :maGiangVien and diemPhieuCham < 8 and tenPhieu = :tenPhieu "
@@ -39,9 +39,9 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
 	List<PhieuCham> layPhieuTheoVaiTro(@Param("maGiangVien") String maGiangVien, @Param("mahocky") String mahocky,
 			@Param("tenPhieu") String tenPhieu);
 
-	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu,  " + "a.maDeTai, a.maGiangVien from phieucham a   "
+	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu,   a.maDeTai, a.maGiangVien from phieucham a   "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
-			+ "where maSinhVien = :maSinhVien and tenPhieu = :tenPhieu  ; ", nativeQuery = true)
+			+ "where maSinhVien = :maSinhVien and tenPhieu = :tenPhieu order by a.maPhieu desc ; ", nativeQuery = true)
 	List<PhieuCham> layPhieuTheoMaSinhVienTenVaiTro(@Param("maSinhVien") String maSinhVien,
 			@Param("tenPhieu") String tenPhieu);
 
@@ -52,12 +52,12 @@ public interface PhieuChamRepository extends JpaRepository<PhieuCham, String> {
 	List<String> layMaPhieuPhieuTheoMaSinhVienTenVaiTro(@Param("maHocKy") String maHocKy,
 			@Param("tenPhieu") String tenPhieu, @Param("maNhom") String maNhom);
 	
-	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a "
+	@Query(value = "select  a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a "
 			+ "join detai d on a.madetai = d.madetai " + "join ketqua k on a.maPhieu = k.maPhieu "
 			+ " where maHocKy = :mahocky and k.maSinhVien = :maSinhVien  ; ", nativeQuery = true)
 	List<PhieuCham> layDsPhieuTheoNamHocKyQL( @Param("mahocky") String mahocky, @Param("maSinhVien") String maSInhVien);
 
-	@Query(value = "select a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
+	@Query(value = "select  a.maPhieu, diemPhieuCham, tenPhieu, a.maDeTai, a.maGiangVien from phieucham a    "
 			+ "join phancong p on p.maGiangVien = a.maGiangVien  " + "join detai d on a.madetai = d.madetai  "
 			+ "join ketqua k on a.maPhieu = k.maPhieu "
 			+ "where diemPhieuCham >= 8 and tenPhieu = :tenPhieu  and k.maSinhVien = :maSinhVien "

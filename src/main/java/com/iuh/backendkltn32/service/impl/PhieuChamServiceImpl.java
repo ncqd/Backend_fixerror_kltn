@@ -23,20 +23,15 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 			throw new RuntimeException("Mã không được phép rỗng");
 		}
 		System.out.println("PhieuCham service - layTheoMa: " + ma);
-		PhieuCham phieuCham = repository.findById(ma).orElse(null);
+		PhieuCham phieuCham = repository.findById(Integer.parseInt(ma)).orElse(null);
 
 		return phieuCham;
 	}
 
 	@Override
 	public PhieuCham luu(PhieuCham obj) throws RuntimeException {
-		PhieuCham phieuChamDaTonTai = layTheoMa(obj.getMaPhieu());
 
-		System.out.println("PhieuCham service - luu: " + phieuChamDaTonTai);
 
-		if (phieuChamDaTonTai != null) {
-			throw new RuntimeException("Phiếu đã tồn tại");
-		}
 
 		return repository.save(obj);
 	}
@@ -48,14 +43,14 @@ public class PhieuChamServiceImpl implements PhieuChamService{
 		if (phieuChamKhongTonTai == null) {
 			throw new RuntimeException("Phiếu không tồn tại");
 		}
-		repository.deleteById(ma);
+		repository.deleteById(Integer.parseInt(ma));
 
 		return "Xóa thành công";
 	}
 
 	@Override
 	public PhieuCham capNhat(PhieuCham obj) throws RuntimeException {
-		PhieuCham phieuChamKhongTonTai = layTheoMa(obj.getMaPhieu());
+		PhieuCham phieuChamKhongTonTai = layTheoMa(obj.getMaPhieu()+"");
 
 		if (phieuChamKhongTonTai == null) {
 			throw new RuntimeException("Phiếu không tồn tại");

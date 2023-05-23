@@ -82,6 +82,7 @@ public class KetQuaKLTNExporter {
 
 		styleContent.setAlignment(HorizontalAlignment.CENTER);
 		styleContent.setVerticalAlignment(VerticalAlignment.CENTER);
+		
 		styleContent.setBorderRight(BorderStyle.MEDIUM);
 		styleContent.setBorderBottom(BorderStyle.MEDIUM);
 		styleContent.setBorderLeft(BorderStyle.MEDIUM);
@@ -107,6 +108,7 @@ public class KetQuaKLTNExporter {
 		phatSinhDiemTieuChi(row, tieuChiChamDiemPB2, styleContent);
 		phatSinhDiemTieuChi(row, tieuChiChamDiemHoiDong1, styleContent);
 		phatSinhDiemTieuChi(row, tieuChiChamDiemHoiDong2, styleContent);
+		phatSinhDiemTieuChi(row, tieuChiChamDiemHoiDong3, styleContent);
 
 		row = sheet.createRow(2);
 		createCellTieuDe(row, 8, "GVHD", styleContent);
@@ -115,6 +117,7 @@ public class KetQuaKLTNExporter {
 		createCellTieuDe(row, 11, "", styleContent);
 		createCellTieuDe(row, 12, "", styleContent);
 		sheet.addMergedRegion(new CellRangeAddress(2, 2, 8, count = 8 + tieuChiChamDiemHD.size()));
+		
 		createCellTieuDe(row, count + 1, "GVPB1", styleContent);
 		createCellTieuDe(row, count + 2, "", styleContent);
 		createCellTieuDe(row, count + 3, "", styleContent);
@@ -140,13 +143,13 @@ public class KetQuaKLTNExporter {
 		createCellTieuDe(row, count + 4, "", styleContent);
 		createCellTieuDe(row, count + 5, "", styleContent);
 		sheet.addMergedRegion(
-				new CellRangeAddress(2, 2, count + 1, count = count + tieuChiChamDiemHoiDong2.size() + 1));
+				new CellRangeAddress(2, 2, count + 1, count = count + tieuChiChamDiemHoiDong3.size() + 1));
 		createCellTieuDe(row, count + 1, "TVHD", styleContent);
 		createCellTieuDe(row, count + 2, "", styleContent);
 		createCellTieuDe(row, count + 3, "", styleContent);
 		createCellTieuDe(row, count + 4, "", styleContent);
 		createCellTieuDe(row, count + 5, "", styleContent);
-		sheet.addMergedRegion(new CellRangeAddress(2, 2, count + 1, count = count + tieuChiChamDiemHD.size() + 1));
+		sheet.addMergedRegion(new CellRangeAddress(2, 2, count + 1, count = count + tieuChiChamDiemHoiDong3.size() + 1));
 
 		row = sheet.createRow(3);
 		createCellTieuDe(row, 8, "TIÊU CHÍ", styleContent);
@@ -182,7 +185,7 @@ public class KetQuaKLTNExporter {
 		createCellTieuDe(row, count + 3, "", styleContent);
 		createCellTieuDe(row, count + 4, "", styleContent);
 		createCellTieuDe(row, count + 5, "", styleContent);
-		sheet.addMergedRegion(new CellRangeAddress(3, 3, count + 1, count = count + tieuChiChamDiemHD.size() + 1));
+		sheet.addMergedRegion(new CellRangeAddress(3, 3, count + 1, count = count + tieuChiChamDiemHoiDong3.size() + 1));
 
 		row = sheet.createRow(4);
 		styleHeader.setAlignment(HorizontalAlignment.CENTER);
@@ -264,11 +267,12 @@ public class KetQuaKLTNExporter {
 			throws RuntimeException {
 		List<TieuChiChamDiem> tieuChiChamDiems = new ArrayList<>();
 		List<String> maTieuChiChamDiems = new ArrayList<>();
+		
 
-		for (PhieuChamMau pc : phieuChamMauService.layHet(vaiTro, hocKy.getMaHocKy())) {
+		PhieuChamMau pc = phieuChamMauService.layHet(vaiTro, hocKy.getMaHocKy()).get(0) ;
 			maTieuChiChamDiems = Arrays
 					.asList(pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length() - 1).split(",\\s"));
-		}
+		
 
 		for (String tc : maTieuChiChamDiems) {
 			createCellTieuDe(row, count++, stt ? tc : "LO" + tc, styleContent);
@@ -375,7 +379,7 @@ public class KetQuaKLTNExporter {
 				
 				createCellTieuDe(row, nextColum++, dtp.getDiemThanhPhan(), style);
 			}
-			createCellTieuDe(rowNext, nextColum++, phieuChamHoiDong3SV1.getDiemPhieuCham(), style);
+			createCellTieuDe(row, nextColum++, phieuChamHoiDong3SV1.getDiemPhieuCham(), style);
 			
 
 			Double diemPB = (double) 0;
@@ -458,7 +462,7 @@ public class KetQuaKLTNExporter {
 				Double diemHD2 = (phieuChamHoiDong1SV2.getDiemPhieuCham() + phieuChamHoiDong2SV2.getDiemPhieuCham() + phieuChamHoiDong3SV2.getDiemPhieuCham()) / 3;
 				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong1SV2.getDiemPhieuCham(), style);
 				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong2SV2.getDiemPhieuCham(), style);
-				createCellTieuDe(row, nextColum++, phieuChamHoiDong3SV1.getDiemPhieuCham(), style);
+				createCellTieuDe(rowNext, nextColum2++, phieuChamHoiDong3SV1.getDiemPhieuCham(), style);
 				
 				createCellTieuDe(rowNext, nextColum2++, diemHD, style);
 

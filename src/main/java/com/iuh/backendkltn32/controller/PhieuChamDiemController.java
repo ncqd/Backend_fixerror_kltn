@@ -93,13 +93,14 @@ public class PhieuChamDiemController {
 		try {
 			PhieuCham phieuChamAddSV1;
 			PhieuCham phieuChamAddSV2;
-			phieuChamAddSV1 = phieuChamService.luu(new PhieuCham(Math.random() + "", phieuCham.getTenPhieu(), null,
+			phieuChamAddSV1 = phieuChamService.luu(new PhieuCham(phieuCham.getTenPhieu(), null,
 					null, null, deTaiService.layTheoMa(phieuCham.getMaDeTai()),
 					giangVienService.layTheoMa(phieuCham.getMaGiangVien())));
 
 			HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 			List<TieuChiChamDiem> tieuChiChamDiems = null;
-			for (PhieuChamMau pc : phieuChamMauService.layHet(phieuCham.getTenPhieu(), hocKy.getMaHocKy())) {
+			PhieuChamMau pc  = phieuChamMauService.layHet(phieuCham.getTenPhieu(), hocKy.getMaHocKy()).size() > 0 ? 
+					phieuChamMauService.layHet(phieuCham.getTenPhieu(), hocKy.getMaHocKy()).get(0) : new PhieuChamMau("","","","");
 				List<String> maTieuChiChamDiems = Arrays.asList(
 						pc.getTieuChiChamDiems().substring(1, pc.getTieuChiChamDiems().length() - 1).split(",\\s"));
 				tieuChiChamDiems = maTieuChiChamDiems.stream().map(tc -> {
@@ -110,7 +111,6 @@ public class PhieuChamDiemController {
 					}
 					return null;
 				}).toList();
-			}
 
 			List<DiemThanhPhan> dsDiemThanhPhans = new ArrayList<>();
 			Double diemTong = (double) 0;
@@ -135,7 +135,7 @@ public class PhieuChamDiemController {
 
 			List<KetQua> ketQuas = new ArrayList<>();
 
-			String maPhieCHamAdd = phieuChamAddSV1.getMaPhieu();
+			String maPhieCHamAdd = phieuChamAddSV1.getMaPhieu()+"";
 			KetQua ketQua = new KetQua();
 			try {
 				ketQua.setPhieuCham(phieuChamService.layTheoMa(maPhieCHamAdd));
@@ -153,7 +153,7 @@ public class PhieuChamDiemController {
 			phieuChams.add(phieuChamAddSV1);
 			if (phieuCham.getSinhVien().size() >= 2) {
 
-				phieuChamAddSV2 = phieuChamService.luu(new PhieuCham(Math.random() + "", phieuCham.getTenPhieu(), null,
+				phieuChamAddSV2 = phieuChamService.luu(new PhieuCham( phieuCham.getTenPhieu(), null,
 						null, null, deTaiService.layTheoMa(phieuCham.getMaDeTai()),
 						giangVienService.layTheoMa(phieuCham.getMaGiangVien())));
 
@@ -180,7 +180,7 @@ public class PhieuChamDiemController {
 
 				ketQuas = new ArrayList<>();
 
-				maPhieCHamAdd = phieuChamAddSV2.getMaPhieu();
+				maPhieCHamAdd = phieuChamAddSV2.getMaPhieu()+"";
 				ketQua = new KetQua();
 				try {
 					ketQua.setPhieuCham(phieuChamService.layTheoMa(maPhieCHamAdd));
@@ -211,7 +211,7 @@ public class PhieuChamDiemController {
 
 		try {
 			PhieuCham phieuChamUpdate = phieuChamService
-					.capNhat(new PhieuCham(phieuCham.getMaPhieuCham(), phieuCham.getTenPhieu(),
+					.capNhat(new PhieuCham(Integer.parseInt(phieuCham.getMaPhieuCham()), phieuCham.getTenPhieu(),
 							phieuCham.getKetQuaTong(), null, null, deTaiService.layTheoMa(phieuCham.getMaDeTai()),
 							giangVienService.layTheoMa(phieuCham.getMaGiangVien())));
 
@@ -252,7 +252,7 @@ public class PhieuChamDiemController {
 			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(diemThanhPhanDtos.get(0).getMaPhieuCham());
 
 			List<DiemThanhPhan> dsDiemThanhPhans = diemThanhPhanService
-					.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu());
+					.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu()+"");
 			if (diemThanhPhanDtos.size() > dsDiemThanhPhans.size()) {
 				throw new RuntimeException("Danh Sách chấm điểm không hợp lệ");
 			}
@@ -282,7 +282,7 @@ public class PhieuChamDiemController {
 			PhieuCham phieuChamUpdate = phieuChamService.layTheoMa(diemThanhPhanDtos.get(0).getMaPhieuCham());
 
 			List<DiemThanhPhan> dsDiemThanhPhans = diemThanhPhanService
-					.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu());
+					.layDsDiemThanhPhan(phieuChamUpdate.getMaPhieu()+"");
 			if (diemThanhPhanDtos.size() > dsDiemThanhPhans.size()) {
 				throw new RuntimeException("Danh Sách chấm điểm không hợp lệ");
 			}
@@ -418,7 +418,7 @@ public class PhieuChamDiemController {
 					break;
 				}
 				List<String> dsPP = request.getPpcham() == null ? new ArrayList<>() :  request.getPpcham();
-				if (dsPP.size() == 2) {
+				if (dsPP.size() == 1) {
 					if (request.getPpcham().get(0).equals("chamPoster")) {
 						phieuChamService
 								.layDsPhieuChamPosterVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong, vaiTro)
@@ -473,6 +473,7 @@ public class PhieuChamDiemController {
 								diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
 								diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
 								rs.add(diemSVDTO);
+								System.out.println("hoi co 2\n" + diemSVDTO.getTenSV());
 							});
 					phieuChamService
 							.layDsPhieuChamHoiDongVaiTro(request.getMaNguoiDung(), hocKy.getMaHocKy(), viTriPhanCong, vaiTro)
@@ -490,8 +491,8 @@ public class PhieuChamDiemController {
 								diemSVDTO.setTenDeTai(phieuCham.getDeTai().getTenDeTai());
 								diemSVDTO.setDiemThanhPhans(phieuCham.getDsDiemThanhPhan());
 								rs.add(diemSVDTO);
+								System.out.println("hoi co 2\n" + diemSVDTO.getMaNhom());
 							});
-					System.out.println("hoi co 2\n" + rs);
 				}
 			}
 		}
@@ -513,7 +514,8 @@ public class PhieuChamDiemController {
 		for (Nhom nhom : nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
 			if (phanCongService.layPhanCongTheoMaNhomVaTen(nhom.getMaNhom(), "thanh vien 3").size() >= 1) {
 				for (String maSV : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
-					if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0) {
+					if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0 
+							) {
 						System.out.println(maSV);
 						DiemSinhVienQuanLyDto diemSVDTO = new DiemSinhVienQuanLyDto();
 						PhieuCham phieuChamHD = phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "HD", maSV)
@@ -538,17 +540,17 @@ public class PhieuChamDiemController {
 						diemSVDTO.setMaDeTai(nhom.getDeTai().getMaDeTai());
 						diemSVDTO.setTenDeTai(nhom.getDeTai().getTenDeTai());
 
-						diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu(),
+						diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu()+"",
 								phieuChamHD.getTenPhieu(), phieuChamHD.getDiemPhieuCham(),
 								phieuChamHD.getDsDiemThanhPhan(), phieuChamHD.getGiangVien().getMaGiangVien(),
 								phieuChamHD.getGiangVien().getTenGiangVien()));
 
-						diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu(),
+						diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu()+"",
 								phieuChamPB1.getTenPhieu(), phieuChamPB1.getDiemPhieuCham(),
 								phieuChamPB1.getDsDiemThanhPhan(), phieuChamPB1.getGiangVien().getMaGiangVien(),
 								phieuChamPB1.getGiangVien().getTenGiangVien()));
 
-						diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu(),
+						diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu()+"",
 								phieuChamPB2.getTenPhieu(), phieuChamPB2.getDiemPhieuCham(),
 								phieuChamPB2.getDsDiemThanhPhan(), phieuChamPB2.getGiangVien().getMaGiangVien(),
 								phieuChamPB2.getGiangVien().getTenGiangVien()));
@@ -557,7 +559,7 @@ public class PhieuChamDiemController {
 								+ phieuChamPB2.getDiemPhieuCham()) / 3;
 
 						diemSVDTO.setPhieuChamDiemCT(
-								new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu(), phieuChamHoiDong1.getTenPhieu(),
+								new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu()+"", phieuChamHoiDong1.getTenPhieu(),
 										diemTBBM >= 8 && phieuChamHoiDong1.getDiemPhieuCham() >= 8
 												? phieuChamHoiDong1.getDiemPhieuCham()
 												: 8,
@@ -566,7 +568,7 @@ public class PhieuChamDiemController {
 										phieuChamHoiDong1.getGiangVien().getTenGiangVien()));
 
 						diemSVDTO.setPhieuChamDiemTK(
-								new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu(), phieuChamHoiDong2.getTenPhieu(),
+								new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu()+"", phieuChamHoiDong2.getTenPhieu(),
 										diemTBBM >= 8 && phieuChamHoiDong2.getDiemPhieuCham() >= 8
 												? phieuChamHoiDong2.getDiemPhieuCham()
 												: 8,
@@ -575,7 +577,7 @@ public class PhieuChamDiemController {
 										phieuChamHoiDong2.getGiangVien().getTenGiangVien()));
 
 						diemSVDTO.setPhieuChamDiemTK(
-								new PhieuChamKetQuaQL(phieuChamHoiDong3.getMaPhieu(), phieuChamHoiDong3.getTenPhieu(),
+								new PhieuChamKetQuaQL(phieuChamHoiDong3.getMaPhieu()+"", phieuChamHoiDong3.getTenPhieu(),
 										diemTBBM >= 8 && phieuChamHoiDong3.getDiemPhieuCham() >= 8
 												? phieuChamHoiDong3.getDiemPhieuCham()
 												: 8,
@@ -604,7 +606,8 @@ public class PhieuChamDiemController {
 				}
 			} else {
 				for (String maSV : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
-					if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0) {
+					if (phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "CT", maSV).size() > 0  
+							) {
 						System.out.println(maSV);
 						DiemSinhVienQuanLyDto diemSVDTO = new DiemSinhVienQuanLyDto();
 						PhieuCham phieuChamHD = phieuChamService.layDsPhieuChamVaiTroQL(hocKy.getMaHocKy(), "HD", maSV)
@@ -616,6 +619,8 @@ public class PhieuChamDiemController {
 
 						PhieuCham phieuChamPB1 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(0);
 						PhieuCham phieuChamPB2 = phieuChamService.layPhieuTheoMaSinhVienTenVaiTro(maSV, "PB").get(1);
+						System.out.println(phieuChamPB1.getDiemPhieuCham());
+						System.out.println(phieuChamPB2.getDiemPhieuCham());
 
 						phieuChamHD.getDsKetQua().forEach(sv -> {
 							diemSVDTO.setMaSV(sv.getSinhVien().getMaSinhVien());
@@ -627,17 +632,17 @@ public class PhieuChamDiemController {
 						diemSVDTO.setMaDeTai(nhom.getDeTai().getMaDeTai());
 						diemSVDTO.setTenDeTai(nhom.getDeTai().getTenDeTai());
 
-						diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu(),
+						diemSVDTO.setPhieuChamDiemHD(new PhieuChamKetQuaQL(phieuChamHD.getMaPhieu()+"",
 								phieuChamHD.getTenPhieu(), phieuChamHD.getDiemPhieuCham(),
 								phieuChamHD.getDsDiemThanhPhan(), phieuChamHD.getGiangVien().getMaGiangVien(),
 								phieuChamHD.getGiangVien().getTenGiangVien()));
 
-						diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu(),
+						diemSVDTO.setPhieuChamDiemPB1(new PhieuChamKetQuaQL(phieuChamPB1.getMaPhieu()+"",
 								phieuChamPB1.getTenPhieu(), phieuChamPB1.getDiemPhieuCham(),
 								phieuChamPB1.getDsDiemThanhPhan(), phieuChamPB1.getGiangVien().getMaGiangVien(),
 								phieuChamPB1.getGiangVien().getTenGiangVien()));
 
-						diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu(),
+						diemSVDTO.setPhieuChamDiemPB2(new PhieuChamKetQuaQL(phieuChamPB2.getMaPhieu()+"",
 								phieuChamPB2.getTenPhieu(), phieuChamPB2.getDiemPhieuCham(),
 								phieuChamPB2.getDsDiemThanhPhan(), phieuChamPB2.getGiangVien().getMaGiangVien(),
 								phieuChamPB2.getGiangVien().getTenGiangVien()));
@@ -646,7 +651,7 @@ public class PhieuChamDiemController {
 								+ phieuChamPB2.getDiemPhieuCham()) / 3;
 
 						diemSVDTO.setPhieuChamDiemCT(
-								new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu(), phieuChamHoiDong1.getTenPhieu(),
+								new PhieuChamKetQuaQL(phieuChamHoiDong1.getMaPhieu()+"", phieuChamHoiDong1.getTenPhieu(),
 										diemTBBM >= 8 && phieuChamHoiDong1.getDiemPhieuCham() >= 8
 												? phieuChamHoiDong1.getDiemPhieuCham()
 												: 8,
@@ -655,7 +660,7 @@ public class PhieuChamDiemController {
 										phieuChamHoiDong1.getGiangVien().getTenGiangVien()));
 
 						diemSVDTO.setPhieuChamDiemTK(
-								new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu(), phieuChamHoiDong2.getTenPhieu(),
+								new PhieuChamKetQuaQL(phieuChamHoiDong2.getMaPhieu()+"", phieuChamHoiDong2.getTenPhieu(),
 										diemTBBM >= 8 && phieuChamHoiDong2.getDiemPhieuCham() >= 8
 												? phieuChamHoiDong2.getDiemPhieuCham()
 												: 8,

@@ -343,24 +343,24 @@ public class KeHoachController {
 			case "5-6":
 				tgbd.setHours(10);
 				tgkt.setHours(11);
-				tgbd.setMinutes(40);
+				tgkt.setMinutes(40);
 				break;
 			case "7-8":
 				tgbd.setHours(12);
 				tgbd.setMinutes(30);
 				tgkt.setHours(14);
-				tgbd.setMinutes(10);
+				tgkt.setMinutes(10);
 				break;
 			case "9-10":
 				tgbd.setHours(14);
 				tgbd.setMinutes(10);
 				tgkt.setHours(3);
-				tgbd.setMinutes(50);
+				tgkt.setMinutes(50);
 				break;
 			case "11-12":
 				tgbd.setHours(16);
 				tgkt.setHours(17);
-				tgbd.setMinutes(40);
+				tgkt.setMinutes(40);
 				break;
 			}
 			KeHoach keHoach = new KeHoach("Lịch chấm phản biện", keHoachGvDto.getPhong(), null, hocKy, tgbd, tgkt, 1,
@@ -489,19 +489,19 @@ public class KeHoachController {
 			case "5-6":
 				tgbd.setHours(10);
 				tgkt.setHours(11);
-				tgbd.setMinutes(40);
+				tgkt.setMinutes(40);
 				break;
 			case "7-8":
 				tgbd.setHours(12);
 				tgbd.setMinutes(30);
 				tgkt.setHours(14);
-				tgbd.setMinutes(10);
+				tgkt.setMinutes(10);
 				break;
 			case "9-10":
 				tgbd.setHours(14);
 				tgbd.setMinutes(10);
 				tgkt.setHours(3);
-				tgbd.setMinutes(50);
+				tgkt.setMinutes(50);
 				break;
 			case "11-12":
 				tgbd.setHours(16);
@@ -539,7 +539,7 @@ public class KeHoachController {
 						nhomSvPB.setTenNhom(sinhVien.getNhom().getTenNhom());
 						nhomSvPB.setTenDeTai(sinhVien.getNhom().getDeTai().getTenDeTai());
 						nhomSinhVienPB.add(new SinhVienNhomVaiTroDto(sinhVien.getMaSinhVien(), sinhVien.getTenSinhVien()));
-						
+						System.out.println(nhomSinhVienPB);
 					}
 					
 					List<GiangVienPBDto> nhomGiangVienPB = new ArrayList<>();

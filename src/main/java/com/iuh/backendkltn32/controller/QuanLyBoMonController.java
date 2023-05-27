@@ -37,6 +37,7 @@ import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.LopHocPhanDto;
 import com.iuh.backendkltn32.dto.PhanCongDto;
 import com.iuh.backendkltn32.dto.PhanCongDto2;
+import com.iuh.backendkltn32.dto.SinhVienNhomVaiTroDto;
 import com.iuh.backendkltn32.dto.ThongKeDto;
 import com.iuh.backendkltn32.export.DanhSachDeTaiExporter;
 import com.iuh.backendkltn32.export.DanhSachNhomExporter;
@@ -689,11 +690,10 @@ public class QuanLyBoMonController {
 		List<Long> soDT = new ArrayList<>();
 		Collections.reverse(listHocKys);
 		for (HocKy hocKy : listHocKys) {
-			System.out.println("HK" + hocKy.getSoHocKy() +
-            "-20" + hocKy.getMaHocKy().substring(0,2));
-			tenHocKys.add(("HK" + hocKy.getSoHocKy() +
-            "-20" + hocKy.getMaHocKy().substring(0,2)));
-			List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
+			System.out.println("HK" + hocKy.getSoHocKy() + "-20" + hocKy.getMaHocKy().substring(0, 2));
+			tenHocKys.add(("HK" + hocKy.getSoHocKy() + "-20" + hocKy.getMaHocKy().substring(0, 2)));
+			List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(),
+					hocKy.getSoHocKy());
 			List<DeTai> deTais = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
 			soDT.add((long) deTais.size());
 			soSV.add((long) sinhViens.size());
@@ -702,10 +702,10 @@ public class QuanLyBoMonController {
 		DataThongKeDto dataSinhVien = new DataThongKeDto("Sinh viên", soSV);
 		thongKeDtos.add(dataSinhVien);
 		thongKeDtos.add(dataDeTai);
-		
+
 		return new ThongKeDto(tenHocKys, thongKeDtos);
 	}
-	
+
 	@GetMapping("/thong-ke-sv-co-nhom")
 	public ThongKeDto thongKeSvDangKyDT() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
@@ -713,7 +713,7 @@ public class QuanLyBoMonController {
 		List<Long> soSV = new ArrayList<>();
 		Long soSvDKDeTai = (long) 0;
 		Long soSvChuaDKDeTai = (long) 0;
-		for (SinhVien sv: sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy())) {
+		for (SinhVien sv : sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy())) {
 			if (sv.getNhom() != null) {
 				soSvDKDeTai += 1;
 			} else {
@@ -724,10 +724,10 @@ public class QuanLyBoMonController {
 		soSV.add(soSvChuaDKDeTai);
 		DataThongKeDto dataDeTai = new DataThongKeDto("Số lượng:", soSV);
 		thongKeDtos.add(dataDeTai);
-		
+
 		return new ThongKeDto(Arrays.asList("Đã đăng ký", "Chưa được đăng ký"), thongKeDtos);
 	}
-	
+
 	@GetMapping("/thong-ke-nhom-detai")
 	public ThongKeDto thongKeDTDangKy() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
@@ -735,21 +735,21 @@ public class QuanLyBoMonController {
 		List<Long> soSV = new ArrayList<>();
 		Long soDTDK = (long) 0;
 		Long soDTChuaDK = (long) 0;
-		for (Nhom nhom: nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
+		for (Nhom nhom : nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
 			if (nhom.getDeTai() != null) {
 				soDTDK += +1;
 			} else {
-				soDTChuaDK +=1;
+				soDTChuaDK += 1;
 			}
 		}
 		soSV.add(soDTDK);
 		soSV.add(soDTChuaDK);
 		DataThongKeDto dataDeTai = new DataThongKeDto("Số lượng:", soSV);
 		thongKeDtos.add(dataDeTai);
-		
+
 		return new ThongKeDto(Arrays.asList("Đã đăng ký", "Chưa được đăng ký"), thongKeDtos);
 	}
-	
+
 	@GetMapping("/thong-ke-detai-giangvien")
 	public ThongKeDto thongKeDTGiangVien() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
@@ -759,30 +759,32 @@ public class QuanLyBoMonController {
 		List<Long> listsoDTDK = new ArrayList<>();
 		List<Long> listsoChuaDTDK = new ArrayList<>();
 		dsGiangVien.remove(0);
-		for (GiangVien gv: dsGiangVien) {
+		for (GiangVien gv : dsGiangVien) {
 			tenGV.add(gv.getTenGiangVien());
 			Long soDTDK = (long) 0;
 			Long soDTChuaDK = (long) 0;
-			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy(), gv.getMaGiangVien())) {
-				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0 :  deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					gv.getMaGiangVien())) {
+				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0
+						: deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
 				if (soNhom > 0) {
 					soDTDK += 1;
-				}  else {
+				} else {
 					soDTChuaDK += 1;
 				}
 			}
 			listsoChuaDTDK.add(soDTChuaDK);
 			listsoDTDK.add(soDTDK);
-			
+
 		}
 		DataThongKeDto dataDeTai = new DataThongKeDto("đã được đăng ký", listsoDTDK);
 		DataThongKeDto dataDeTaiChuaDK = new DataThongKeDto("chưa được đăng ký", listsoChuaDTDK);
 		thongKeDtos.add(dataDeTai);
 		thongKeDtos.add(dataDeTaiChuaDK);
-		
+
 		return new ThongKeDto(tenGV, thongKeDtos);
 	}
-	
+
 	@GetMapping("/thong-ke-giangvien-cothenhan")
 	public ThongKeDto thongKeSoNhomGiangVien() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
@@ -791,14 +793,18 @@ public class QuanLyBoMonController {
 		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
 		List<Long> listsoDTDK = new ArrayList<>();
 		dsGiangVien.remove(0);
-		for (GiangVien gv: dsGiangVien) {
+		for (GiangVien gv : dsGiangVien) {
 			tenGV.add(gv.getTenGiangVien());
 			Long soNhomCon = (long) 0;
-			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(), gv.getMaGiangVien(), 2)) {
-				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0 :  deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
-				if (soNhom > 0 && deTai.getGioiHanSoNhomThucHien() -  deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) > 0) {
-					soNhomCon += deTai.getGioiHanSoNhomThucHien() - deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
-				}  else {
+			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					gv.getMaGiangVien(), 2)) {
+				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0
+						: deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				if (soNhom > 0 && deTai.getGioiHanSoNhomThucHien()
+						- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) > 0) {
+					soNhomCon += deTai.getGioiHanSoNhomThucHien()
+							- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				} else {
 					soNhomCon += deTai.getGioiHanSoNhomThucHien();
 				}
 			}
@@ -806,24 +812,61 @@ public class QuanLyBoMonController {
 		}
 		DataThongKeDto dataDeTai = new DataThongKeDto("Số nhóm còn có thể hướng dẫn", listsoDTDK);
 		thongKeDtos.add(dataDeTai);
-		
+
 		return new ThongKeDto(tenGV, thongKeDtos);
 	}
-	
+
 	@GetMapping("/ds-giangvien-chuadu-so-detai-toithieu/{soDeTaiToiThieu}")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
-	public List<GiangVienDtoChuaCoSoDTTT> getGiangVienChuaDuSoDTToiThieu(@PathVariable("soDeTaiToiThieu") Integer soDeTaiToiThieu) {
+	public List<GiangVienDtoChuaCoSoDTTT> getGiangVienChuaDuSoDTToiThieu(
+			@PathVariable("soDeTaiToiThieu") Integer soDeTaiToiThieu) {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<GiangVien> ListGV = giangVienService.layDanhSach();
+		ListGV.remove(giangVienService.layTheoMa("12392401"));
 		List<GiangVienDtoChuaCoSoDTTT> result = new ArrayList<>();
 		for (GiangVien giangVien : ListGV) {
 			int soLuongDeTaiDaCo = giangVienService.layDanhSachTT(giangVien.getMaGiangVien(), hocKy.getMaHocKy());
 			if (soLuongDeTaiDaCo < soDeTaiToiThieu) {
-				result.add(new GiangVienDtoChuaCoSoDTTT(giangVien.getMaGiangVien(), giangVien.getTenGiangVien(), soLuongDeTaiDaCo));
+				result.add(new GiangVienDtoChuaCoSoDTTT(giangVien.getMaGiangVien(), giangVien.getTenGiangVien(),
+						soLuongDeTaiDaCo));
 			}
-			
+
 		}
 		return result;
 	}
-	
+
+	@GetMapping("/ds-sinhvien-chua-dangky-nhom")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public List<SinhVienNhomVaiTroDto> getSinhVienChuaDKNHom() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<SinhVien> ListGV = sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
+		List<SinhVienNhomVaiTroDto> result = new ArrayList<>();
+		for (SinhVien giangVien : ListGV) {
+			if (giangVien.getNhom() == null) {
+				result.add(new SinhVienNhomVaiTroDto(giangVien.getMaSinhVien(), giangVien.getTenSinhVien()));
+
+			}
+
+		}
+		return result;
+	}
+
+	@GetMapping("/ds-sinhvien-chua-dangky-detai")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public List<SinhVienNhomVaiTroDto> getSinhVienChuaDKDT() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<Nhom> nhoms = nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1);
+		List<SinhVienNhomVaiTroDto> result = new ArrayList<>();
+		for (Nhom nhom : nhoms) {
+			if (nhom.getDeTai() == null) {
+				sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom()).forEach(ma -> {
+					SinhVien sv = sinhVienService.layTheoMa(ma);
+					result.add(new SinhVienNhomVaiTroDto(sv.getMaSinhVien(), sv.getTenSinhVien()));
+				});
+			}
+
+		}
+		return result;
+	}
+
 }

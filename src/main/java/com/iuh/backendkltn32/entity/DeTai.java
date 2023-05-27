@@ -1,6 +1,7 @@
 package com.iuh.backendkltn32.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,8 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -57,6 +60,10 @@ public class DeTai implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "maGiangVien", nullable = false)
 	private GiangVien giangVien;
+	
+	@OneToMany(mappedBy = "deTai")
+	@JsonIgnore
+	private List<HocPhanTienQuyet_DeTai> hocPhanTienQuyet_DeTais;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {
 	        CascadeType.PERSIST, 

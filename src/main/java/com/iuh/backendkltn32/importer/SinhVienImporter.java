@@ -13,16 +13,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.HocPhanKhoaLuanTotNghiep;
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet;
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet_SinhVien;
 import com.iuh.backendkltn32.entity.LopDanhNghia;
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.HocPhanKhoaLuanTotNghiepService;
+import com.iuh.backendkltn32.service.HocPhanTienQuyetService;
 import com.iuh.backendkltn32.service.LopDanhNghiaService;
 import com.iuh.backendkltn32.service.LopHocPhanService;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +45,7 @@ public class SinhVienImporter {
 
 	@Autowired
 	private LopDanhNghiaService lopDanhNghiaService;
+	
 
 	public static boolean isValidExcelFile(MultipartFile file, LopHocPhan lopHocPhan) {
 		return Objects.equals(file.getContentType(),
@@ -49,6 +54,7 @@ public class SinhVienImporter {
 
 	public List<SinhVien> addDataFDromExcel(InputStream inputStream) throws RuntimeException {
 		List<SinhVien> sinhViens = new ArrayList<>();
+		
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 			XSSFSheet sheet = workbook.getSheetAt(0);
@@ -102,6 +108,7 @@ public class SinhVienImporter {
 				sinhVien.setAnhDaiDien("");
 				sinhVien.setNamNhapHoc(2023);
 				sinhVien.setNoiSinh("Ho Chi Minh");
+				
 				String tenSinhVien = "";
 				
 				if (nextRow.getCell(3).getCellType() == CellType.BLANK) {

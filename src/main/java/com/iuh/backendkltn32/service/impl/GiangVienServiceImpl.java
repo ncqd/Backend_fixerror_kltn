@@ -93,4 +93,10 @@ public class GiangVienServiceImpl implements GiangVienService {
 		return repository.findAll();
 	}
 
+	@Override
+	public Integer layDanhSachTT(String magv , String maHocKy) {
+		// TODO Auto-generated method stub
+		return repository.soDTGVCo(magv, maHocKy);
+	}
+
 }

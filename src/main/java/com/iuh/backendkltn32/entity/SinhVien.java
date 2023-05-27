@@ -1,6 +1,7 @@
 package com.iuh.backendkltn32.entity;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +72,10 @@ public class SinhVien implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "sinhVien")
 	@JsonIgnore
 	private List<KetQua> dsKetQua;
+	
+	@OneToMany(mappedBy = "sinhVien")
+	@JsonIgnore
+	private List<HocPhanTienQuyet_SinhVien> dsHocPhanTienQuyet_SinhViens;
 
 	@ManyToOne()
 	@JoinColumn(name = "maNhom", nullable = true)

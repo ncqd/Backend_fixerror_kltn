@@ -10,5 +10,7 @@ public interface GiangVienService extends AbstractService<GiangVien> {
 	List<GiangVien> luuDanhSach(List<GiangVien> deTais);
 	
 	List<GiangVien> layDanhSach();
+	
+	Integer layDanhSachTT(String magv, String maHocKy);
 
 }

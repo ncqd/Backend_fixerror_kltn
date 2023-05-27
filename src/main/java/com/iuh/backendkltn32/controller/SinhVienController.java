@@ -23,6 +23,8 @@ import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.LopHocPhanDto;
 import com.iuh.backendkltn32.dto.SinhVienDto;
 import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet;
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet_SinhVien;
 import com.iuh.backendkltn32.entity.LopDanhNghia;
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.Nhom;
@@ -33,6 +35,7 @@ import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.importer.DeTaiImporter;
 import com.iuh.backendkltn32.importer.SinhVienImporter;
 import com.iuh.backendkltn32.service.HocKyService;
+import com.iuh.backendkltn32.service.HocPhanTienQuyetService;
 import com.iuh.backendkltn32.service.LopDanhNghiaService;
 import com.iuh.backendkltn32.service.LopHocPhanService;
 import com.iuh.backendkltn32.service.NhomService;
@@ -76,9 +79,6 @@ public class SinhVienController {
 
 	@Autowired
 	private PhanCongService phanCongService;
-
-	@Autowired
-	private QuanLyBoMonService quanLyBoMonService;
 
 	@GetMapping("/thong-tin-ca-nhan/{maSinhVien}")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")

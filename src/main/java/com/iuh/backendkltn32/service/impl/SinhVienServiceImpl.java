@@ -4,11 +4,16 @@ package com.iuh.backendkltn32.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet;
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet_SinhVien;
 import com.iuh.backendkltn32.entity.LopHocPhan;
 import com.iuh.backendkltn32.entity.SinhVien;
+import com.iuh.backendkltn32.repository.HPTQ_SinhVienRepository;
+import com.iuh.backendkltn32.repository.HocPhanTienQuyetRepository;
 import com.iuh.backendkltn32.repository.SinhVienRepository;
 import com.iuh.backendkltn32.service.SinhVienService;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -18,6 +23,12 @@ public class SinhVienServiceImpl implements  SinhVienService {
 
 	@Autowired
 	private SinhVienRepository sinhVienRepository;
+	
+	@Autowired
+	private HocPhanTienQuyetRepository hocPhanTienQuyetRepository;
+	
+	@Autowired
+	private HPTQ_SinhVienRepository  ptq_SinhVienRepository;
 
 	@Override
 	public SinhVien layTheoMa(String ma) throws RuntimeException {
@@ -41,9 +52,14 @@ public class SinhVienServiceImpl implements  SinhVienService {
 		if (sinhVienDaTonTai != null) {
 			throw new RuntimeException("Sinh Viên đã tồn tại");
 		}
-		sinhVienRepository.save(obj);
-
-		return obj;
+		SinhVien sv = sinhVienRepository.save(obj);
+		
+		HocPhanTienQuyet hocPhanTienQuyet = hocPhanTienQuyetRepository.findById("44200056").get();
+		sv.setDsHocPhanTienQuyet_SinhViens(Arrays.asList(
+				ptq_SinhVienRepository.save(
+						new HocPhanTienQuyet_SinhVien(hocPhanTienQuyet, sv, 8.0))));
+		sv = sinhVienRepository.save(obj);
+		return sv;
 	}
 
 	@Override
@@ -99,8 +115,18 @@ public class SinhVienServiceImpl implements  SinhVienService {
 
 	@Override
 	public List<SinhVien> luuDanhSach(List<SinhVien> deTais) {
-		// TODO Auto-generated method stub
-		return sinhVienRepository.saveAll(deTais);
+		
+		List<SinhVien> result = sinhVienRepository.saveAll(deTais);
+		HocPhanTienQuyet hocPhanTienQuyet = hocPhanTienQuyetRepository.findById("44200056").get();
+		System.out.println(hocPhanTienQuyet);
+		for (SinhVien sinhVien : result) {
+			List<HocPhanTienQuyet_SinhVien> ds = Arrays.asList(
+					ptq_SinhVienRepository.save(
+							new HocPhanTienQuyet_SinhVien(hocPhanTienQuyet, sinhVien, 8.0)));
+			sinhVien.setDsHocPhanTienQuyet_SinhViens(ds);
+		}
+		
+		return result;
 	}
 
 	@Override

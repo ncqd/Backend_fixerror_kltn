@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iuh.backendkltn32.dto.ChoXemDiemDto;
 import com.iuh.backendkltn32.dto.DataThongKeDto;
 import com.iuh.backendkltn32.dto.DuyetRequest;
+import com.iuh.backendkltn32.dto.GiangVienDtoChuaCoSoDTTT;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.LoginRequest;
@@ -807,6 +808,22 @@ public class QuanLyBoMonController {
 		thongKeDtos.add(dataDeTai);
 		
 		return new ThongKeDto(tenGV, thongKeDtos);
+	}
+	
+	@GetMapping("/ds-giangvien-chuadu-so-detai-toithieu/{soDeTaiToiThieu}")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public List<GiangVienDtoChuaCoSoDTTT> getGiangVienChuaDuSoDTToiThieu(@PathVariable("soDeTaiToiThieu") Integer soDeTaiToiThieu) {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<GiangVien> ListGV = giangVienService.layDanhSach();
+		List<GiangVienDtoChuaCoSoDTTT> result = new ArrayList<>();
+		for (GiangVien giangVien : ListGV) {
+			int soLuongDeTaiDaCo = giangVienService.layDanhSachTT(giangVien.getMaGiangVien(), hocKy.getMaHocKy());
+			if (soLuongDeTaiDaCo < soDeTaiToiThieu) {
+				result.add(new GiangVienDtoChuaCoSoDTTT(giangVien.getMaGiangVien(), giangVien.getTenGiangVien(), soLuongDeTaiDaCo));
+			}
+			
+		}
+		return result;
 	}
 	
 }

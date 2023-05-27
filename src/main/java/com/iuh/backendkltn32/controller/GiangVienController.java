@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.GiangVienDto;
+import com.iuh.backendkltn32.dto.GiangVienDtoChuaCoSoDTTT;
 import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.entity.GiangVien;
+import com.iuh.backendkltn32.entity.HocKy;
 import com.iuh.backendkltn32.entity.Khoa;
 import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.importer.DeTaiImporter;
 import com.iuh.backendkltn32.importer.GiangVienImporter;
 import com.iuh.backendkltn32.service.GiangVienService;
+import com.iuh.backendkltn32.service.HocKyService;
 import com.iuh.backendkltn32.service.KhoaService;
 import com.iuh.backendkltn32.service.TaiKhoanService;
 import com.iuh.backendkltn32.service.VaiTroService;
@@ -46,6 +50,9 @@ public class GiangVienController {
 
 	@Autowired
 	private GiangVienImporter giangVienImporter;
+	
+	@Autowired
+	private HocKyService hocKyService;
 
 	@GetMapping("/thong-tin-ca-nhan/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN')")
@@ -132,4 +139,5 @@ public class GiangVienController {
 		}
 		return null;
 	}
+	
 }

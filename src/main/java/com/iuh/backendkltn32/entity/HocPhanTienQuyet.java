@@ -1,11 +1,15 @@
 package com.iuh.backendkltn32.entity;
 
-import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +31,8 @@ public class HocPhanTienQuyet {
 	@Column(name = "tenHocPhan")
 	private String tenHocPhan;
 
-	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "hocPhanTienQuyet")
+	@Column( nullable = true)
+	private List<HocPhanTienQuyet_SinhVien> hocPhanTienQuyet_SinhViens; 
 
 }

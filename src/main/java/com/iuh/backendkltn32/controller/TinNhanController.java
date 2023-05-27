@@ -1,5 +1,6 @@
 package com.iuh.backendkltn32.controller;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iuh.backendkltn32.dto.ThemTinNhanDto;
 import com.iuh.backendkltn32.dto.TinNhanDto;
 import com.iuh.backendkltn32.dto.TinNhanResponesDto;
 import com.iuh.backendkltn32.entity.TinNhan;
@@ -79,6 +82,14 @@ public class TinNhanController {
 		}
 		return tinNhanDto;
 
+	}
+	
+	@PostMapping("/them-tin-nhan")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public TinNhan themTinNhan(@RequestBody ThemTinNhanDto themTinNhanDto ) {
+		TinNhan tinNhan = new TinNhan("Bạn có tin nhắn từ người quản lý", themTinNhanDto.getNoiDung(), 
+				themTinNhanDto.getMaNguoiNhan(), themTinNhanDto.getMaNguoiGui(), 0, new Timestamp(System.currentTimeMillis()));
+		return tinNhanSerivce.luu(tinNhan);
 	}
 
 }

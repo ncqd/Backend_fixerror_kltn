@@ -227,8 +227,8 @@ public class SinhVienController {
 						+ phieuChamHoiDong3SV1.getDiemPhieuCham()) / 3;
 
 			}
-			Double kq = (double) (Math.round(((diemHD + diemPB) / 2) * 10)) / 10;
-
+			Double kq = (double) (Math.round(((diemHD + diemPB ) / 2) * 10)) / 10;
+			kq =(double) ((Math.round(((kq + phieuChamHoiDong2SV1.getDsKetQua().get(0).getDiemBao() )) * 10)) / 10);
 			Double diemThang4 = (double) 0;
 
 			String diemChu = "";

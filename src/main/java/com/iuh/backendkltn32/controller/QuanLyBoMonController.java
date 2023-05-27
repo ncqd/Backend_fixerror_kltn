@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iuh.backendkltn32.dto.ChoXemDiemDto;
+import com.iuh.backendkltn32.dto.DataThongKeDto;
 import com.iuh.backendkltn32.dto.DuyetRequest;
 import com.iuh.backendkltn32.dto.LapKeHoachDto;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
@@ -34,6 +36,7 @@ import com.iuh.backendkltn32.dto.LoginRequest;
 import com.iuh.backendkltn32.dto.LopHocPhanDto;
 import com.iuh.backendkltn32.dto.PhanCongDto;
 import com.iuh.backendkltn32.dto.PhanCongDto2;
+import com.iuh.backendkltn32.dto.ThongKeDto;
 import com.iuh.backendkltn32.export.DanhSachDeTaiExporter;
 import com.iuh.backendkltn32.export.DanhSachNhomExporter;
 import com.iuh.backendkltn32.export.DanhSachNhomKLTNChamDiemExporter;
@@ -144,8 +147,9 @@ public class QuanLyBoMonController {
 						new Timestamp(System.currentTimeMillis()));
 			} else {
 				tinNhan = new TinNhan("Bạn có đề tài đã duyệt",
-						"Đề Tài " + deTai.getTenDeTai() + "| Đã Được Duyệt  | "  + " | "+ deTai.getMaDeTai(), "12392401",
-						deTai.getGiangVien().getMaGiangVien(), 0, new Timestamp(System.currentTimeMillis()));
+						"Đề Tài " + deTai.getTenDeTai() + "| Đã Được Duyệt  | " + " | " + deTai.getMaDeTai(),
+						"12392401", deTai.getGiangVien().getMaGiangVien(), 0,
+						new Timestamp(System.currentTimeMillis()));
 			}
 
 			tinNhanSerivce.luu(tinNhan);
@@ -391,7 +395,7 @@ public class QuanLyBoMonController {
 				}
 				case "7-8": {
 					tgbd.setHours(12);
-					tgbd.setMinutes(30);
+					tgbd.setMinutes(10);
 					tgkt.setHours(2);
 					tgkt.setMinutes(10);
 					break;
@@ -422,8 +426,8 @@ public class QuanLyBoMonController {
 											"ROLE_SINHVIEN", sv, new LoaiKeHoach(3), phong.getId() + "");
 									keHoachService.luu(keHoach);
 								} else {
-									KeHoach keHoach = new KeHoach("Lịch chấm hội đồng sinh viên", phong.getTenPhong(), null,
-											hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1,
+									KeHoach keHoach = new KeHoach("Lịch chấm hội đồng sinh viên", phong.getTenPhong(),
+											null, hocKyService.layTheoMa(phanCongDto.getMaHocKy()), tgbd, tgkt, 1,
 											"ROLE_SINHVIEN", sv, new LoaiKeHoach(3), phong.getId() + "");
 									keHoachService.luu(keHoach);
 								}
@@ -435,9 +439,9 @@ public class QuanLyBoMonController {
 			}
 			return ResponseEntity.ok(phanCongs);
 		} catch (Exception e) {
-			throw new RuntimeException("Đã xảy ra lỗi \n" +e.getMessage());
+			throw new RuntimeException("Đã xảy ra lỗi \n" + e.getMessage());
 		}
-		
+
 	}
 
 	@PutMapping("/cap-nhat-phan-cong")
@@ -655,7 +659,7 @@ public class QuanLyBoMonController {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/xuat-phieu-cham-ql")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public void xuatPhieuChamGVPB(HttpServletResponse response) throws RuntimeException {
@@ -674,4 +678,135 @@ public class QuanLyBoMonController {
 //			throw new RuntimeException(e.getMessage());
 //		}
 	}
+
+	@GetMapping("/thong-ke-sinhvien-detai")
+	public ThongKeDto thongKeSvDT() {
+		List<HocKy> listHocKys = hocKyService.layTatCaHocKy();
+		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
+		List<String> tenHocKys = new ArrayList<>();
+		List<Long> soSV = new ArrayList<>();
+		List<Long> soDT = new ArrayList<>();
+		Collections.reverse(listHocKys);
+		for (HocKy hocKy : listHocKys) {
+			System.out.println("HK" + hocKy.getSoHocKy() +
+            "-20" + hocKy.getMaHocKy().substring(0,2));
+			tenHocKys.add(("HK" + hocKy.getSoHocKy() +
+            "-20" + hocKy.getMaHocKy().substring(0,2)));
+			List<SinhVien> sinhViens = sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
+			List<DeTai> deTais = deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy());
+			soDT.add((long) deTais.size());
+			soSV.add((long) sinhViens.size());
+		}
+		DataThongKeDto dataDeTai = new DataThongKeDto("Đề tài", soDT);
+		DataThongKeDto dataSinhVien = new DataThongKeDto("Sinh viên", soSV);
+		thongKeDtos.add(dataSinhVien);
+		thongKeDtos.add(dataDeTai);
+		
+		return new ThongKeDto(tenHocKys, thongKeDtos);
+	}
+	
+	@GetMapping("/thong-ke-sv-co-nhom")
+	public ThongKeDto thongKeSvDangKyDT() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
+		List<Long> soSV = new ArrayList<>();
+		Long soSvDKDeTai = (long) 0;
+		Long soSvChuaDKDeTai = (long) 0;
+		for (SinhVien sv: sinhVienService.layTatCaSinhVienTheoHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy())) {
+			if (sv.getNhom() != null) {
+				soSvDKDeTai += 1;
+			} else {
+				soSvChuaDKDeTai += 1;
+			}
+		}
+		soSV.add(soSvDKDeTai);
+		soSV.add(soSvChuaDKDeTai);
+		DataThongKeDto dataDeTai = new DataThongKeDto("Số lượng:", soSV);
+		thongKeDtos.add(dataDeTai);
+		
+		return new ThongKeDto(Arrays.asList("Đã đăng ký", "Chưa được đăng ký"), thongKeDtos);
+	}
+	
+	@GetMapping("/thong-ke-nhom-detai")
+	public ThongKeDto thongKeDTDangKy() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
+		List<Long> soSV = new ArrayList<>();
+		Long soDTDK = (long) 0;
+		Long soDTChuaDK = (long) 0;
+		for (Nhom nhom: nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1)) {
+			if (nhom.getDeTai() != null) {
+				soDTDK += +1;
+			} else {
+				soDTChuaDK +=1;
+			}
+		}
+		soSV.add(soDTDK);
+		soSV.add(soDTChuaDK);
+		DataThongKeDto dataDeTai = new DataThongKeDto("Số lượng:", soSV);
+		thongKeDtos.add(dataDeTai);
+		
+		return new ThongKeDto(Arrays.asList("Đã đăng ký", "Chưa được đăng ký"), thongKeDtos);
+	}
+	
+	@GetMapping("/thong-ke-detai-giangvien")
+	public ThongKeDto thongKeDTGiangVien() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<GiangVien> dsGiangVien = giangVienService.layDanhSach();
+		List<String> tenGV = new ArrayList<>();
+		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
+		List<Long> listsoDTDK = new ArrayList<>();
+		List<Long> listsoChuaDTDK = new ArrayList<>();
+		dsGiangVien.remove(0);
+		for (GiangVien gv: dsGiangVien) {
+			tenGV.add(gv.getTenGiangVien());
+			Long soDTDK = (long) 0;
+			Long soDTChuaDK = (long) 0;
+			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKy(hocKy.getMaHocKy(), hocKy.getSoHocKy(), gv.getMaGiangVien())) {
+				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0 :  deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				if (soNhom > 0) {
+					soDTDK += 1;
+				}  else {
+					soDTChuaDK += 1;
+				}
+			}
+			listsoChuaDTDK.add(soDTChuaDK);
+			listsoDTDK.add(soDTDK);
+			
+		}
+		DataThongKeDto dataDeTai = new DataThongKeDto("đã được đăng ký", listsoDTDK);
+		DataThongKeDto dataDeTaiChuaDK = new DataThongKeDto("chưa được đăng ký", listsoChuaDTDK);
+		thongKeDtos.add(dataDeTai);
+		thongKeDtos.add(dataDeTaiChuaDK);
+		
+		return new ThongKeDto(tenGV, thongKeDtos);
+	}
+	
+	@GetMapping("/thong-ke-giangvien-cothenhan")
+	public ThongKeDto thongKeSoNhomGiangVien() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<GiangVien> dsGiangVien = giangVienService.layDanhSach();
+		List<String> tenGV = new ArrayList<>();
+		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
+		List<Long> listsoDTDK = new ArrayList<>();
+		dsGiangVien.remove(0);
+		for (GiangVien gv: dsGiangVien) {
+			tenGV.add(gv.getTenGiangVien());
+			Long soNhomCon = (long) 0;
+			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(), gv.getMaGiangVien(), 2)) {
+				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0 :  deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				if (soNhom > 0 && deTai.getGioiHanSoNhomThucHien() -  deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) > 0) {
+					soNhomCon += deTai.getGioiHanSoNhomThucHien() - deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				}  else {
+					soNhomCon += deTai.getGioiHanSoNhomThucHien();
+				}
+			}
+			listsoDTDK.add(soNhomCon);
+		}
+		DataThongKeDto dataDeTai = new DataThongKeDto("Số nhóm còn có thể hướng dẫn", listsoDTDK);
+		thongKeDtos.add(dataDeTai);
+		
+		return new ThongKeDto(tenGV, thongKeDtos);
+	}
+	
 }

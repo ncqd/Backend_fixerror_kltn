@@ -70,7 +70,7 @@ public class HocKyController {
 		String soHocKy = hocKy.getThoiGianBatDau().getMonth()+1 >= 8 && hocKy.getThoiGianBatDau().getMonth()+1 < 12 ? "1" : "2";
 		hocKy.setMaHocKy(maHK + soHocKy);
 		hocKy.setSoHocKy(soHocKy);
-		
+		hocKy.setChoXemDiem(false);
 
 		hocKy = hocKyService.luu(hocKy);
 		

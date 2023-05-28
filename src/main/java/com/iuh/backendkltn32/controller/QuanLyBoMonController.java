@@ -930,5 +930,4 @@ public class QuanLyBoMonController {
 
 		return new ThongKeDto(tenGV, thongKeDtos);
 	}
-
 }

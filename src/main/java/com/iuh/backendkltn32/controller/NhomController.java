@@ -627,5 +627,18 @@ public class NhomController {
 		}
 		return sinhViens;
 	}
+	
+
+	@GetMapping("/lay-ds-nhom-dangky-detai")
+	public List<Nhom> layDSDeTai() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<Nhom> dsNhomChuaDKDT = new ArrayList<>();
+		nhomService.layTatCaNhomTheoTinhTrang(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 1).forEach(nhom -> {
+			if (nhom.getDeTai() == null) {
+				dsNhomChuaDKDT.add(nhom);
+			}
+		});
+		return dsNhomChuaDKDT;
+	}
 
 }

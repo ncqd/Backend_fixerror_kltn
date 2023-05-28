@@ -47,6 +47,7 @@ public class JmsPublishProducer {
 				mapMessage.setString("maNhom", message.getMaNhom());
 				mapMessage.setString("maDeTai", message.getMaDeTai());
 				mapMessage.setString("password", message.getPassword());
+				mapMessage.setString("vaiTro", message.getVaiTro());
 				return mapMessage;		
 			}
 		});

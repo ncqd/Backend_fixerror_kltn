@@ -209,9 +209,9 @@ public class JmsListenerConsumer implements MessageListener {
 		if (nhom != null) {
 			Integer soNhomHienHanh = Integer.parseInt(nhom.getMaNhom().substring(5)) + 1;
 			String maNhom = null;
-			if (soNhomHienHanh < 9) {
+			if (soNhomHienHanh < 10) {
 				maNhom = "00" + soNhomHienHanh;
-			} else if (soNhomHienHanh >= 9 && soNhomHienHanh < 100) {
+			} else if (soNhomHienHanh >= 10 && soNhomHienHanh < 100) {
 				maNhom = "0" + soNhomHienHanh;
 			} else {
 				maNhom = "" + soNhomHienHanh;

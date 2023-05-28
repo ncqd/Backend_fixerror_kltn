@@ -135,8 +135,10 @@ public class NhomController {
 				}
 
 			}
+		} else {
+			
+			throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
 		}
-		throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
 
 	}
 

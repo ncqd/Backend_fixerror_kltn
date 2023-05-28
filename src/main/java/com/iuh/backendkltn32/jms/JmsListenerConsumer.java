@@ -109,29 +109,56 @@ public class JmsListenerConsumer implements MessageListener {
 			System.out.println("Listener - dang ky nhom - " + request);
 			try {
 				if (request.getMaNhom() == null) {
-					for (String maSv : request.getDsMaSinhVien()) {
-						SinhVien sv = sinhVienService.layTheoMa(maSv); // check SV co nhom chua
-						if (sv != null) {
-							if (sv.getNhom() != null) {
-								throw new RuntimeException("Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
+					if (mapMessage.getString("vaiTro").equals("ROLE_QUANLY")) {
+						for (String maSv : request.getDsMaSinhVien()) {
+							SinhVien sv = sinhVienService.layTheoMa(maSv); // check SV co nhom chua
+							if (sv != null) {
+								if (sv.getNhom() != null) {
+									throw new RuntimeException("Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
+								}
+							} else {
+								throw new RuntimeException("Ma sinh vien: " + maSv + " khong dung");
 							}
-						} else {
-							throw new RuntimeException("Ma sinh vien: " + maSv + " khong dung");
-						}
 
+						}
+						String maNhomMoi = taoMaMoi();
+						DeTai deTai = null;
+						if (request.getMaDeTai() != null) {
+							deTai = deTaiService.layTheoMa(request.getMaDeTai());
+						}
+						Nhom nhom = nhomService.luu(new Nhom(maNhomMoi, "Nhom " + maNhomMoi.substring(5), deTai, 1, 0));
+						for (String maSv : request.getDsMaSinhVien()) {
+							SinhVien sv = sinhVienService.layTheoMa(maSv);
+							sv.setNhom(nhom);
+							sinhVienService.capNhat(sv);
+						}
+						return ResponseEntity.ok(nhom);
+					} else {
+						for (String maSv : request.getDsMaSinhVien()) {
+							SinhVien sv = sinhVienService.layTheoMa(maSv); // check SV co nhom chua
+							if (sv != null) {
+								if (sv.getNhom() != null) {
+									throw new RuntimeException("Khong the dang ky nhom vi sinh vien " + sv.getTenSinhVien() + " da co nhom");
+								}
+							} else {
+								throw new RuntimeException("Ma sinh vien: " + maSv + " khong dung");
+							}
+
+						}
+						String maNhomMoi = taoMaMoi();
+						DeTai deTai = null;
+						if (request.getMaDeTai() != null) {
+							deTai = deTaiService.layTheoMa(request.getMaDeTai());
+						}
+						Nhom nhom = nhomService.luu(new Nhom(maNhomMoi, "Nhom " + maNhomMoi.substring(5), deTai, 0, 0));
+						for (String maSv : request.getDsMaSinhVien()) {
+							SinhVien sv = sinhVienService.layTheoMa(maSv);
+							sv.setNhom(nhom);
+							sinhVienService.capNhat(sv);
+						}
+						return ResponseEntity.ok(nhom);
 					}
-					String maNhomMoi = taoMaMoi();
-					DeTai deTai = null;
-					if (request.getMaDeTai() != null) {
-						deTai = deTaiService.layTheoMa(request.getMaDeTai());
-					}
-					Nhom nhom = nhomService.luu(new Nhom(maNhomMoi, "Nhom " + maNhomMoi.substring(5), deTai, 0, 0));
-					for (String maSv : request.getDsMaSinhVien()) {
-						SinhVien sv = sinhVienService.layTheoMa(maSv);
-						sv.setNhom(nhom);
-						sinhVienService.capNhat(sv);
-					}
-					return ResponseEntity.ok(nhom);
+					
 				} else {
 					Nhom nhomJoin = nhomService.layTheoMa(request.getMaNhom());
 					if (nhomJoin == null) {

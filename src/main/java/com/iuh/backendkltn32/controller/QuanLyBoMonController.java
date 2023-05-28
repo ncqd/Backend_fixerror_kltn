@@ -868,5 +868,67 @@ public class QuanLyBoMonController {
 		}
 		return result;
 	}
+	
+	@GetMapping("/thong-ke-mucdokho-detai")
+	public ThongKeDto thongKeMucDoKhoCuaDeTai() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<GiangVien> dsGiangVien = giangVienService.layDanhSach();
+		List<String> tenGV = new ArrayList<>();
+		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
+		List<Long> listsoDTDK = new ArrayList<>();
+		dsGiangVien.remove(0);
+		for (GiangVien gv : dsGiangVien) {
+			tenGV.add(gv.getTenGiangVien());
+			Long soNhomCon = (long) 0;
+			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					gv.getMaGiangVien(), 2)) {
+				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0
+						: deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				if (soNhom > 0 && deTai.getGioiHanSoNhomThucHien()
+						- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) > 0) {
+					soNhomCon += deTai.getGioiHanSoNhomThucHien()
+							- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				} else {
+					soNhomCon += deTai.getGioiHanSoNhomThucHien();
+				}
+			}
+			listsoDTDK.add(soNhomCon);
+		}
+		DataThongKeDto dataDeTai = new DataThongKeDto("Số nhóm còn có thể hướng dẫn", listsoDTDK);
+		thongKeDtos.add(dataDeTai);
+
+		return new ThongKeDto(tenGV, thongKeDtos);
+	}
+	
+	@GetMapping("/thong-ke-mucdokho-detai-giangvien")
+	public ThongKeDto thongKeMucDoKhoCuaDeTaiGiangVien() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<GiangVien> dsGiangVien = giangVienService.layDanhSach();
+		List<String> tenGV = new ArrayList<>();
+		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
+		List<Long> listsoDTDK = new ArrayList<>();
+		dsGiangVien.remove(0);
+		for (GiangVien gv : dsGiangVien) {
+			tenGV.add(gv.getTenGiangVien());
+			Long soNhomCon = (long) 0;
+			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
+					gv.getMaGiangVien(), 2)) {
+				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0
+						: deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				if (soNhom > 0 && deTai.getGioiHanSoNhomThucHien()
+						- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) > 0) {
+					soNhomCon += deTai.getGioiHanSoNhomThucHien()
+							- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
+				} else {
+					soNhomCon += deTai.getGioiHanSoNhomThucHien();
+				}
+			}
+			listsoDTDK.add(soNhomCon);
+		}
+		DataThongKeDto dataDeTai = new DataThongKeDto("Số nhóm còn có thể hướng dẫn", listsoDTDK);
+		thongKeDtos.add(dataDeTai);
+
+		return new ThongKeDto(tenGV, thongKeDtos);
+	}
 
 }

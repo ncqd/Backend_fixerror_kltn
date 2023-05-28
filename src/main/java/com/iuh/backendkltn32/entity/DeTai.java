@@ -71,6 +71,9 @@ public class DeTai implements Serializable {
 	    })
 	@JoinColumn(name = "maHocKy", nullable = true)
 	private HocKy hocKy;
+	
+	@Column(name = "doKhoDeTai")
+	private Integer doKhoDeTai;
 
 	@Override
 	public String toString() {

@@ -34,4 +34,6 @@ public class ThemDeTaiRequest {
 	private String maHocKy;
 	
 	private List<HocPhanTienQuyetDeTaiRequest> hocPhanTienQuyet;
+	
+	private Integer doKhoDeTai;
 }

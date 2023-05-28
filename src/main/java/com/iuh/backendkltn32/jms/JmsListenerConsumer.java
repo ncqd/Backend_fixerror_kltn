@@ -7,6 +7,7 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +66,7 @@ public class JmsListenerConsumer implements MessageListener {
 		return null;
 	}
 
-	
+	@Transactional
 	public ResponseEntity<?> listenerDeTaiChannel() throws Exception {
 		jmsTemplate.setDefaultDestinationName("detai_channel");
 		Message message = jmsTemplate.receive();
@@ -76,13 +77,20 @@ public class JmsListenerConsumer implements MessageListener {
 					deTaiService.laySoNhomDaDangKyDeTai(mapMessage.getString("maDeTai")) : 0;
 
 			if (soNhomDaDKDeTai >= deTai.getGioiHanSoNhomThucHien()) {
-				throw new RuntimeException("Khong the dang ky de tai " + deTai.getTenDeTai() + " da day");
+				throw new RuntimeException("Không thể đăng ký đề tài " + deTai.getTenDeTai() + " đã đầy");
 			}
 			Nhom nhomDangKy = nhomService.layTheoMa(mapMessage.getString("maNhom"));
 			if (nhomDangKy.getTinhTrang() == 0) {
 				throw new RuntimeException("Nhóm Chưa được duyệt");
 			}
 			nhomDangKy.setDeTai(deTai);
+			for (String masv : sinhVienService.layTatCaSinhVienTheoNhom(nhomDangKy.getMaNhom())) {
+				TinNhan tinNhan = new TinNhan("Giảng viên đã chấp nhận hướng dẫn đề tài mà bạn yêu cầu",
+						deTai.getTenDeTai() + " |  | " + "Giảng viên " + deTai.getGiangVien().getTenGiangVien() + " đã chấp nhận hướng dẫn bạn đề tài " +" | " + deTai.getMaDeTai() + " | ",
+						deTai.getGiangVien().getMaGiangVien(), masv, 0, new Timestamp(System.currentTimeMillis()));
+				tinNhanSerivce.luu(tinNhan);
+			}
+			
 			return ResponseEntity.ok(nhomService.capNhat(nhomDangKy));
 		}
 		return null;

@@ -105,6 +105,7 @@ public class NhomController {
 				throw new RuntimeException("Thời gian đăng ký nhóm đã hết");
 			}
 			DangKyNhomRequest dangKyNhomRequest = new DangKyNhomRequest();
+			dangKyNhomRequest.setVaiTro("ROLE_QUANLY");
 			List<String> masvreq = new ArrayList<>();
 			if (dsMaSinhVien.size() % 2 != 0) {
 				masvreq.add(dsMaSinhVien.get(dsMaSinhVien.size() - 1));

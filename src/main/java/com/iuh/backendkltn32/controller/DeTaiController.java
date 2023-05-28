@@ -318,13 +318,14 @@ public class DeTaiController {
 	}
 
 	@PostMapping("/dang-ky-de-tai")
-	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_GIANGVIEN')")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> dangKyDeTai(@RequestBody DangKyDeTaiRequest request) throws RuntimeException {
 		HocKy hocKy1 = hocKyService.layHocKyCuoiCungTrongDS();
+		String vaiTro = request.getVaiTro() == null ? "ROLE_GIANGVIEN" : request.getVaiTro();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Lịch đăng ký đề tài",
-				request.getVaiTro());
+				vaiTro);
 		keHoachs.addAll(keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy1.getMaHocKy(), "Lịch gán đề tài cho nhóm",
-				request.getVaiTro()));
+				vaiTro));
 		if (keHoachs.size() > 0) {
 			for (KeHoach keHoach : keHoachs) {
 				if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
@@ -398,7 +399,7 @@ public class DeTaiController {
 		List<DeTaiChuaDuocDangKyDto> dsDeTaiChuaDangKy = new ArrayList<>();
 		deTaiService.layDsDeTaiTheoNamHocKyDaDuyet(hocKy.getMaHocKy(), hocKy.getSoHocKy()).forEach(dt -> {
 			if (deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null || deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) < dt.getGioiHanSoNhomThucHien()) {
-				Integer soLuongConLai = deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null ? 0 : 
+				Integer soLuongConLai = deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null ? dt.getGioiHanSoNhomThucHien() : 
 					dt.getGioiHanSoNhomThucHien() - deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai());
 				dsDeTaiChuaDangKy.add(new DeTaiChuaDuocDangKyDto(dt.getMaDeTai(), dt.getTenDeTai(), dt.getDoKhoDeTai(), soLuongConLai, dt.getGiangVien().getTenGiangVien()));
 			}

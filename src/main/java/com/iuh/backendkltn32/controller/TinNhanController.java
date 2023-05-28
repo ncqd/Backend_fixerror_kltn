@@ -49,10 +49,19 @@ public class TinNhanController {
 						tn.getTenTinNhan()));
 
 			} else {
-				tinNhans.add(new TinNhanDto(tn.getId(), sinhVienService.layTheoMa(tn.getMaNGuoiNhan()), tn.getNoiDung(),
-						tn.getTrangThai(), sinhVienService.layTheoMa(tn.getMaNguoiGui()),
-						format.format(tn.getCreatedAt()),
-						tn.getTenTinNhan()));
+				if (tn.getTenTinNhan().equals("Bạn có tin nhắn từ người quản lý") || 
+						tn.getTenTinNhan().equals("Giảng viên đã chấp nhận hướng dẫn đề tài mà bạn yêu cầu")) {
+					tinNhans.add(new TinNhanDto(tn.getId(), sinhVienService.layTheoMa(tn.getMaNGuoiNhan()), tn.getNoiDung(),
+							tn.getTrangThai(), giangVienService.layTheoMa(tn.getMaNguoiGui()),
+							format.format(tn.getCreatedAt()),
+							tn.getTenTinNhan()));
+				} else {
+					tinNhans.add(new TinNhanDto(tn.getId(), sinhVienService.layTheoMa(tn.getMaNGuoiNhan()), tn.getNoiDung(),
+							tn.getTrangThai(), sinhVienService.layTheoMa(tn.getMaNguoiGui()),
+							format.format(tn.getCreatedAt()),
+							tn.getTenTinNhan()));
+				}
+				
 			}
 			thongBaoChuaDoc = tn.getTrangThai() == 0 ? thongBaoChuaDoc + 1 : thongBaoChuaDoc;
 		}
@@ -88,7 +97,15 @@ public class TinNhanController {
 	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
 	public TinNhan themTinNhan(@RequestBody ThemTinNhanDto themTinNhanDto ) {
 		TinNhan tinNhan = new TinNhan("Bạn có tin nhắn từ người quản lý", themTinNhanDto.getNoiDung(), 
-				themTinNhanDto.getMaNguoiNhan(), themTinNhanDto.getMaNguoiGui(), 0, new Timestamp(System.currentTimeMillis()));
+				themTinNhanDto.getMaNguoiGui(), themTinNhanDto.getMaNguoiNhan(), 0, new Timestamp(System.currentTimeMillis()));
+		return tinNhanSerivce.luu(tinNhan);
+	}
+	
+	@PostMapping("/them-tin-nhan-dangky-detai")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN')")
+	public TinNhan themTinNhanDKDeTai(@RequestBody ThemTinNhanDto themTinNhanDto ) {
+		TinNhan tinNhan = new TinNhan("Bạn có tin nhắn từ sinh viên xin thực hiện đề tài", themTinNhanDto.getNoiDung(), 
+				themTinNhanDto.getMaNguoiGui(), themTinNhanDto.getMaNguoiNhan(), 0, new Timestamp(System.currentTimeMillis()));
 		return tinNhanSerivce.luu(tinNhan);
 	}
 

@@ -3,6 +3,7 @@ package com.iuh.backendkltn32.controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,12 +24,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.DangKyDeTaiRequest;
+import com.iuh.backendkltn32.dto.DangKyDeTaiRes;
 import com.iuh.backendkltn32.dto.DeTaiDto;
+import com.iuh.backendkltn32.dto.HocPhanTienQuyetDeTaiRequest;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
+import com.iuh.backendkltn32.dto.ThemDeTaiRequest;
+import com.iuh.backendkltn32.dto.ThemTinNhanDto;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet;
+import com.iuh.backendkltn32.entity.HocPhanTienQuyet_DeTai;
 import com.iuh.backendkltn32.entity.KeHoach;
+import com.iuh.backendkltn32.entity.Nhom;
 import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.export.FileMauExcelDeTai;
 import com.iuh.backendkltn32.importer.DeTaiImporter;
@@ -36,8 +44,11 @@ import com.iuh.backendkltn32.jms.JmsListenerConsumer;
 import com.iuh.backendkltn32.jms.JmsPublishProducer;
 import com.iuh.backendkltn32.service.DeTaiService;
 import com.iuh.backendkltn32.service.GiangVienService;
+import com.iuh.backendkltn32.service.HPTQ_DeTaiService;
 import com.iuh.backendkltn32.service.HocKyService;
+import com.iuh.backendkltn32.service.HocPhanTienQuyetService;
 import com.iuh.backendkltn32.service.KeHoachService;
+import com.iuh.backendkltn32.service.SinhVienService;
 import com.iuh.backendkltn32.service.TaiKhoanService;
 
 @RestController
@@ -68,11 +79,22 @@ public class DeTaiController {
 	@Autowired
 	private DeTaiImporter deTaiImporter;
 
+	@Autowired
+	private HPTQ_DeTaiService hptq_DeTaiService;
+
+	@Autowired
+	private HocPhanTienQuyetService hptqService;
+	
+	@Autowired
+	private SinhVienService sinhVienService;
+
 	@PostMapping("/them-de-tai/{maGiangVien}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
-	public DeTai themDeTai(@RequestBody DeTai deTai, @PathVariable("maGiangVien") String maGiangVien) throws RuntimeException {
+	public DeTai themDeTai(@RequestBody ThemDeTaiRequest deTaiReq, @PathVariable("maGiangVien") String maGiangVien)
+			throws RuntimeException {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		TaiKhoan taiKhoan = taiKhoanService.layTheoMa(maGiangVien);
+		DeTai deTai = new DeTai();
 		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch thêm đề tài",
 				taiKhoan.getVaiTro().getTenVaiTro().name());
 		if (keHoachs.size() > 0) {
@@ -105,11 +127,40 @@ public class DeTaiController {
 				}
 				deTai.setMaDeTai("DT" + maDT);
 				deTai.setGiangVien(giangVien);
+				deTai.setTenDeTai(deTaiReq.getTenDeTai());
 				deTai.setHocKy(hocKy);
 				deTai.setTrangThai(0);
+				deTai.setGioiHanSoNhomThucHien(deTaiReq.getGioiHanSoNhomThucHien());
+				deTai.setMoTa(deTaiReq.getMoTa());
+				deTai.setSanPhamDuKien(deTaiReq.getSanPhamDuKien());
+				deTai.setYeuCauDauVao(deTaiReq.getYeuCauDauVao());
+				deTai.setMucTieuDeTai(deTaiReq.getMucTieuDeTai());
+
 				System.out.println("giang-vien-controller - them de tai - " + hocKy);
 
 				DeTai ketQuaLuu = deTaiService.luu(deTai);
+
+				HocPhanTienQuyetDeTaiRequest hqtq = deTaiReq.getHocPhanTienQuyet().get(0);
+				HocPhanTienQuyet_DeTai hptqLuu  = new HocPhanTienQuyet_DeTai();
+				switch (hqtq.getDiemHocPhanTienQuyet()) {
+				case "trungbinh":
+					hptqLuu= hptq_DeTaiService.luu(new HocPhanTienQuyet_DeTai(hptqService.layTheoMa(hqtq.getHocPhanTienQuyet()),
+							ketQuaLuu, 5.0));
+					break;
+				case "kha":
+					 hptqLuu = hptq_DeTaiService.luu(new HocPhanTienQuyet_DeTai(hptqService.layTheoMa(hqtq.getHocPhanTienQuyet()),
+							ketQuaLuu, 7.0));
+					break;
+				case "gioi":
+					 hptqLuu = hptq_DeTaiService.luu(new HocPhanTienQuyet_DeTai(hptqService.layTheoMa(hqtq.getHocPhanTienQuyet()),
+							ketQuaLuu, 8.0));
+					break;
+				case "":
+					 hptqLuu = hptq_DeTaiService.luu(new HocPhanTienQuyet_DeTai(hptqService.layTheoMa(hqtq.getHocPhanTienQuyet()),
+							ketQuaLuu, 0.0));
+					break;
+				}
+				ketQuaLuu.setHocPhanTienQuyet_DeTais(Arrays.asList(hptqLuu));
 
 				return ketQuaLuu;
 			} catch (RuntimeException e) {
@@ -250,6 +301,20 @@ public class DeTaiController {
 			return ResponseEntity.ok("Have Error");
 		}
 	}
+	
+	@GetMapping("/dang-ky-de-tai-v2")
+	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_GIANGVIEN')")
+	public ResponseEntity<?> dangKyDeTaiV2(@RequestBody DangKyDeTaiRequest request) throws RuntimeException {
+		Nhom nhom = sinhVienService.layTheoMa(request.getMaNhom()).getNhom();
+		DeTai deTai = deTaiService.layTheoMa(request.getMaDeTai());
+		Boolean duDk = true;
+		for (String ma : sinhVienService.layTatCaSinhVienTheoNhom(nhom.getMaNhom())) {
+			if (sinhVienService.layTheoMa(ma).getDsHocPhanTienQuyet_SinhViens().get(0).getDiemTrungBinh() <  deTai.getHocPhanTienQuyet_DeTais().get(0).getDiemTrungBinh()) {
+				duDk = false;
+			}
+		}
+		return ResponseEntity.ok(new DangKyDeTaiRes(request.getMaDeTai(), duDk));
+	}
 
 	@PostMapping("/dang-ky-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_SINHVIEN') or hasAuthority('ROLE_GIANGVIEN')")
@@ -296,7 +361,7 @@ public class DeTaiController {
 		}
 		return null;
 	}
-	
+
 	@GetMapping("/lay-theo-ma/{maDeTai}")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_QUANLY')")
 	public ResponseEntity<?> layDeTaiTheoMa(@PathVariable("maDeTai") String maDeTai) {
@@ -306,7 +371,7 @@ public class DeTaiController {
 //				deTai1.getMoTa(), deTai1.getYeuCauDauVao(), deTai1.getTrangThai(),deTai1.getGioiHanSoNhomThucHien(), deTai1.getGiangVien(), deTai1.getHocKy().getMaHocKy());
 		return ResponseEntity.ok(deTai1);
 	}
-	
+
 	@GetMapping("/xuat-file-mau-de-tai")
 	@PreAuthorize("hasAuthority('ROLE_GIANGVIEN')")
 	public void xuatFileMauDeTai(HttpServletResponse response) throws RuntimeException {
@@ -325,5 +390,5 @@ public class DeTaiController {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
-	
+
 }

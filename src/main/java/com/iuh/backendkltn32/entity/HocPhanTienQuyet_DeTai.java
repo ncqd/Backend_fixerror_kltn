@@ -37,4 +37,13 @@ public class HocPhanTienQuyet_DeTai {
 	private DeTai deTai;
 	
 	private Double diemTrungBinh;
+
+	public HocPhanTienQuyet_DeTai(HocPhanTienQuyet hocPhanTienQuyet, DeTai deTai, Double diemTrungBinh) {
+		super();
+		this.hocPhanTienQuyet = hocPhanTienQuyet;
+		this.deTai = deTai;
+		this.diemTrungBinh = diemTrungBinh;
+	}
+	
+	
 }

@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.iuh.backendkltn32.dto.DangKyDeTaiRequest;
 import com.iuh.backendkltn32.dto.DangKyDeTaiRes;
+import com.iuh.backendkltn32.dto.DeTaiChuaDuocDangKyDto;
 import com.iuh.backendkltn32.dto.DeTaiDto;
 import com.iuh.backendkltn32.dto.HocPhanTienQuyetDeTaiRequest;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
@@ -390,5 +391,20 @@ public class DeTaiController {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+	
+	@GetMapping("/lay-ds-detai-chua-duoc-dangky")
+	public List<DeTaiChuaDuocDangKyDto> layDSDeTai() {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<DeTaiChuaDuocDangKyDto> dsDeTaiChuaDangKy = new ArrayList<>();
+		deTaiService.layDsDeTaiTheoNamHocKyDaDuyet(hocKy.getMaHocKy(), hocKy.getSoHocKy()).forEach(dt -> {
+			if (deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null || deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) < dt.getGioiHanSoNhomThucHien()) {
+				Integer soLuongConLai = deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null ? 0 : 
+					dt.getGioiHanSoNhomThucHien() - deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai());
+				dsDeTaiChuaDangKy.add(new DeTaiChuaDuocDangKyDto(dt.getMaDeTai(), dt.getTenDeTai(), dt.getDoKhoDeTai(), soLuongConLai, dt.getGiangVien().getTenGiangVien()));
+			}
+		});
+		return dsDeTaiChuaDangKy;
+	}
+	
 
 }

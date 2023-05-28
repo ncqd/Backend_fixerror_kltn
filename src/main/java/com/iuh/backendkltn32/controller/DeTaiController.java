@@ -398,9 +398,21 @@ public class DeTaiController {
 		List<DeTaiChuaDuocDangKyDto> dsDeTaiChuaDangKy = new ArrayList<>();
 		deTaiService.layDsDeTaiTheoNamHocKyDaDuyet(hocKy.getMaHocKy(), hocKy.getSoHocKy()).forEach(dt -> {
 			if (deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null || deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) < dt.getGioiHanSoNhomThucHien()) {
-				Integer soLuongConLai = deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null ? 0 : 
+				Integer soLuongConLai = deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai()) == null ? dt.getGioiHanSoNhomThucHien() :
 					dt.getGioiHanSoNhomThucHien() - deTaiService.laySoNhomDaDangKyDeTai(dt.getMaDeTai());
-				dsDeTaiChuaDangKy.add(new DeTaiChuaDuocDangKyDto(dt.getMaDeTai(), dt.getTenDeTai(), dt.getDoKhoDeTai(), soLuongConLai, dt.getGiangVien().getTenGiangVien()));
+				String doKhoDeTai = "";
+				switch (dt.getDoKhoDeTai()) {
+					case 0:
+						doKhoDeTai = "Trung Bình";
+						break;
+					case 1:
+						doKhoDeTai = "Khá";
+						break;
+					case 2:
+						doKhoDeTai = "Cao";
+						break;
+				}
+				dsDeTaiChuaDangKy.add(new DeTaiChuaDuocDangKyDto(dt.getMaDeTai(), dt.getTenDeTai(), doKhoDeTai, soLuongConLai, dt.getGiangVien().getTenGiangVien()));
 			}
 		});
 		return dsDeTaiChuaDangKy;

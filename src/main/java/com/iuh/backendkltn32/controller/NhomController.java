@@ -91,6 +91,55 @@ public class NhomController {
 
 	}
 
+	@PostMapping("/gan-nhom-tudong")
+	@PreAuthorize("hasAuthority('ROLE_QUANLY')")
+	public void ganNhomTuDong(@RequestBody List<String> dsMaSinhVien) throws RuntimeException {
+		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
+		List<KeHoach> keHoachs = keHoachService.layTheoTenVaMaHocKyVaiTro(hocKy.getMaHocKy(), "Lịch đăng ký nhóm",
+				"ROLE_SINHVIEN");
+		if (keHoachs.size() > 0) {
+			KeHoach keHoach = keHoachs.get(0);
+			if (keHoach.getThoiGianBatDau().getTime() > System.currentTimeMillis()) {
+				throw new RuntimeException("Chưa đến thời gian để đăng ký nhóm");
+			} else if (keHoach.getThoiGianKetThuc().getTime() < System.currentTimeMillis()) {
+				throw new RuntimeException("Thời gian đăng ký nhóm đã hết");
+			}
+			DangKyNhomRequest dangKyNhomRequest = new DangKyNhomRequest();
+			List<String> masvreq = new ArrayList<>();
+			if (dsMaSinhVien.size() % 2 != 0) {
+				masvreq.add(dsMaSinhVien.get(dsMaSinhVien.size() - 1));
+				dangKyNhomRequest.setDsMaSinhVien(masvreq);
+				producer.sendMessageOnNhomChanel(dangKyNhomRequest);
+				try {
+					listenerConsumer.listenerNhomChannel();
+					masvreq.clear();
+					dangKyNhomRequest = new DangKyNhomRequest();
+				} catch (Exception e) {
+					throw new RuntimeException(e.getMessage());
+				}
+				dsMaSinhVien.remove(dsMaSinhVien.size() - 1);
+			}
+
+			for (String maSV : dsMaSinhVien) {
+				masvreq.add(maSV);
+				if (masvreq.size() % 2 == 0) {
+					dangKyNhomRequest.setDsMaSinhVien(masvreq);
+					producer.sendMessageOnNhomChanel(dangKyNhomRequest);
+					try {
+						listenerConsumer.listenerNhomChannel();
+						masvreq.clear();
+						dangKyNhomRequest = new DangKyNhomRequest();
+					} catch (Exception e) {
+						throw new RuntimeException(e.getMessage());
+					}
+				}
+
+			}
+		}
+		throw new RuntimeException("Chưa có kế hoạch đăng ký nhóm");
+
+	}
+
 	@PostMapping("/lay-ds-nhom")
 	@PreAuthorize("hasAuthority('ROLE_QUANLY') or hasAuthority('ROLE_GIANGVIEN') or hasAuthority('ROLE_SINHVIEN')")
 	public Set<NhomRoleGVRespone> layNhomTheoMaGv(@RequestBody LayDeTaiRquestDto request) throws RuntimeException {

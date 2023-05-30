@@ -62,7 +62,7 @@ public class DeTai implements Serializable {
 	private GiangVien giangVien;
 	
 	@OneToMany(mappedBy = "deTai")
-	@JsonIgnore
+//	@JsonIgnore
 	private List<HocPhanTienQuyet_DeTai> hocPhanTienQuyet_DeTais;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {

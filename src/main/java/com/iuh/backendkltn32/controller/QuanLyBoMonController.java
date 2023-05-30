@@ -868,66 +868,79 @@ public class QuanLyBoMonController {
 		}
 		return result;
 	}
-	
+
 	@GetMapping("/thong-ke-mucdokho-detai")
 	public ThongKeDto thongKeMucDoKhoCuaDeTai() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
-		List<GiangVien> dsGiangVien = giangVienService.layDanhSach();
-		List<String> tenGV = new ArrayList<>();
+		List<DeTai> dsDeTai = deTaiService.layDsDeTaiTheoTrangThaiKhongMaGV(hocKy.getMaHocKy(), hocKy.getSoHocKy(), 2);
 		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
 		List<Long> listsoDTDK = new ArrayList<>();
-		dsGiangVien.remove(0);
-		for (GiangVien gv : dsGiangVien) {
-			tenGV.add(gv.getTenGiangVien());
-			Long soNhomCon = (long) 0;
-			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
-					gv.getMaGiangVien(), 2)) {
-				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0
-						: deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
-				if (soNhom > 0 && deTai.getGioiHanSoNhomThucHien()
-						- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) > 0) {
-					soNhomCon += deTai.getGioiHanSoNhomThucHien()
-							- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
-				} else {
-					soNhomCon += deTai.getGioiHanSoNhomThucHien();
-				}
+		Long soDeTaiTB = (long) 0;
+		Long soDeTaiKha = (long) 0;
+		Long soDeTaiKho = (long) 0;
+		for (DeTai deTai : dsDeTai) {
+			switch (deTai.getDoKhoDeTai()) {
+			case 0:
+				soDeTaiTB++;
+				break;
+			case 1:
+				soDeTaiKha++;
+				break;
+			case 2:
+				soDeTaiKho++;
+				break;
 			}
-			listsoDTDK.add(soNhomCon);
 		}
+		listsoDTDK.add(soDeTaiKho);
+		listsoDTDK.add(soDeTaiKha);
+		listsoDTDK.add(soDeTaiTB);
 		DataThongKeDto dataDeTai = new DataThongKeDto("Số nhóm còn có thể hướng dẫn", listsoDTDK);
 		thongKeDtos.add(dataDeTai);
 
-		return new ThongKeDto(tenGV, thongKeDtos);
+		return new ThongKeDto(Arrays.asList("Khó", "Khá", "Trung bình"), thongKeDtos);
 	}
-	
+
 	@GetMapping("/thong-ke-mucdokho-detai-giangvien")
 	public ThongKeDto thongKeMucDoKhoCuaDeTaiGiangVien() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<GiangVien> dsGiangVien = giangVienService.layDanhSach();
 		List<String> tenGV = new ArrayList<>();
 		List<DataThongKeDto> thongKeDtos = new ArrayList<>();
-		List<Long> listsoDTDK = new ArrayList<>();
+		List<Long> listsoDTKho = new ArrayList<>();
+		List<Long> listsoDTKha = new ArrayList<>();
+		List<Long> listsoDTTB = new ArrayList<>();
 		dsGiangVien.remove(0);
+		
 		for (GiangVien gv : dsGiangVien) {
 			tenGV.add(gv.getTenGiangVien());
-			Long soNhomCon = (long) 0;
+			Long soDeTaiTB = (long) 0;
+			Long soDeTaiKha = (long) 0;
+			Long soDeTaiKho = (long) 0;
 			for (DeTai deTai : deTaiService.layDsDeTaiTheoNamHocKyTheoTrangThai(hocKy.getMaHocKy(), hocKy.getSoHocKy(),
 					gv.getMaGiangVien(), 2)) {
-				int soNhom = deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) == null ? 0
-						: deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
-				if (soNhom > 0 && deTai.getGioiHanSoNhomThucHien()
-						- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai()) > 0) {
-					soNhomCon += deTai.getGioiHanSoNhomThucHien()
-							- deTaiService.laySoNhomDaDangKyDeTai(deTai.getMaDeTai());
-				} else {
-					soNhomCon += deTai.getGioiHanSoNhomThucHien();
+				switch (deTai.getDoKhoDeTai()) {
+				case 0:
+					soDeTaiTB++;
+					break;
+				case 1:
+					soDeTaiKha++;
+					break;
+				case 2:
+					soDeTaiKho++;
+					break;
 				}
 			}
-			listsoDTDK.add(soNhomCon);
+			listsoDTKho.add(soDeTaiKho);
+			listsoDTKha.add(soDeTaiKha);
+			listsoDTTB.add(soDeTaiTB);
 		}
-		DataThongKeDto dataDeTai = new DataThongKeDto("Số nhóm còn có thể hướng dẫn", listsoDTDK);
-		thongKeDtos.add(dataDeTai);
-
+		DataThongKeDto dataDeTaiKho = new DataThongKeDto("Khó", listsoDTKho);
+		DataThongKeDto dataDeTaiKha = new DataThongKeDto("Khá", listsoDTKha);
+		DataThongKeDto dataDeTaiTB = new DataThongKeDto("Trung bình", listsoDTTB);
+		thongKeDtos.add(dataDeTaiKho);
+		thongKeDtos.add(dataDeTaiKha);
+		thongKeDtos.add(dataDeTaiTB);
+		
 		return new ThongKeDto(tenGV, thongKeDtos);
 	}
 }

@@ -629,7 +629,7 @@ public class NhomController {
 	}
 	
 
-	@GetMapping("/lay-ds-nhom-dangky-detai")
+	@GetMapping("/lay-ds-nhom-chua-dangky-detai")
 	public List<Nhom> layDSDeTai() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<Nhom> dsNhomChuaDKDT = new ArrayList<>();

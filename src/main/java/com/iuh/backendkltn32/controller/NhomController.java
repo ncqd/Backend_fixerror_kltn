@@ -129,7 +129,7 @@ public class NhomController {
 					try {
 						listenerConsumer.listenerNhomChannel();
 						masvreq.clear();
-						dangKyNhomRequest = new DangKyNhomRequest();
+						dangKyNhomRequest.setDsMaSinhVien(new ArrayList<>());
 					} catch (Exception e) {
 						throw new RuntimeException(e.getMessage());
 					}

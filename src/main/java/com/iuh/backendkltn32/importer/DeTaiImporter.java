@@ -73,6 +73,7 @@ public class DeTaiImporter {
 				deTai.setGioiHanSoNhomThucHien(2);
 				deTai.setHocKy(hocKy);
 				deTai.setTrangThai(0);
+				deTai.setDoKhoDeTai(0);
 
 				while (cellIterator.hasNext() && isHasValue) {
 					Cell nextCell = cellIterator.next();

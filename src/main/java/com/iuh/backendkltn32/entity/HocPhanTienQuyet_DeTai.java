@@ -34,6 +34,7 @@ public class HocPhanTienQuyet_DeTai {
 	
 	@ManyToOne
 	@JoinColumn(name = "maDeTai", nullable = false)
+	@JsonIgnore
 	private DeTai deTai;
 	
 	private Double diemTrungBinh;

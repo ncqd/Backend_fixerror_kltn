@@ -31,6 +31,7 @@ import com.iuh.backendkltn32.dto.HocPhanTienQuyetDeTaiRequest;
 import com.iuh.backendkltn32.dto.LayDeTaiRquestDto;
 import com.iuh.backendkltn32.dto.ThemDeTaiRequest;
 import com.iuh.backendkltn32.dto.ThemTinNhanDto;
+import com.iuh.backendkltn32.dto.TinhHopLeDTReq;
 import com.iuh.backendkltn32.entity.DeTai;
 import com.iuh.backendkltn32.entity.GiangVien;
 import com.iuh.backendkltn32.entity.HocKy;
@@ -38,6 +39,7 @@ import com.iuh.backendkltn32.entity.HocPhanTienQuyet;
 import com.iuh.backendkltn32.entity.HocPhanTienQuyet_DeTai;
 import com.iuh.backendkltn32.entity.KeHoach;
 import com.iuh.backendkltn32.entity.Nhom;
+import com.iuh.backendkltn32.entity.SinhVien;
 import com.iuh.backendkltn32.entity.TaiKhoan;
 import com.iuh.backendkltn32.export.FileMauExcelDeTai;
 import com.iuh.backendkltn32.importer.DeTaiImporter;
@@ -405,6 +407,19 @@ public class DeTaiController {
 			}
 		});
 		return dsDeTaiChuaDangKy;
+	}
+	
+	@PostMapping("/kiem-tra-hop-le")
+	public ResponseEntity<?> kiemTraTinhHopLe(@RequestBody TinhHopLeDTReq req) {
+		if (req.getMaDeTai().isBlank() || req.getMaDeTai() == null || req.getMaSinhVien() == null || req.getMaSinhVien().isBlank()) {
+			throw new RuntimeException("Mã không được rỗng");
+		}
+		DeTai deTai = deTaiService.layTheoMa(req.getMaDeTai());
+		SinhVien sinhVien = sinhVienService.layTheoMa(req.getMaSinhVien());
+		if (deTai.getHocPhanTienQuyet_DeTais().get(0).getDiemTrungBinh() > sinhVien.getDsHocPhanTienQuyet_SinhViens().get(0).getDiemTrungBinh()) {
+			return ResponseEntity.ok(false);
+		}
+		return ResponseEntity.ok(true);
 	}
 	
 

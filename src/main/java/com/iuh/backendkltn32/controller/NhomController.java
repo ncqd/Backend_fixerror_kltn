@@ -129,7 +129,7 @@ public class NhomController {
 					try {
 						listenerConsumer.listenerNhomChannel();
 						masvreq.clear();
-						dangKyNhomRequest = new DangKyNhomRequest();
+						dangKyNhomRequest.setDsMaSinhVien(new ArrayList<>());
 					} catch (Exception e) {
 						throw new RuntimeException(e.getMessage());
 					}
@@ -629,7 +629,7 @@ public class NhomController {
 	}
 	
 
-	@GetMapping("/lay-ds-nhom-dangky-detai")
+	@GetMapping("/lay-ds-nhom-chua-dangky-detai")
 	public List<Nhom> layDSDeTai() {
 		HocKy hocKy = hocKyService.layHocKyCuoiCungTrongDS();
 		List<Nhom> dsNhomChuaDKDT = new ArrayList<>();
